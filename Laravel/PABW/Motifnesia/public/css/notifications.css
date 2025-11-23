@@ -1,0 +1,78 @@
+/* ======================================= */
+/* Struktur Halaman Utama */
+/* ======================================= */
+.notifications-container {
+    max-width: 650px; 
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.notifications-container h1 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Jarak antar card notifikasi */
+}
+
+/* ======================================= */
+/* Card Notifikasi (.notification-card) */
+/* ======================================= */
+.notification-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.notification-icon {
+    color: #ff9900; /* Warna Orange untuk ikon titik */
+    font-size: 0.8em;
+    margin-right: 10px;
+}
+
+.notification-status {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.notification-time {
+    font-size: 0.85em;
+    color: #999;
+    margin-bottom: 15px;
+    margin-left: 18px; /* Agar sejajar dengan teks status */
+}
+
+/* Detail Pesanan */
+.notification-details-list {
+    list-style: none;
+    padding-left: 25px; /* Indentasi seperti di gambar */
+    margin: 0;
+}
+
+.notification-details-list li {
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #555;
+    position: relative;
+}
+
+/* Tambahkan bullet point kecil/titik */
+.notification-details-list li::before {
+    content: "\2022"; /* Karakter bullet point */
+    color: #ff9900;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}

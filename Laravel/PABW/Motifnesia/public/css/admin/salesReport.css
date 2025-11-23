@@ -1,0 +1,131 @@
+/* Styling Utama Halaman (Konsisten) */
+.sales-report-container {
+    padding: 20px;
+    background-color: #f7f5ef;
+    min-height: 100vh;
+    border-top-left-radius: 20px;
+    margin-left: 20px;
+}
+
+/* Header dan Search Bar (Konsisten) */
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+/* ... styling search box dan input disamakan dengan file CSS sebelumnya ... */
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #4a4a4a;
+    margin: 25px 0 15px 0;
+}
+
+/* --- BAGIAN GRAFIK BATANG --- */
+.chart-wrapper {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.bar-chart-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end; /* Batang mulai dari bawah */
+    height: 200px; /* Tinggi maksimum chart */
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.chart-bar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 12%; /* Lebar kolom chart */
+    height: 100%;
+}
+
+.chart-bar {
+    width: 100%;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    transition: height 0.3s;
+}
+
+/* Warna Batang sesuai Screenshot (Hijau dan Merah Bata) */
+.bar-green {
+    background-color: #72a969; /* Warna Hijau di screenshot */
+}
+
+.bar-red {
+    background-color: #c7867e; /* Warna Merah Bata di screenshot */
+}
+
+.chart-label {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+/* --- BAGIAN TABEL PRODUK TERLARIS --- */
+.best-seller-table {
+    margin-top: 20px;
+    padding: 0; /* Hilangkan padding wrapper, biar header menyatu */
+}
+
+/* Header Tabel */
+.table-header {
+    display: flex;
+    background-color: #8b6e5e; /* Warna cokelat tua di tabel */
+    color: #fff;
+    padding: 10px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.header-col {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+/* Pembagian Lebar Kolom Tabel */
+.seller-col-name { flex: 2; }
+.seller-col-unit { flex: 1; text-align: center; }
+.seller-col-revenue { flex: 1.5; text-align: right; }
+
+/* Styling Baris Data (bestSellerRow.blade.php) */
+.best-seller-rows-list {
+    padding: 0 20px 20px 20px;
+}
+
+.best-seller-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    margin-top: 5px;
+    border-bottom: 1px solid #eee; /* Garis pemisah tipis */
+}
+.best-seller-row:last-child {
+    border-bottom: none;
+}
+
+.row-col {
+    font-size: 15px;
+    color: #333;
+    padding: 0 5px;
+}
+
+.row-col.seller-col-name { flex: 2; font-weight: 500;}
+.row-col.seller-col-unit { flex: 1; text-align: center; }
+.row-col.seller-col-revenue { flex: 1.5; text-align: right; }

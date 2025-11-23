@@ -1,0 +1,159 @@
+/* Styling Utama Halaman (Konsisten) */
+.return-management-container {
+    padding: 20px;
+    background-color: #f7f5ef;
+    min-height: 100vh;
+    border-top-left-radius: 20px;
+    margin-left: 20px;
+}
+
+/* Header dan Search Bar (Konsisten) */
+.management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+.search-box {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #a89486;
+}
+
+.search-input {
+    padding: 8px 15px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: transparent;
+    color: #fff;
+    width: 200px;
+    box-sizing: border-box;
+}
+
+.search-button {
+    background-color: #a89486;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* Tabel Header dan Wrapper */
+.data-table-wrapper {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+    display: flex;
+    background-color: #a89486;
+    color: #fff;
+    padding: 10px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.header-col {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+/* Pengaturan Lebar Kolom */
+.col-id { flex: 0.8; }
+.col-name { flex: 1; }
+.col-product { flex: 1.2; }
+.col-reason { flex: 1.5; }
+.col-action { flex: 1; text-align: right; } /* Biar tombol rata kanan */
+
+
+/* Styling Baris Data Retur (returnRow.blade.php) */
+.return-rows-list {
+    padding: 0 20px 20px 20px;
+}
+
+.return-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+
+/* Warna selang-seling */
+.odd-row { background-color: #fff; }
+.even-row { background-color: #fcf8e3; }
+
+.row-col {
+    font-size: 15px;
+    color: #333;
+    padding: 0 5px;
+    /* Gunakan flex yang sama dengan header */
+}
+
+.row-col.col-id { flex: 0.8; }
+.row-col.col-name { flex: 1; }
+.row-col.col-product { flex: 1.2; }
+.row-col.col-reason { flex: 1.5; }
+.row-col.col-action { flex: 1; text-align: right; }
+
+
+.action-button {
+    background-color: #e6cfa8; /* Warna kuning kecoklatan di screenshot */
+    color: #5d4a3b;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:hover {
+    background-color: #d1b893;
+}
+
+/* Styling Pagination */
+.pagination-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+    padding-right: 20px;
+}
+
+.pagination-btn {
+    background-color: #f7f5ef; /* Warna latar belakang kontainer */
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-number {
+    background-color: #c7b5a8; /* Warna aktif */
+    color: #fff;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 4px;
+    font-weight: bold;
+}

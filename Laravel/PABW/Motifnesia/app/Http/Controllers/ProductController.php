@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class ProductController extends Controller 
+{
+    public function index()
+    {
+        // contoh data produk (nanti bisa dari DB)
+        $products = [
+            [
+                'id' => 1,
+                'nama' => 'Batik Mega Mendung',
+                'harga' => 150000,
+                'gambar' => 'batik1.jpg',
+                'deskripsi' => 'Motif klasik dengan nuansa biru khas Cirebon.'
+            ],
+            [
+                'id' => 2,
+                'nama' => 'Batik Parang Rusak',
+                'harga' => 175000,
+                'gambar' => 'batik2.jpg',
+                'deskripsi' => 'Motif khas keraton Yogyakarta yang melambangkan kekuatan.'
+            ],
+            [
+                'id' => 3,
+                'nama' => 'Batik Kawung',
+                'harga' => 160000,
+                'gambar' => 'batik3.jpg',
+                'deskripsi' => 'Motif geometris elegan yang sering digunakan dalam acara formal.'
+            ],
+        ];
+
+        return view('homePage', compact('products'));
+    }
+
+    public function show($id)
+    {
+        $products = [
+            [
+                'id' => 1,
+                'nama' => 'Batik Mega Mendung',
+                'harga' => 150000,
+                'gambar' => 'batik1.jpg',
+                'deskripsi' => 'Motif klasik dengan nuansa biru khas Cirebon.'
+            ],
+            [
+                'id' => 2,
+                'nama' => 'Batik Parang Rusak',
+                'harga' => 175000,
+                'gambar' => 'batik2.jpg',
+                'deskripsi' => 'Motif khas keraton Yogyakarta yang melambangkan kekuatan.'
+            ],
+            [
+                'id' => 3,
+                'nama' => 'Batik Kawung',
+                'harga' => 160000,
+                'gambar' => 'batik3.jpg',
+                'deskripsi' => 'Motif geometris elegan yang sering digunakan dalam acara formal.'
+            ],
+        ];
+
+        // cari produk berdasarkan id. Pastikan $id di-cast ke int
+        // Meskipun di route secara default string, tapi biar lebih aman saat perbandingan.
+        $product = collect($products)->firstWhere('id', (int)$id);
+
+        if (!$product) {
+            abort(404);
+        }
+
+        return view('detailProduct', compact('product'));
+    }
+}
