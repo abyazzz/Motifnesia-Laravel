@@ -13,11 +13,11 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\ReviewController;
 
 // Import Controllers Admin (Backend)
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReturnController;
-use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -38,6 +38,7 @@ Route::post('/login', [UserController::class, 'doLogin'])->name('doLogin');
 
 // Register (GET)
 Route::get('/register', [UserController::class, 'register'])->name('register');
+Route::post('/register', [UserController::class, 'doRegister'])->name('doRegister');
 
 // Forgot Password (GET)
 Route::get('/forgot', [UserController::class, 'forgot'])->name('forgot');
@@ -63,10 +64,17 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
+// Reviews CRUD (AJAX)
+Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
 
 // User Profile
 Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
 Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/edit', [UserProfileController::class, 'update'])->name('profile.update');
 
 // ---------------------------------- Route Khusu Admin ------------------------------------------
 Route::get('/admin/daftar-produk', [AdminProductController::class, 'index'])->name('admin.daftar-produk');

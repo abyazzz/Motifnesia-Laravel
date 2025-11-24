@@ -30,15 +30,30 @@ document.addEventListener('DOMContentLoaded', function() {
         // Event listeners untuk tombol aksi di modal Riwayat Pembelian
         document.querySelectorAll('.btn-ulasan').forEach(btn => {
             btn.onclick = () => {
+                const productId = btn.getAttribute('data-product-id');
+                const productNameEl = btn.closest('.history-item') ? btn.closest('.history-item').querySelector('.product-name-hist') : null;
+                const productName = productNameEl ? productNameEl.textContent.trim() : '';
                 closeModal(historyModal);
-                openModal(reviewModal);
+                // prefer using modal helper that sets product context
+                if (typeof openReviewModal === 'function') {
+                    openReviewModal(productId, productName);
+                } else {
+                    openModal(reviewModal);
+                }
             };
         });
 
         document.querySelectorAll('.btn-view-ulasan').forEach(btn => {
             btn.onclick = () => {
+                const productId = btn.getAttribute('data-product-id');
+                const productNameEl = btn.closest('.history-item') ? btn.closest('.history-item').querySelector('.product-name-hist') : null;
+                const productName = productNameEl ? productNameEl.textContent.trim() : '';
                 closeModal(historyModal);
-                openModal(viewReviewModal);
+                if (typeof openViewReviewModal === 'function') {
+                    openViewReviewModal(productId, productName);
+                } else {
+                    openModal(viewReviewModal);
+                }
             };
         });
 
