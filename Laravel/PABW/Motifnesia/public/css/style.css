@@ -130,6 +130,30 @@ aside button:hover {
 
 }
 
+/* Product image styling: ensure consistent aspect ratio and cover behavior */
+.product-card img,
+.product-card .product-img {
+  width: 100%;
+  height: 260px; /* fixed visual size to match slideshow */
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin: 0 0 12px 0;
+}
+
+.product-card h3 {
+  font-size: 1.05rem;
+  margin: 6px 0 4px 0;
+  color: #1a5db8; /* blue link-style like screenshot */
+  text-decoration: underline;
+}
+
+.product-card p {
+  margin: 0;
+}
+
+.product-link { text-decoration: none; color: inherit; }
+
 .slideshow {
   height: 260px;
   /* Warna sesuai screenshot: gradien cokelat muda */

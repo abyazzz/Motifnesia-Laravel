@@ -4,37 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Produk;
+use App\Models\KontenSlideShow;
 
 class ProductController extends Controller 
 {
     public function index()
     {
-        // contoh data produk (nanti bisa dari DB)
-        $products = [
-            [
-                'id' => 1,
-                'nama' => 'Batik Mega Mendung',
-                'harga' => 150000,
-                'gambar' => 'batik1.jpg',
-                'deskripsi' => 'Motif klasik dengan nuansa biru khas Cirebon.'
-            ],
-            [
-                'id' => 2,
-                'nama' => 'Batik Parang Rusak',
-                'harga' => 175000,
-                'gambar' => 'batik2.jpg',
-                'deskripsi' => 'Motif khas keraton Yogyakarta yang melambangkan kekuatan.'
-            ],
-            [
-                'id' => 3,
-                'nama' => 'Batik Kawung',
-                'harga' => 160000,
-                'gambar' => 'batik3.jpg',
-                'deskripsi' => 'Motif geometris elegan yang sering digunakan dalam acara formal.'
-            ],
-        ];
+        // load products from database (fallback to empty collection)
+        $products = Produk::orderBy('id', 'desc')->get()->map(function($p) {
+            return [
+                'id' => $p->id,
+                'nama' => $p->nama_produk ?? $p->nama ?? '',
+                'harga' => $p->harga ?? 0,
+                'gambar' => $p->gambar ?? '',
+                'deskripsi' => $p->deskripsi ?? '',
+            ];
+        });
 
-        return view('homePage', compact('products'));
+        // load slideshow rows ordered by `urutan`
+        $slides = KontenSlideShow::orderBy('urutan')->get();
+
+        return view('homePage', compact('products', 'slides'));
     }
 
     public function show($id)
