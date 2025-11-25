@@ -12,13 +12,10 @@ class StaticContentController extends Controller
 {
     public function index()
     {
-        $icons = KontenIcon::orderBy('urutan')->get();
-        $about = KontenAboutUs::first();
+        // Hanya ambil slideshow — halaman ini fokus ke slideshow saja
         $slides = KontenSlideShow::orderBy('urutan')->get();
 
         return view('admin.pages.kontenStatis', [
-            'icons' => $icons,
-            'about' => $about,
             'slides' => $slides,
             'activePage' => 'konten-statis',
         ]);
@@ -171,5 +168,64 @@ class StaticContentController extends Controller
         }
 
         return back()->with('success', 'Slides aktualisasi disimpan');
+    }
+
+    // API endpoints for slideshow CRUD used by the admin UI (AJAX)
+    public function storeSlide(Request $request)
+    {
+        $data = $request->validate([
+            'judul' => 'nullable|string|max:255',
+            'gambar' => 'required|image|max:10240',
+        ]);
+
+        $file = $request->file('gambar');
+        $name = time() . '_slide_' . preg_replace('/[^A-Za-z0-9_\.-]/', '_', $file->getClientOriginalName());
+        $file->move(public_path('assets/konten'), $name);
+
+        $slide = new KontenSlideShow();
+        $slide->judul = $data['judul'] ?? null;
+        $slide->gambar = 'assets/konten/' . $name;
+        $last = KontenSlideShow::orderBy('urutan', 'desc')->first();
+        $slide->urutan = $last ? ($last->urutan + 1) : 1;
+        $slide->aktif = true;
+        $slide->save();
+
+        return response()->json(['success' => true, 'slide' => $slide]);
+    }
+
+    public function updateSlide(Request $request, $id)
+    {
+        $slide = KontenSlideShow::findOrFail($id);
+
+        $data = $request->validate([
+            'judul' => 'nullable|string|max:255',
+            'gambar' => 'nullable|image|max:10240',
+        ]);
+
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $name = time() . '_slide_' . preg_replace('/[^A-Za-z0-9_\.-]/', '_', $file->getClientOriginalName());
+            $file->move(public_path('assets/konten'), $name);
+            if ($slide->gambar && file_exists(public_path($slide->gambar))) { @unlink(public_path($slide->gambar)); }
+            $slide->gambar = 'assets/konten/' . $name;
+        }
+
+        if (isset($data['judul'])) { $slide->judul = $data['judul']; }
+        $slide->save();
+
+        return response()->json(['success' => true, 'slide' => $slide]);
+    }
+
+    public function deleteSlide(Request $request, $id)
+    {
+        $slide = KontenSlideShow::findOrFail($id);
+        if ($slide->gambar && file_exists(public_path($slide->gambar))) { @unlink(public_path($slide->gambar)); }
+        $slide->delete();
+
+        // reindex urutan
+        $slides = KontenSlideShow::orderBy('urutan')->get();
+        $i = 1; foreach ($slides as $s) { $s->urutan = $i++; $s->save(); }
+
+        return response()->json(['success' => true]);
     }
 }

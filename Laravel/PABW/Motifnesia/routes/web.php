@@ -102,8 +102,12 @@ Route::get('/admin/sales-report', [ReportController::class, 'index'])->name('adm
 
 // Admin static content (About Us / Icons / Slideshow)
 Route::get('/admin/konten', [App\Http\Controllers\Admin\StaticContentController::class, 'index'])->name('admin.konten.index');
-Route::post('/admin/konten/about', [App\Http\Controllers\Admin\StaticContentController::class, 'updateAbout']);
-Route::post('/admin/konten/icon', [App\Http\Controllers\Admin\StaticContentController::class, 'updateIcon']);
+// Slideshow CRUD (AJAX endpoints)
+Route::post('/admin/konten/slides/create', [App\Http\Controllers\Admin\StaticContentController::class, 'storeSlide'])->name('admin.konten.slides.create');
+Route::post('/admin/konten/slides/{id}/update', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlide'])->name('admin.konten.slides.update');
+Route::post('/admin/konten/slides/{id}/delete', [App\Http\Controllers\Admin\StaticContentController::class, 'deleteSlide'])->name('admin.konten.slides.delete');
+
+// Backward-compatible single-endpoint kept but redirects to index (not used by new UI)
 Route::post('/admin/konten/slideshow', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlideshow']);
 
 
