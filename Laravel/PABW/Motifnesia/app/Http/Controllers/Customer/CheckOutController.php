@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -33,6 +35,6 @@ class CheckOutController extends Controller
         $totalBayar = $totalHarga + $ongkosKirim;
 
 
-        return view('checkOut', compact('transactionData', 'totalHarga', 'ongkosKirim', 'totalBayar'));
+        return view('customer.pages.checkOut', compact('transactionData', 'totalHarga', 'ongkosKirim', 'totalBayar'));
     }
 }

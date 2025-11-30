@@ -3,111 +3,113 @@
 use Illuminate\Support\Facades\Route;
 
 // Import Controllers auth
-use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\AdminController;
 
 // Import Controllers User (Frontend)
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CheckOutController;
-use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Admin\ChatController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\ReviewController;
-
-// Import Controllers Admin (Backend)
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReturnController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Admin\OrderStatusController;
-use App\Http\Controllers\Admin\ProductFormController;
-use App\Http\Controllers\Admin\AdminProductController;
-use App\Http\Controllers\Admin\ProductManagementController;
-// Kita import ProductController Admin dari namespace Admin dan kasih alias
+use App\Http\Controllers\Customer\CheckOutController;
+use App\Http\Controllers\Customer\FavoriteController;
+use App\Http\Controllers\Admin\StaticContentController;
+
+// Import Controllers Admin (Backend)
+use App\Http\Controllers\Customer\TransactionController;
+use App\Http\Controllers\Customer\UserProfileController;
+use App\Http\Controllers\Customer\NotificationController;
+use App\Http\Controllers\Customer\ShoppingCartController;
+use App\Http\Controllers\Customer\CustomerProductController;
+use App\Http\Controllers\Admin\AdminProductController; // ← CRUD Produk Admin
 
 
-// ---------------------------------- Auth ----------------------------------
+// ==================== AUTH GROUP ====================
+Route::group(['prefix' => '', 'as' => 'auth.'], function () {
+    // Halaman Login (GET)
+    Route::get('/login', [UserController::class, 'login'])->name('login');
+    // Proses Login (POST)
+    Route::post('/login', [UserController::class, 'doLogin'])->name('doLogin');
+    // Register (GET)
+    Route::get('/register', [UserController::class, 'register'])->name('register');
+    Route::post('/register', [UserController::class, 'doRegister'])->name('doRegister');
+    // Forgot Password
+    Route::get('/forgot', [UserController::class, 'forgot'])->name('forgot');
+    // Logout
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+});
 
-// Halaman Login (GET)
-Route::get('/login', [UserController::class, 'login'])->name('login'); // <-- Tambahkan route GET login
+// ==================== CUSTOMER GROUP ====================
+Route::group(['prefix' => '', 'as' => 'customer.'], function () {
+    // Home Page → khusus CustomerProductController
+    Route::get('/homePage', [App\Http\Controllers\Customer\CustomerProductController::class, 'index'])->name('home');
+    // Product Detail
+    Route::get('/products/{id}', [App\Http\Controllers\Customer\CustomerProductController::class, 'show'])->name('product.detail');
+    // Shopping Cart
+    Route::get('/cart', [App\Http\Controllers\Customer\ShoppingCartController::class, 'index'])->name('cart.index');
+    // Checkout
+    Route::get('/checkout', [App\Http\Controllers\Customer\CheckOutController::class, 'index'])->name('checkout.index');
+    // Payment Confirm
+    Route::get('/payment-confirm', [App\Http\Controllers\Customer\TransactionController::class, 'showPaymentConfirmation'])->name('payment.confirm');
+    // Favorites & Notifications
+    Route::get('/favorites', [App\Http\Controllers\Customer\FavoriteController::class, 'index'])->name('favorites.index');
+    Route::get('/notifications', [App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('notifications.index');
+    // Reviews (AJAX)
+    Route::get('/products/{id}/reviews', [App\Http\Controllers\Customer\ReviewController::class, 'index'])->name('products.reviews.index');
+    Route::post('/reviews', [App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{id}', [App\Http\Controllers\Customer\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{id}', [App\Http\Controllers\Customer\ReviewController::class, 'destroy'])->name('reviews.destroy');
+    // User Profile
+    Route::get('/profile', [App\Http\Controllers\Customer\UserProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [App\Http\Controllers\Customer\UserProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/edit', [App\Http\Controllers\Customer\UserProfileController::class, 'update'])->name('profile.update');
+});
 
-// Proses Login (POST)
-Route::post('/login', [UserController::class, 'doLogin'])->name('doLogin');
-
-// Register (GET)
-Route::get('/register', [UserController::class, 'register'])->name('register');
-Route::post('/register', [UserController::class, 'doRegister'])->name('doRegister');
-
-// Forgot Password (GET)
-Route::get('/forgot', [UserController::class, 'forgot'])->name('forgot');
-
-// Logout
-Route::get('/logout', [UserController::class, 'logout'])->name('logout');
-
-
-// Halaman Home (Ganti ke '/' untuk URL root, atau tetap '/homePage' sesuai permintaan)
-Route::get('/homePage', [ProductController::class, 'index'])->name('home');
-
-// Halaman Detail Produk
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
-
-// Shopping & Checkout
-Route::get('/cart', [ShoppingCartController::class, 'index'])->name('cart.index');
-
-Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-
-Route::get('/payment-confirm', [TransactionController::class, 'showPaymentConfirmation'])->name('payment.confirm');
-
-Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-
-Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-
-// Reviews CRUD (AJAX)
-Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
-Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-
-
-// User Profile
-Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
-Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
-Route::post('/profile/edit', [UserProfileController::class, 'update'])->name('profile.update');
-
-// ---------------------------------- Route Khusu Admin ------------------------------------------
-Route::get('/admin/daftar-produk', [AdminProductController::class, 'index'])->name('admin.daftar-produk');
-
-Route::get('/admin/customers', [CustomerController::class, 'index'])->name('admin.customers.index');
-
-Route::get('/admin/product-management', [ProductManagementController::class, 'index'])->name('admin.product.management.index');
-
-Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
-
-Route::get('/admin/live-chat', [ChatController::class, 'index'])->name('admin.chat.index');
-
-Route::get('/admin/returns', [ReturnController::class, 'index'])->name('admin.returns.index');
-
-Route::get('/admin/order-status', [OrderStatusController::class, 'index'])->name('admin.orders.status');
-
-Route::get('/admin/products/create', [ProductFormController::class, 'create'])->name('admin.products.create');
-Route::post('/admin/products/create', [ProductFormController::class, 'store'])->name('admin.products.store');
-Route::post('/admin/products/{id}/update', [ProductFormController::class, 'update'])->name('admin.products.update');
-Route::post('/admin/products/{id}/delete', [ProductFormController::class, 'destroy'])->name('admin.products.delete');
-
-Route::get('/admin/sales-report', [ReportController::class, 'index'])->name('admin.reports.sales');
-
-
-
-// Admin static content (About Us / Icons / Slideshow)
-Route::get('/admin/konten', [App\Http\Controllers\Admin\StaticContentController::class, 'index'])->name('admin.konten.index');
-// Slideshow CRUD (AJAX endpoints)
-Route::post('/admin/konten/slides/create', [App\Http\Controllers\Admin\StaticContentController::class, 'storeSlide'])->name('admin.konten.slides.create');
-Route::post('/admin/konten/slides/{id}/update', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlide'])->name('admin.konten.slides.update');
-Route::post('/admin/konten/slides/{id}/delete', [App\Http\Controllers\Admin\StaticContentController::class, 'deleteSlide'])->name('admin.konten.slides.delete');
-
-// Backward-compatible single-endpoint kept but redirects to index (not used by new UI)
-Route::post('/admin/konten/slideshow', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlideshow']);
-
+// ==================== ADMIN GROUP ====================
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    // Daftar Produk (list/table view)
+    Route::get('/daftar-produk', [AdminProductController::class, 'index'])
+        ->name('daftar-produk');
+    // Product Management Page (grid + modal edit/delete)
+    Route::get('/product-management', [AdminProductController::class, 'manage'])
+        ->name('product.management.index');
+    // CREATE product (Form Add)
+    Route::get('/products/create', [AdminProductController::class, 'create'])
+        ->name('products.create');
+    // STORE product
+    Route::post('/products/create', [AdminProductController::class, 'store'])
+        ->name('products.store');
+    // UPDATE product (modal)
+    Route::post('/products/{id}/update', [AdminProductController::class, 'update'])
+        ->name('products.update');
+    // DELETE product (modal)
+    Route::post('/products/{id}/delete', [AdminProductController::class, 'destroy'])
+        ->name('products.delete');
+    // Customers
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    // Reviews (admin view)
+    Route::get('/reviews', [App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
+    // Live Chat Admin
+    Route::get('/live-chat', [ChatController::class, 'index'])->name('chat.index');
+    // Returns
+    Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
+    // Order Status
+    Route::get('/order-status', [OrderStatusController::class, 'index'])->name('orders.status');
+    // Sales Report
+    Route::get('/sales-report', [ReportController::class, 'index'])->name('reports.sales');
+    // STATIC CONTENT
+    Route::get('/konten', [App\Http\Controllers\Admin\StaticContentController::class, 'index'])
+        ->name('konten.index');
+    // Slideshow CRUD
+    Route::post('/konten/slides/create', [App\Http\Controllers\Admin\StaticContentController::class, 'storeSlide'])
+        ->name('konten.slides.create');
+    Route::post('/konten/slides/{id}/update', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlide'])
+        ->name('konten.slides.update');
+    Route::post('/konten/slides/{id}/delete', [App\Http\Controllers\Admin\StaticContentController::class, 'deleteSlide'])
+        ->name('konten.slides.delete');
+    // Old endpoint (compatibility only)
+    Route::post('/konten/slideshow', [App\Http\Controllers\Admin\StaticContentController::class, 'updateSlideshow']);
+});
 

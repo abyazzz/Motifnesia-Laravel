@@ -4,7 +4,7 @@
 
 @section('content')
 
-{{-- @dd($produkList) --}}
+{{-- @dd($products) --}}
     <h2 style="margin-bottom: 20px;">Daftar Produk</h2>
 
     <div style="
@@ -12,7 +12,7 @@
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 20px;
     ">
-        @foreach ($produkList as $produk)
+        @foreach ($products as $produk)
             @include('admin.components.bCardProduct', [
                 'nama' => $produk->nama_produk ?? $produk->name ?? 'Produk',
                 'gambar' => $produk->gambar ?? $produk->image ?? null

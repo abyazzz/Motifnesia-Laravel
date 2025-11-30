@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -48,6 +50,6 @@ class NotificationController extends Controller
             ],
         ];
 
-        return view('notifications', compact('notifications'));
+        return view('customer.pages.notifications', compact('notifications'));
     }
 }

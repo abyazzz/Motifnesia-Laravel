@@ -26,7 +26,7 @@
 </head>
 <body>
     <main>
-        @include('partials.navbar')
+        @include('customer.partials.navbar')
 
         {{-- content dari setiap halaman --}}
         @yield('container') {{-- JANGAN GANTI INI --}}

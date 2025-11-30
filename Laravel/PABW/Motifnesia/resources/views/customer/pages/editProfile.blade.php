@@ -1,4 +1,4 @@
-@extends('layouts.mainLayout')
+@extends('customer.layouts.mainLayout')
 
 @section('container')
     <div class="edit-profile-container">

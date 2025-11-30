@@ -1,7 +1,6 @@
 <?php
-
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Customer;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -25,7 +24,7 @@ class TransactionController extends Controller
         $ongkosKirim = 0; 
         $totalBayar = $totalHarga + $ongkosKirim;
 
-        return view('checkout', compact('transactionData', 'totalHarga', 'ongkosKirim', 'totalBayar'));
+        return view('customer.pages.checkOut', compact('transactionData', 'totalHarga', 'ongkosKirim', 'totalBayar'));
     }
 
 
@@ -44,6 +43,6 @@ class TransactionController extends Controller
             'transaction_date' => date('d M Y, H:i'),
         ];
 
-        return view('paymentConfirmation', compact('paymentInfo'));
+        return view('customer.pages.paymentConfirmation', compact('paymentInfo'));
     }
 }

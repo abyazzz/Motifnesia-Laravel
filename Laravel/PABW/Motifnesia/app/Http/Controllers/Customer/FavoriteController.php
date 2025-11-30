@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -33,6 +35,6 @@ class FavoriteController extends Controller
             ],
         ];
 
-        return view('favorites', compact('favoriteItems'));
+        return view('customer.pages.favorites', compact('favoriteItems'));
     }
 }

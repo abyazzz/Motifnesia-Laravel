@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ShoppingCartController extends Controller
 {
@@ -37,6 +38,6 @@ class ShoppingCartController extends Controller
         ];
 
         // Mengarahkan ke view shoppingCart.blade.php
-        return view('shoppingCart', $data);
+        return view('customer.pages.shoppingCart', $data);
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.mainLayout')
+@extends('customer.layouts.mainLayout')
 
 @section('container')
     <div class="shopping-cart-container">
@@ -16,9 +16,9 @@
 
         {{-- DAFTAR PRODUK (LOOPING COMPONENT DI SINI) --}}
         <div class="cart-items-list">
-            @include('components.componentShoppingCart')
+            @include('customer.components.componentShoppingCart')
             {{-- Kita duplikat komponen untuk simulasi banyak item --}}
-            @include('components.componentShoppingCart') 
+            @include('customer.components.componentShoppingCart') 
         </div>
 
         {{-- TOTAL KERANJANG BELANJA --}}

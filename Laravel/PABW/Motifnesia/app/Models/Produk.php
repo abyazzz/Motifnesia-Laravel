@@ -29,10 +29,5 @@ class Produk extends Model
         'harga_diskon',
     ];
 
-    protected $casts = [
-        'harga' => 'decimal:2',
-        'harga_diskon' => 'decimal:2',
-        'stok' => 'integer',
-        'diskon_persen' => 'integer',
-    ];
+    
 }

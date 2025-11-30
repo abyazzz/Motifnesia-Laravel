@@ -135,3 +135,34 @@
 .save-button:hover {
     background-color: #d1b893;
 }
+
+
+        /* Ensure inputs/select/textarea in left column have same width */
+        .product-form .form-column.form-left input[type="text"],
+        .product-form .form-column.form-left input[type="number"],
+        .product-form .form-column.form-left select,
+        .product-form .form-column.form-left textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: #fff;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        /* Keep file preview and image sizing consistent */
+        .product-image-preview {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #fff;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Align right column buttons */
+        .action-buttons-area .save-button { width: 100%; }

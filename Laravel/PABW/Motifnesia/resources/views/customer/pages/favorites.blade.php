@@ -1,4 +1,4 @@
-@extends('layouts.mainLayout')
+@extends('customer.layouts.mainLayout')
 
 @section('container')
     <div class="favorites-page-container">
@@ -8,7 +8,7 @@
             @if (count($favoriteItems) > 0)
                 <div class="favorites-card-list">
                     @foreach ($favoriteItems as $item)
-                        @include('components.favorite-item', ['item' => $item])
+                        @include('customer.components.favorite-item', ['item' => $item])
                     @endforeach
                 </div>
             @else

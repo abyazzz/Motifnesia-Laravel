@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\PurchaseHistoryController;
 use App\Models\User;
-class UserProfileController extends Controller
+class UserProfileController extends \App\Http\Controllers\Controller
 {
     /**
      * Tampilkan halaman Profil Pengguna.
@@ -52,7 +53,7 @@ class UserProfileController extends Controller
         }
 
         $purchaseHistory = PurchaseHistoryController::getHistoryData();
-        return view('userProfile', compact('userProfile', 'purchaseHistory'));
+        return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory'));
     }
 
     public function edit()
@@ -93,7 +94,7 @@ class UserProfileController extends Controller
             }
         }
 
-        return view('editProfile', compact('userProfile'));
+        return view('customer.pages.editProfile', compact('userProfile'));
     }
 
     /**

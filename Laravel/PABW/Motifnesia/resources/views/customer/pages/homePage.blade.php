@@ -1,30 +1,30 @@
-@extends('layouts.mainLayout')
+@extends('customer.layouts.mainLayout')
 
 @section('container')
         <div class="slideshow-wrapper">
-    <div id="homepage-carousel" class="homepage-carousel">
-        @if(isset($slides) && $slides->count())
-            @foreach($slides as $i => $slide)
-                <div class="carousel-slide" data-index="{{ $i }}" style="display: {{ $i === 0 ? 'block' : 'none' }};">
-                    <img src="{{ asset($slide->gambar) }}" alt="Slide {{ $i+1 }}">
-                    {{-- caption dihilangkan --}}
-                </div>
-            @endforeach
-            <button id="carousel-prev" class="carousel-control prev"><</button>
-            <button id="carousel-next" class="carousel-control next">></button>
-        @else
-            <div class="carousel-slide" style="display:block;">
-                <div class="no-slide">No slides available</div>
+            <div id="homepage-carousel" class="homepage-carousel">
+                @if(isset($slides) && $slides->count())
+                    @foreach($slides as $i => $slide)
+                        <div class="carousel-slide" data-index="{{ $i }}" style="display: {{ $i === 0 ? 'block' : 'none' }};">
+                            <img src="{{ asset($slide->gambar) }}" alt="Slide {{ $i+1 }}">
+                            {{-- caption dihilangkan --}}
+                        </div>
+                    @endforeach
+                    <button id="carousel-prev" class="carousel-control prev">‹</button>
+                    <button id="carousel-next" class="carousel-control next">›</button>
+                @else
+                    <div class="carousel-slide" style="display:block;">
+                        <div class="no-slide">No slides available</div>
+                    </div>
+                @endif
             </div>
-        @endif
-    </div>
-</div>
+        </div>
 
         <div class="page-container">
-            @include('components.sideBar')
+            @include('customer.components.sideBar')
             <div class="product-grid">
                 @foreach ($products as $product)
-                    @include('components.product-card', ['product' => $product])
+                    @include('customer.components.product-card', ['product' => $product])
                 @endforeach
             </div>
         </div>
