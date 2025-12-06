@@ -23,7 +23,7 @@
             @endif
 
             {{-- Form untuk mengedit data pengguna --}}
-            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" style="max-width:720px; margin:auto;">
+            <form action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data" style="max-width:720px; margin:auto;">
                 @csrf
                 {{-- Nama dan Nilai Input diambil dari $userProfile --}}
 
@@ -102,7 +102,7 @@
                 {{-- Tombol Aksi --}}
                 <div class="form-actions" style="display:flex; gap:8px; margin-top:12px;">
                     <button type="submit" class="btn-save" style="background:#4CAF50; color:white; padding:10px 16px; border-radius:6px; border:0;">Simpan Perubahan</button>
-                    <button type="button" class="btn-close" onclick="window.location='{{ route('profile.index') }}'" style="background:#ccc; color:#111; padding:8px 30px; border-radius:6px; border:0;">Batal</button>
+                    <button type="button" class="btn-close" onclick="window.location='{{ route('customer.profile.index') }}'" style="background:#ccc; color:#111; padding:8px 30px; border-radius:6px; border:0;">Batal</button>
                 </div>
 
             </form>

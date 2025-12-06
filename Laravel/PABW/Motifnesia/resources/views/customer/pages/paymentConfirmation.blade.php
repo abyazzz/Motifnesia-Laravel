@@ -34,8 +34,8 @@
             <div class="button-section">
                 <button 
                     class="btn-pay" 
-                    {{-- Ini akan mengarahkan browser ke URL yang dihasilkan oleh route('home') --}}
-                    onclick="window.location='{{ route('home') }}'">
+                    {{-- Ini akan mengarahkan browser ke URL yang dihasilkan oleh route('customer.home') --}}
+                    onclick="window.location='{{ route('customer.home') }}'">
                     Bayar
                 </button>
             </div>

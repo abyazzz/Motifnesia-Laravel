@@ -35,7 +35,41 @@
 
                     {{-- TOMBOL AKSI --}}
                     <div class="action-buttons">
-                        <button type="button" class="btn-cart">Tambah ke Keranjang</button>
+                        <button type="button" class="btn-cart" id="btnAddToCart">Tambah ke Keranjang</button>
+                        @push('scripts')
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.getElementById('btnAddToCart').addEventListener('click', function() {
+                                const ukuran = document.querySelector('input[name="size"]:checked');
+                                if (!ukuran) {
+                                    alert('Pilih ukuran terlebih dahulu!');
+                                    return;
+                                }
+                                fetch("{{ route('customer.cart.add') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({
+                                        product_id: {{ $product['id'] }},
+                                        ukuran: ukuran.value
+                                    })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert(data.message);
+                                        window.location.href = "{{ route('customer.cart.index') }}";
+                                    } else {
+                                        alert(data.message || 'Gagal menambah ke keranjang!');
+                                    }
+                                })
+                                .catch(() => alert('Terjadi kesalahan.'));
+                            });
+                        });
+                        </script>
+                        @endpush
                         <button type="button" class="btn-wishlist"><i class="fa-regular fa-heart"></i></button>
                     </div>
                 </div>

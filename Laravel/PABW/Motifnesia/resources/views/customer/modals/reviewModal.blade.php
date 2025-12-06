@@ -90,7 +90,7 @@
             return;
         }
 
-        fetch('{{ route('reviews.store') }}', {
+        fetch('{{ route('customer.reviews.store') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

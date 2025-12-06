@@ -49,10 +49,11 @@
     </div>
 
     {{-- Tombol Logout --}}
-    <button style="background-color: #A47C48; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+    <a href="{{ route('auth.logout') }}" 
+       style="background-color: #A47C48; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none;">
         <span style="font-size: 16px;">
             &#128274; {{-- Unicode lock icon --}}
         </span>
         Logout
-    </button>
+    </a>
 </div>

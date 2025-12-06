@@ -1,104 +1,83 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-    <div class="transaction-container">
-        
-        {{-- BAGIAN ALAMAT --}}
-        <div class="section-box address-section">
-            <h3>Alamat:</h3>
-            <select class="form-select address-select">
-                <option selected>-- Pilih Alamat --</option>
-                <option value="1">{{ $transactionData['alamat'] }}</option>
-            </select>
+<div class="checkout-container" style="max-width:700px;margin:40px auto;padding:20px;">
+    <form id="checkoutForm" method="POST" action="{{ route('customer.checkout.final') }}">
+        @csrf
+        <h3>Alamat:</h3>
+        <div class="address-box" style="margin-bottom:20px;">
+            <input type="text" name="alamat" value="{{ isset($alamat) ? $alamat : '' }}" class="form-control" required>
         </div>
-
-        {{-- BAGIAN PRODUK --}}
-        <div class="section-box product-item-summary">
-            <h4>{{ $transactionData['item']['nama'] }}</h4>
-            <div class="product-detail-inline">
-                <img src="{{ asset('images/' . $transactionData['item']['gambar']) }}" alt="{{ $transactionData['item']['nama'] }}" class="product-thumb-sm">
-                <div class="product-info-sm">
-                    <p>Ukuran: {{ $transactionData['item']['ukuran'] }}</p>
-                    <p>Jumlah: {{ $transactionData['item']['jumlah'] }}</p>
-                    <p>Rp{{ number_format($transactionData['item']['harga'], 0, ',', '.') }}</p>
+        <h3>Produk yang di-checkout:</h3>
+        <div class="product-list" style="margin-bottom:20px;">
+            @foreach(isset($products) ? $products : [] as $item)
+                <div style="display:flex;align-items:center;gap:15px;margin-bottom:10px;">
+                    <img src="{{ asset('images/' . $item['produk']['gambar']) }}" alt="{{ $item['produk']['nama_produk'] }}" style="width:60px;border-radius:6px;">
+                    <div>
+                        <div>{{ $item['produk']['nama_produk'] }} - {{ $item['ukuran'] }} x{{ $item['qty'] }}</div>
+                        <div>Rp{{ number_format($item['produk']['harga'], 0, ',', '.') }}</div>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
-
-        {{-- BAGIAN METODE PENGIRIMAN --}}
-        <div class="section-box shipping-section">
-            <h4>Metode Pengiriman</h4>
-            <div class="shipping-option">
-                <label>
-                    <input type="radio" name="shipping" value="reguler">
-                    <span>Regular (2-5 hari)</span>
-                    <span class="price-right">Rp{{ number_format($transactionData['ongkir_reguler'], 0, ',', '.') }}</span>
-                </label>
-            </div>
-            <div class="shipping-option">
-                <label>
-                    <input type="radio" name="shipping" value="express">
-                    <span>Ekspres (1-2 hari)</span>
-                    <span class="price-right">Rp{{ number_format($transactionData['ongkir_ekspres'], 0, ',', '.') }}</span>
-                </label>
-            </div>
-            <div class="shipping-option">
-                <label>
-                    <input type="radio" name="shipping" value="ekonomis">
-                    <span>Ekonomis (4-7 hari)</span>
-                    <span class="price-right">Rp{{ number_format($transactionData['ongkir_ekonomis'], 0, ',', '.') }}</span>
-                </label>
-            </div>
+        <h3>Metode Pengiriman:</h3>
+        <div class="shipping-methods" style="margin-bottom:20px;">
+            @foreach(isset($metodePengiriman) ? $metodePengiriman : [] as $pengiriman)
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <label>
+                        <input type="radio" name="metode_pengiriman" value="{{ $pengiriman->id }}" data-harga="{{ $pengiriman->harga }}" required>
+                        <strong>{{ $pengiriman->nama_pengiriman }}</strong> - {{ $pengiriman->deskripsi_pengiriman }}
+                    </label>
+                    <span>Rp{{ number_format($pengiriman->harga, 0, ',', '.') }}</span>
+                </div>
+            @endforeach
         </div>
-
-        {{-- BAGIAN METODE PEMBAYARAN --}}
-        <div class="section-box payment-section">
-            <h4>Metode Pembayaran</h4>
-            <div class="payment-option">
-                <label><input type="radio" name="payment" value="mandiri"> Mandiri Virtual Account</label>
-            </div>
-            <div class="payment-option">
-                <label><input type="radio" name="payment" value="bca"> BCA Virtual Account</label>
-            </div>
-            <div class="payment-option">
-                <label><input type="radio" name="payment" value="gopay"> GoPay</label>
-            </div>
-            <div class="payment-option">
-                <label><input type="radio" name="payment" value="cod"> Bayar di Tempat (COD)</label>
-            </div>
+        <h3>Metode Pembayaran:</h3>
+        <div class="payment-methods" style="margin-bottom:20px;">
+            @foreach(isset($metodePembayaran) ? $metodePembayaran : [] as $pembayaran)
+                <div style="margin-bottom:8px;">
+                    <label>
+                        <input type="radio" name="metode_pembayaran" value="{{ $pembayaran->id }}" required>
+                        <strong>{{ $pembayaran->nama_pembayaran }}</strong> - {{ $pembayaran->deskripsi_pembayaran }}
+                    </label>
+                </div>
+            @endforeach
         </div>
-
-        {{-- BAGIAN RINCIAN BELANJA --}}
-        <div class="section-box summary-section">
-            <h4>Rincian Belanja</h4>
-            <div class="summary-line">
-                <span>{{ $transactionData['item']['nama'] }} ({{ $transactionData['item']['ukuran'] }})</span>
-                <span>Rp{{ number_format($totalHarga, 0, ',', '.') }}</span>
-            </div>
-            <div class="summary-line">
-                <span>Total Harga:</span>
-                <span>Rp{{ number_format($totalHarga, 0, ',', '.') }}</span>
-            </div>
-            <div class="summary-line">
-                <span>Ongkos Kirim:</span>
-                <span>Rp{{ number_format($ongkosKirim, 0, ',', '.') }}</span>
-            </div>
-            <hr>
-            <div class="summary-line total-line">
-                <span>Total Bayar:</span>
-                <span>Rp{{ number_format($totalBayar, 0, ',', '.') }}</span>
-            </div>
+        <h3>Rincian Belanja:</h3>
+        <div class="summary-box" style="margin-bottom:20px;">
+            <div>Total harga produk: <span id="totalProduk">Rp0</span></div>
+            <div>Total ongkir: <span id="totalOngkir">Rp0</span></div>
+            <div><strong>Total: <span id="totalFinal">Rp0</span></strong></div>
         </div>
-
-        {{-- TOMBOL BAYAR --}}
-        <div class="checkout-footer">
-            <button 
-                class="btn-pay" 
-                {{-- Ini akan mengarahkan browser ke URL yang dihasilkan oleh route('payment.confirm') --}}
-                onclick="window.location='{{ route('payment.confirm') }}'">
-                Bayar
-            </button>
-        </div>
-
-    </div>
+        <input type="hidden" name="total" id="totalInput" value="0">
+        <button type="submit" class="btn btn-warning" style="width:100%;font-size:1.2em;">Bayar</button>
+    </form>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+function formatRupiah(angka) {
+    return 'Rp' + angka.toLocaleString('id-ID');
+}
+function hitungTotal() {
+    let totalProduk = 0;
+    @foreach(isset($products) ? $products : [] as $item)
+        totalProduk += {{ $item['produk']['harga'] }} * {{ $item['qty'] }};
+    @endforeach
+    document.getElementById('totalProduk').innerText = formatRupiah(totalProduk);
+    let ongkir = 0;
+    const pengiriman = document.querySelector('input[name="metode_pengiriman"]:checked');
+    if (pengiriman) {
+        ongkir = parseInt(pengiriman.getAttribute('data-harga'));
+    }
+    document.getElementById('totalOngkir').innerText = formatRupiah(ongkir);
+    document.getElementById('totalFinal').innerText = formatRupiah(totalProduk + ongkir);
+    document.getElementById('totalInput').value = totalProduk + ongkir;
+}
+document.querySelectorAll('input[name="metode_pengiriman"]').forEach(el => {
+    el.addEventListener('change', hitungTotal);
+});
+window.onload = hitungTotal;
+</script>
+@endpush

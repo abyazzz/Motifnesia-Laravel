@@ -27,9 +27,9 @@
                 <p style="color:#777; margin-top:6px;">{{ $userProfile['email'] ?? '' }}</p>
 
                 <div class="profile-actions">
-                    <a href="{{ route('profile.edit') }}" class="btn-edit">Edit Profil</a>
+                    <a href="{{ route('customer.profile.edit') }}" class="btn-edit">Edit Profil</a>
                     <button id="openHistoryModalBtn" class="btn-history">Riwayat Pembelian</button>
-                    <a href="{{ route('logout') }}" class="btn-logout">Logout</a>
+                    <a href="{{ route('auth.logout') }}" class="btn-logout">Logout</a>
                 </div>
             </aside>
 
@@ -77,6 +77,6 @@
     </div>
 @endsection
 
-@include('modals.purchaseHistoryModal')
-@include('modals.reviewModal')
-@include('modals.viewReviewModal')
+@include('customer.modals.purchaseHistoryModal')
+@include('customer.modals.reviewModal')
+@include('customer.modals.viewReviewModal')

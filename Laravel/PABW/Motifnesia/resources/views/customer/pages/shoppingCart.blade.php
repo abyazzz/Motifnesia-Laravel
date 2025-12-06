@@ -36,7 +36,7 @@
             </div>
             
             <div class="summary-checkout">
-                <button class="btn-checkout" onclick="window.location='{{ route('checkout.index') }}'">CHECKOUT</button>
+                <button class="btn-checkout" onclick="window.location='{{ route('customer.checkout.index') }}'">CHECKOUT</button>
             </div>
         </div>
     </div>

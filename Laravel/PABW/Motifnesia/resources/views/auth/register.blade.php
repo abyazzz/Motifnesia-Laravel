@@ -166,7 +166,7 @@
     <h1>Sign Up</h1>
 
     <!-- FORM MULAI DI SINI -->
-    <form action="{{ route('doRegister') }}" method="POST">
+    <form action="{{ route('auth.register') }}" method="POST">
       @csrf
       <div class="input-box">
         <input type="text" name="username" placeholder="Username" required />

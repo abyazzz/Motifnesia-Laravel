@@ -34,23 +34,23 @@ class CustomerProductController extends Controller
     /**
      * Detail produk
      */
-    // public function show($id)
-    // {
-    //     $product = Produk::findOrFail($id);
+    public function show($id)
+    {
+        $product = Produk::findOrFail($id);
 
-    //     // Normalize ke array format untuk backward compatibility dengan view
-    //     $productData = [
-    //         'id'        => $product->id,
-    //         'nama'      => $product->nama_produk,
-    //         'harga'     => $product->harga,
-    //         'gambar'    => $product->gambar,
-    //         'deskripsi' => $product->deskripsi,
-    //         'material'  => $product->material,
-    //         'proses'    => $product->proses,
-    //         'kategori'  => $product->kategori,
-    //         'stok'      => $product->stok,
-    //     ];
+        // Normalize ke array format untuk backward compatibility dengan view
+        $productData = [
+            'id'        => $product->id,
+            'nama'      => $product->nama_produk,
+            'harga'     => $product->harga,
+            'gambar'    => $product->gambar,
+            'deskripsi' => $product->deskripsi,
+            'material'  => $product->material,
+            'proses'    => $product->proses,
+            'kategori'  => $product->kategori,
+            'stok'      => $product->stok,
+        ];
 
-    //     return view('detailProduct', ['product' => $productData]);
-    // }
+        return view('customer.pages.detailProduct', ['product' => $productData]);
+    }
 }

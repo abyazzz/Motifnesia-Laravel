@@ -122,7 +122,7 @@
       <p style="color:green; text-align:center;">{{ session('success') }}</p>
     @endif
 
-    <form action="{{ route('doLogin') }}" method="POST">
+    <form action="{{ route('auth.doLogin') }}" method="POST">
       @csrf
       <div class="input-box">
         <input type="text" name="username" placeholder="Username" required />
@@ -133,14 +133,14 @@
 
       <div class="remember-forget">
         <label><input type="checkbox" name="remember" /> Remember Me</label>
-        <p><a href="{{ route('forgot') }}">Lupa Password?</a></p>
+        <p><a href="{{ route('auth.forgot') }}">Lupa Password?</a></p>
       </div>
 
       <button type="submit" class="btn">Login</button>
 
       <div class="register">
         <p>Belum punya akun?</p>
-        <a href="{{ route('register') }}">Register</a>  
+        <a href="{{ route('auth.register') }}">Register</a>  
       </div>
     </form>
   </div>

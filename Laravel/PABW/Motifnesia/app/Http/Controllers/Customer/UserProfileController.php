@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\PurchaseHistoryController;
+use App\Http\Controllers\Customer\PurchaseHistoryController;
 use App\Models\User;
 class UserProfileController extends \App\Http\Controllers\Controller
 {
@@ -164,7 +164,7 @@ class UserProfileController extends \App\Http\Controllers\Controller
             'role' => 'user'
         ]]);
 
-        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('customer.profile.index')->with('success', 'Profil berhasil diperbarui.');
     }
 
     

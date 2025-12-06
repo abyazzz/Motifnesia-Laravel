@@ -13,7 +13,7 @@
   }
 @endphp
 
-<a href="{{ route('product.detail', ['id' => $product['id']]) }}" class="product-link">
+<a href="{{ route('customer.product.detail', ['id' => $product['id']]) }}" class="product-link">
   <div class="product-card">
     <img src="{{ $img }}" alt="{{ $product['nama'] }}">
     <h3>{{ $product['nama'] }}</h3>

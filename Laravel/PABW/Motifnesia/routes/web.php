@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 
 // Import Controllers auth
@@ -22,9 +21,14 @@ use App\Http\Controllers\Customer\TransactionController;
 use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\ShoppingCartController;
+use App\Http\Controllers\Customer\ShoppingCardController;
+use App\Http\Controllers\Customer\ControllerSessionCheckout;
 use App\Http\Controllers\Customer\CustomerProductController;
 use App\Http\Controllers\Admin\AdminProductController; // ← CRUD Produk Admin
-
+// Redirect root path ke homePage
+Route::get('/', function() {
+    return redirect()->route('customer.home');
+});
 
 // ==================== AUTH GROUP ====================
 Route::group(['prefix' => '', 'as' => 'auth.'], function () {
@@ -43,12 +47,19 @@ Route::group(['prefix' => '', 'as' => 'auth.'], function () {
 
 // ==================== CUSTOMER GROUP ====================
 Route::group(['prefix' => '', 'as' => 'customer.'], function () {
+        // Proses simpan session checkout dari shoppingCard
+        Route::post('/checkout/session', [ControllerSessionCheckout::class, 'storeCheckoutSession'])->name('checkout.session');
+        // Halaman checkout
+        Route::get('/checkout', [ControllerSessionCheckout::class, 'index'])->name('checkout.index');
+        // Proses simpan session checkout final
+        Route::post('/checkout/final', [ControllerSessionCheckout::class, 'storeCheckoutFinal'])->name('checkout.final');
     // Home Page → khusus CustomerProductController
     Route::get('/homePage', [App\Http\Controllers\Customer\CustomerProductController::class, 'index'])->name('home');
     // Product Detail
     Route::get('/products/{id}', [App\Http\Controllers\Customer\CustomerProductController::class, 'show'])->name('product.detail');
-    // Shopping Cart
-    Route::get('/cart', [App\Http\Controllers\Customer\ShoppingCartController::class, 'index'])->name('cart.index');
+    // Shopping Cart (keranjang belanja CRUD)
+    Route::get('/cart', [ShoppingCardController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [ShoppingCardController::class, 'add'])->name('cart.add');
     // Checkout
     Route::get('/checkout', [App\Http\Controllers\Customer\CheckOutController::class, 'index'])->name('checkout.index');
     // Payment Confirm
