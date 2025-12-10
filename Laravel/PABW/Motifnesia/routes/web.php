@@ -47,35 +47,41 @@ Route::group(['prefix' => '', 'as' => 'auth.'], function () {
 
 // ==================== CUSTOMER GROUP ====================
 Route::group(['prefix' => '', 'as' => 'customer.'], function () {
-        // Proses simpan session checkout dari shoppingCard
-        Route::post('/checkout/session', [ControllerSessionCheckout::class, 'storeCheckoutSession'])->name('checkout.session');
-        // Halaman checkout
-        Route::get('/checkout', [ControllerSessionCheckout::class, 'index'])->name('checkout.index');
-        // Proses simpan session checkout final
-        Route::post('/checkout/final', [ControllerSessionCheckout::class, 'storeCheckoutFinal'])->name('checkout.final');
-    // Home Page → khusus CustomerProductController
-    Route::get('/homePage', [App\Http\Controllers\Customer\CustomerProductController::class, 'index'])->name('home');
-    // Product Detail
-    Route::get('/products/{id}', [App\Http\Controllers\Customer\CustomerProductController::class, 'show'])->name('product.detail');
-    // Shopping Cart (keranjang belanja CRUD)
+
+    // ========== HOME & PRODUCTS ==========
+    Route::get('/homePage', [CustomerProductController::class, 'index'])->name('home');
+    Route::get('/products/{id}', [CustomerProductController::class, 'show'])->name('product.detail');
+
+    // ========== SHOPPING CART (Keranjang Belanja) ==========
     Route::get('/cart', [ShoppingCardController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [ShoppingCardController::class, 'add'])->name('cart.add');
-    // Checkout
-    Route::get('/checkout', [App\Http\Controllers\Customer\CheckOutController::class, 'index'])->name('checkout.index');
-    // Payment Confirm
-    Route::get('/payment-confirm', [App\Http\Controllers\Customer\TransactionController::class, 'showPaymentConfirmation'])->name('payment.confirm');
-    // Favorites & Notifications
-    Route::get('/favorites', [App\Http\Controllers\Customer\FavoriteController::class, 'index'])->name('favorites.index');
-    Route::get('/notifications', [App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('notifications.index');
-    // Reviews (AJAX)
-    Route::get('/products/{id}/reviews', [App\Http\Controllers\Customer\ReviewController::class, 'index'])->name('products.reviews.index');
-    Route::post('/reviews', [App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('reviews.store');
-    Route::put('/reviews/{id}', [App\Http\Controllers\Customer\ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{id}', [App\Http\Controllers\Customer\ReviewController::class, 'destroy'])->name('reviews.destroy');
-    // User Profile
-    Route::get('/profile', [App\Http\Controllers\Customer\UserProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/edit', [App\Http\Controllers\Customer\UserProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/edit', [App\Http\Controllers\Customer\UserProfileController::class, 'update'])->name('profile.update');
+    Route::post('/cart/update', [ShoppingCardController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}', [ShoppingCardController::class, 'delete'])->name('cart.delete');
+    Route::post('/cart/checkout', [ShoppingCardController::class, 'checkout'])->name('cart.checkout');
+
+    // ========== CHECKOUT ==========
+    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/store', [CheckOutController::class, 'store'])->name('checkout.store');
+
+    // ========== PAYMENT/TRANSACTION ==========
+    Route::get('/payment', [\App\Http\Controllers\Customer\PaymentController::class, 'index'])->name('payment.index');
+    Route::post('/payment/store', [\App\Http\Controllers\Customer\PaymentController::class, 'store'])->name('payment.store');
+    Route::get('/transaction/success/{orderId}', [\App\Http\Controllers\Customer\PaymentController::class, 'success'])->name('transaction.success');
+
+    // ========== FAVORITES & NOTIFICATIONS ==========
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+    // ========== REVIEWS ==========
+    Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // ========== USER PROFILE ==========
+    Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/edit', [UserProfileController::class, 'update'])->name('profile.update');
 });
 
 // ==================== ADMIN GROUP ====================

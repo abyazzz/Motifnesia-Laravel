@@ -4,52 +4,82 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\ShoppingCard;
-use App\Models\MetodePengiriman;
-use App\Models\MetodePembayaran;
+use App\Models\Produk;
 
-class ControllerSessionCheckout extends Controller
+class ControllerShoppingCard extends Controller
 {
-    // Simpan produk yang di-checkout ke session_checkout
-    public function storeCheckoutSession(Request $request)
-    {
-        $user = session('user');
-        $userId = $user['id'] ?? null;
-        if (!$userId) {
-            return redirect()->route('auth.login');
-        }
-        // Ambil produk yang dipilih dari request (array of shopping_card_id)
-        $selectedIds = $request->input('selected_ids', []);
-        $products = ShoppingCard::with('produk')
-            ->where('user_id', $userId)
-            ->whereIn('id', $selectedIds)
-            ->get();
-        session(['session_checkout' => $products->toArray()]);
-        return redirect()->route('customer.checkout.index');
-    }
-
-    // Tampilkan halaman checkout
     public function index()
     {
         $user = session('user');
         $userId = $user['id'] ?? null;
+
         if (!$userId) {
             return redirect()->route('auth.login');
         }
-        $alamat = User::find($userId)->address_line ?? '';
-        $products = session('session_checkout', []);
-        $metodePengiriman = MetodePengiriman::all();
-        $metodePembayaran = MetodePembayaran::all();
-        return view('customer.pages.checkOut', compact('alamat', 'products', 'metodePengiriman', 'metodePembayaran'));
+
+        // Ambil keranjang user
+        $cards = ShoppingCard::with('produk')
+            ->where('user_id', $userId)
+            ->get();
+
+        // Hitung total
+        $total = $cards->sum(function ($item) {
+            return $item->produk->harga * $item->qty;
+        });
+
+        return view('customer.pages.shoppingCart', compact('cards', 'total'));
     }
 
-    // Simpan data final checkout ke session_checkout_final
-    public function storeCheckoutFinal(Request $request)
+    public function updateQty(Request $request, $id)
     {
-        $data = $request->only(['alamat', 'produk', 'metode_pengiriman', 'metode_pembayaran', 'total']);
-        session(['session_checkout_final' => $data]);
-        // Nanti redirect ke halaman pembayaran
-        return redirect()->route('customer.payment.index');
+        $card = ShoppingCard::findOrFail($id);
+
+        $qty = (int) $request->qty;
+        if ($qty < 1) $qty = 1;
+
+        $card->qty = $qty;
+        $card->save();
+
+        return back();
+    }
+
+    public function deleteItem($id)
+    {
+        ShoppingCard::where('id', $id)->delete();
+        return back();
+    }
+
+    public function storeCheckoutSession(Request $request)
+    {
+        $selected = $request->input('selected_ids', []);
+        if (empty($selected)) {
+            return back()->with('error', 'Pilih produk terlebih dahulu.');
+        }
+
+        $user = session('user');
+        $userId = $user['id'] ?? null;
+
+        $cards = ShoppingCard::with('produk')
+            ->where('user_id', $userId)
+            ->whereIn('id', $selected)
+            ->get();
+
+        $products = [];
+        foreach ($cards as $item) {
+            $products[] = [
+                'shopping_card_id' => $item->id,
+                'produk_id'        => $item->produk->id,
+                'nama'             => $item->produk->nama_produk,
+                'harga'            => (int) $item->produk->harga,
+                'qty'              => (int) $item->qty,
+                'subtotal'         => (int) $item->produk->harga * (int) $item->qty,
+                'ukuran'           => $item->ukuran,
+            ];
+        }
+
+        session(['session_checkout' => $products]);
+
+        return redirect()->route('customer.checkout.index');
     }
 }

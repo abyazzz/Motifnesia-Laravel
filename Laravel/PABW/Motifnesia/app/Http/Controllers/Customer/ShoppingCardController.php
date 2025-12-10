@@ -6,32 +6,96 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ShoppingCard;
 use App\Models\Produk;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class ShoppingCardController extends Controller
 {
-    // Tambah ke keranjang
-    public function add(Request $request)
+    /**
+     * Helper: Get authenticated user ID
+     */
+    private function getUserId()
     {
         $user = session('user');
         if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Silakan login terlebih dahulu.']);
+            return null;
         }
+
         $userId = $user['id'] ?? null;
+        
+        // Fallback: cari user id dari email/username di DB
         if (!$userId) {
-            // Fallback: cari user id dari email/username di DB
             if (isset($user['email'])) {
-                $dbUser = \App\Models\User::where('email', $user['email'])->first();
+                $dbUser = User::where('email', $user['email'])->first();
                 $userId = $dbUser ? $dbUser->id : null;
             } elseif (isset($user['username'])) {
-                $dbUser = \App\Models\User::where('name', $user['username'])->first();
+                $dbUser = User::where('name', $user['username'])->first();
                 $userId = $dbUser ? $dbUser->id : null;
             }
         }
+
+        return $userId;
+    }
+
+    /**
+     * Tampilkan halaman keranjang belanja
+     */
+    public function index()
+    {
+        $userId = $this->getUserId();
+        
         if (!$userId) {
-            return response()->json(['success' => false, 'message' => 'User tidak valid.']);
+            return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
+
+        // Ambil semua item keranjang user dengan relasi produk
+        $items = ShoppingCard::with('produk')
+            ->where('user_id', $userId)
+            ->get();
+
+        // Hitung total
+        $total = 0;
+        foreach ($items as $item) {
+            if ($item->produk) {
+                $total += $item->produk->harga * $item->qty;
+            }
+        }
+
+        return view('customer.pages.shoppingCard', compact('items', 'total'));
+    }
+
+    /**
+     * Tambah produk ke keranjang (AJAX)
+     */
+    public function add(Request $request)
+    {
+        $userId = $this->getUserId();
+        
+        if (!$userId) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Silakan login terlebih dahulu.'
+            ], 401);
+        }
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:produk,id',
+            'ukuran' => 'required|string',
+            'qty' => 'nullable|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $productId = $request->input('product_id');
         $ukuran = $request->input('ukuran');
+        $qty = $request->input('qty', 1);
 
         // Cek apakah produk+ukuran sudah ada di keranjang user
         $item = ShoppingCard::where('user_id', $userId)
@@ -40,37 +104,146 @@ class ShoppingCardController extends Controller
             ->first();
 
         if ($item) {
-            $item->qty += 1;
+            // Update qty jika sudah ada
+            $item->qty += $qty;
             $item->save();
         } else {
+            // Buat item baru
             ShoppingCard::create([
                 'user_id' => $userId,
                 'product_id' => $productId,
                 'ukuran' => $ukuran,
-                'qty' => 1,
+                'qty' => $qty,
             ]);
         }
-        return response()->json(['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang!']);
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Produk berhasil ditambahkan ke keranjang!'
+        ]);
     }
 
-    // Tampilkan isi keranjang user
-    public function index()
+    /**
+     * Update qty item di keranjang (AJAX)
+     */
+    public function update(Request $request)
     {
-        $sessionUser = session('user');
-        $userId = $sessionUser['id'] ?? null;
+        $userId = $this->getUserId();
+        
         if (!$userId) {
-            // Fallback: cari user id dari email/username di DB
-            if (isset($sessionUser['email'])) {
-                $user = \App\Models\User::where('email', $sessionUser['email'])->first();
-                $userId = $user ? $user->id : null;
-            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
+
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required|exists:shopping_card,id',
+            'qty' => 'required|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid.'
+            ], 422);
+        }
+
+        $cartId = $request->input('cart_id');
+        $qty = $request->input('qty');
+
+        // Pastikan item milik user yang sedang login
+        $item = ShoppingCard::where('id', $cartId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item tidak ditemukan.'
+            ], 404);
+        }
+
+        $item->qty = $qty;
+        $item->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jumlah berhasil diperbarui.'
+        ]);
+    }
+
+    /**
+     * Hapus item dari keranjang (AJAX)
+     */
+    public function delete($id)
+    {
+        $userId = $this->getUserId();
+        
         if (!$userId) {
-            return redirect()->route('auth.login');
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
+
+        // Pastikan item milik user yang sedang login
+        $item = ShoppingCard::where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item tidak ditemukan.'
+            ], 404);
+        }
+
+        $item->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item berhasil dihapus dari keranjang.'
+        ]);
+    }
+
+    /**
+     * Proses checkout: Simpan item yang dipilih ke session
+     */
+    public function checkout(Request $request)
+    {
+        $userId = $this->getUserId();
+        
+        if (!$userId) {
+            return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Validasi: harus ada item yang dipilih
+        $validator = Validator::make($request->all(), [
+            'selected_items' => 'required|array|min:1',
+            'selected_items.*' => 'exists:shopping_card,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', 'Pilih minimal 1 produk untuk checkout.');
+        }
+
+        $selectedIds = $request->input('selected_items');
+
+        // Pastikan semua item milik user yang login
         $items = ShoppingCard::with('produk')
             ->where('user_id', $userId)
+            ->whereIn('id', $selectedIds)
             ->get();
-        return view('customer.pages.shoppingCard', compact('items'));
+
+        if ($items->isEmpty()) {
+            return redirect()->back()->with('error', 'Item tidak valid.');
+        }
+
+        // Simpan ID items yang dipilih ke session
+        session(['checkout_items' => $selectedIds]);
+
+        // Redirect ke halaman checkout
+        return redirect()->route('customer.checkout.index');
     }
 }
