@@ -8,22 +8,24 @@ class Checkout extends Model
 {
     protected $table = 'checkout';
     
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'alamat',
-        'metode_pengiriman_id',
-        'metode_pembayaran_id',
-        'delivery_status_id',
-        'produk_id',
-        'nama_produk',
-        'ukuran',
-        'qty',
-        'harga',
-        'subtotal',
-        'order_number',
-        'total_ongkir',
+        'pengiriman',
+        'pembayaran',
+        'total_harga',
+        'ongkir',
         'total_bayar',
-        'payment_number',
+        'status_id',
+    ];
+
+    protected $casts = [
+        'total_harga' => 'decimal:2',
+        'ongkir' => 'decimal:2',
+        'total_bayar' => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
     public function user()
@@ -31,23 +33,18 @@ class Checkout extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function produk()
+    public function items()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->hasMany(CheckoutItem::class, 'checkout_id');
     }
 
-    public function metodePengiriman()
+    public function status()
     {
-        return $this->belongsTo(MetodePengiriman::class, 'metode_pengiriman_id');
+        return $this->belongsTo(StatusTransaksi::class, 'status_id');
     }
 
-    public function metodePembayaran()
+    public function reviews()
     {
-        return $this->belongsTo(MetodePembayaran::class, 'metode_pembayaran_id');
-    }
-
-    public function deliveryStatus()
-    {
-        return $this->belongsTo(DeliveryStatus::class, 'delivery_status_id');
+        return $this->hasMany(OrderReview::class, 'checkout_id');
     }
 }

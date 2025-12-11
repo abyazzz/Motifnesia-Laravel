@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customer\PurchaseHistoryController;
 use App\Models\User;
+
 class UserProfileController extends \App\Http\Controllers\Controller
 {
     /**
@@ -13,44 +15,21 @@ class UserProfileController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
-        // Jika ada user di session (yang diset saat login), gunakan itu untuk mengambil data di DB
-        $sessionUser = session('user');
+        $user = Auth::user();
 
         $userProfile = [
-            'username' => 'guest',
-            'profile_pic' => 'placeholder_user.jpg',
-            'full_name' => 'Guest User',
-            'birth_date' => null,
-            'gender' => null,
-            'email' => null,
-            'phone_number' => null,
+            'username' => $user->name ?? 'guest',
+            'profile_pic' => $user->profile_pic ?? 'placeholder_user.jpg',
+            'full_name' => $user->full_name ?? $user->name ?? 'Guest User',
+            'birth_date' => $user->birth_date ?? null,
+            'gender' => $user->gender ?? null,
+            'email' => $user->email ?? null,
+            'phone_number' => $user->phone_number ?? null,
+            'address_line' => $user->address_line ?? null,
+            'city' => $user->city ?? null,
+            'province' => $user->province ?? null,
+            'postal_code' => $user->postal_code ?? null,
         ];
-
-        if ($sessionUser) {
-            // coba ambil user dari DB berdasarkan name (username) atau email
-            $user = User::where('name', $sessionUser['username'])->orWhere('email', $sessionUser['username'])->first();
-
-            if ($user) {
-                $userProfile['username'] = $user->name;
-                $userProfile['full_name'] = $user->full_name ?? $user->name;
-                $userProfile['email'] = $user->email;
-                // Ambil kolom profil dari DB jika tersedia
-                $userProfile['profile_pic'] = $user->profile_pic ?? 'placeholder_user.jpg';
-                $userProfile['birth_date'] = $user->birth_date; // bisa null
-                $userProfile['gender'] = $user->gender; // 'L' atau 'P' atau null
-                $userProfile['phone_number'] = $user->phone_number;
-                // address fields
-                $userProfile['address_line'] = $user->address_line ?? null;
-                $userProfile['city'] = $user->city ?? null;
-                $userProfile['province'] = $user->province ?? null;
-                $userProfile['postal_code'] = $user->postal_code ?? null;
-            } else {
-                // jika tidak ada di DB, gunakan session values sebagai fallback
-                $userProfile['username'] = $sessionUser['username'] ?? $sessionUser['nama'] ?? 'user';
-                $userProfile['full_name'] = $sessionUser['nama'] ?? $userProfile['username'];
-                $userProfile['email'] = $sessionUser['email'] ?? null;
-            }
-        }
 
         $purchaseHistory = PurchaseHistoryController::getHistoryData();
         return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory'));

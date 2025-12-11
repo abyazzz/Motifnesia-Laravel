@@ -291,8 +291,8 @@ Output: JSON success + redirect URL
 
 ### ✅ **1. Database vs Session**
 
-| Data Type | Storage | Reason |
-|-----------|---------|--------|
+| Data Type           | Storage |               Reason                |
+|---------------------|---------|-------------------------------------|
 | Shopping Cart Items | **DATABASE** | Persistent, tidak hilang saat logout/refresh |
 | Selected Checkout Items (IDs) | **SESSION** | Temporary, hanya untuk flow checkout |
 | Checkout Data (alamat, total, dll) | **SESSION** | Temporary, dihapus setelah bayar |

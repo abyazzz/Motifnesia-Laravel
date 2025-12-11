@@ -75,11 +75,15 @@ Route::group(['prefix' => '', 'as' => 'customer.'], function () {
     Route::get('/favorites/{id}/add-to-cart', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'addToCart'])->name('favorites.addToCart');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
-    // ========== REVIEWS ==========
+    // ========== REVIEWS (Old - Product Detail Reviews) ==========
     Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
-    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::post('/product-reviews', [ReviewController::class, 'store'])->name('product.reviews.store');
+    Route::put('/product-reviews/{id}', [ReviewController::class, 'update'])->name('product.reviews.update');
+    Route::delete('/product-reviews/{id}', [ReviewController::class, 'destroy'])->name('product.reviews.destroy');
+
+    // ========== ORDER REVIEWS (Purchase History Reviews) ==========
+    Route::post('/order-reviews', [\App\Http\Controllers\Customer\OrderReviewController::class, 'store'])->name('order.reviews.store');
+    Route::get('/order-reviews/{orderItemId}', [\App\Http\Controllers\Customer\OrderReviewController::class, 'show'])->name('order.reviews.show');
 
     // ========== USER PROFILE ==========
     Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
