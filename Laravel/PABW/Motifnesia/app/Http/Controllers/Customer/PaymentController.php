@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductOrder;
-use App\Models\ProductOrderItem;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\OrderStatusHistory;
 use App\Models\ShoppingCard;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -15,39 +17,12 @@ use Illuminate\Support\Facades\Validator;
 class PaymentController extends Controller
 {
     /**
-     * Helper: Get authenticated user ID
-     */
-    private function getUserId()
-    {
-        $user = session('user');
-        if (!$user) {
-            return null;
-        }
-
-        $userId = $user['id'] ?? null;
-        
-        if (!$userId) {
-            if (isset($user['email'])) {
-                $dbUser = User::where('email', $user['email'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            } elseif (isset($user['username'])) {
-                $dbUser = User::where('name', $user['username'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            }
-        }
-
-        return $userId;
-    }
-
-    /**
      * Tampilkan halaman payment/transaksi
      * Menampilkan ringkasan dari session checkout_data
      */
     public function index()
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
@@ -69,9 +44,7 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -107,36 +80,54 @@ class PaymentController extends Controller
         DB::beginTransaction();
         
         try {
-            // Simpan order ke database
-            $order = ProductOrder::create([
-                'user_id' => $userId,
+            // Generate order number (unique untuk grouping items)
+            $orderNumber = 'ORD-' . time() . '-' . Auth::id();
+            
+            Log::info('Creating order:', ['order_number' => $orderNumber]);
+            
+            // 1. Create order (header) - 1 row untuk semua produk
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'order_number' => $orderNumber,
                 'alamat' => $checkoutData['alamat'],
                 'metode_pengiriman_id' => $checkoutData['metode_pengiriman']['id'],
                 'metode_pembayaran_id' => $checkoutData['metode_pembayaran']['id'],
-                'subtotal_produk' => $checkoutData['subtotal_produk'],
+                'delivery_status_id' => 1, // default: pending
                 'total_ongkir' => $checkoutData['total_ongkir'],
                 'total_bayar' => $checkoutData['total_bayar'],
                 'payment_number' => $request->payment_number,
-                'status' => 'pending', // Status awal: menunggu konfirmasi admin
                 'created_at' => $checkoutData['created_at'] ?? now(),
             ]);
-
-            // Simpan order items
+            
+            Log::info('Order created:', ['order_id' => $order->id]);
+            
+            // 2. Create order items (detail) - banyak row untuk banyak produk
             foreach ($checkoutData['products'] as $product) {
-                ProductOrderItem::create([
-                    'product_order_id' => $order->id,
+                OrderItem::create([
+                    'order_id' => $order->id,
                     'produk_id' => $product['produk_id'],
-                    'nama' => $product['nama'],
-                    'harga' => $product['harga'],
-                    'qty' => $product['qty'],
-                    'subtotal' => $product['subtotal'],
+                    'nama_produk' => $product['nama'],
                     'ukuran' => $product['ukuran'] ?? null,
+                    'qty' => $product['qty'],
+                    'harga' => $product['harga'],
+                    'subtotal' => $product['subtotal'],
                 ]);
+                
+                Log::info('Order item created:', ['order_id' => $order->id, 'product' => $product['nama']]);
             }
+
+            // 3. Track status history (Pending - saat order dibuat)
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'delivery_status_id' => 1, // Pending
+                'changed_at' => now(),
+            ]);
+            
+            Log::info('Order status history created:', ['order_id' => $order->id, 'status' => 'Pending']);
 
             // Hapus item dari shopping cart setelah transaksi berhasil
             $cartIds = array_column($checkoutData['products'], 'cart_id');
-            ShoppingCard::where('user_id', $userId)
+            ShoppingCard::where('user_id', Auth::id())
                 ->whereIn('id', $cartIds)
                 ->delete();
 
@@ -145,7 +136,7 @@ class PaymentController extends Controller
 
             DB::commit();
 
-            // Redirect ke success page
+            // Redirect ke success page dengan order id
             return redirect()->route('customer.transaction.success', $order->id)
                 ->with('success', 'Transaksi berhasil! Menunggu konfirmasi pembayaran.');
 
@@ -168,16 +159,14 @@ class PaymentController extends Controller
      */
     public function success($orderId)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return redirect()->route('auth.login');
         }
 
-        // Ambil detail order
-        $order = ProductOrder::with(['details', 'metodePengiriman', 'metodePembayaran'])
+        // Ambil detail order dengan items
+        $order = Order::with(['orderItems', 'metodePengiriman', 'metodePembayaran', 'deliveryStatus'])
             ->where('id', $orderId)
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$order) {

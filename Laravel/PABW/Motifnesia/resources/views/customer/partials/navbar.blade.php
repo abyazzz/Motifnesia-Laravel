@@ -22,15 +22,12 @@
                 <li><a href="{{ route('customer.favorites.index') }}"><i class="fa-regular fa-heart"></i></a></li>
                 
                 <li>|</li>
-                @php
-                    $sessionUser = session('user');
-                @endphp
-                @if (! $sessionUser)
+                @if (!Auth::check())
                     <li><a href="{{ route('auth.login') }}">Login</a></li>
                 @else
                     <li>
                         <a href="{{ route('customer.profile.index') }}" style="display:inline-block;">
-                            <img src="{{ asset('images/' . ($sessionUser['profile_pic'] ?? 'placeholder_user.jpg')) }}" alt="Profile" style="width:40px; height:40px; object-fit:cover; border-radius:50%; vertical-align:middle;">
+                            <img src="{{ asset('images/' . (Auth::user()->profile_pic ?? 'placeholder_user.jpg')) }}" alt="Profile" style="width:40px; height:40px; object-fit:cover; border-radius:50%; vertical-align:middle;">
                         </a>
                     </li>
                 @endif

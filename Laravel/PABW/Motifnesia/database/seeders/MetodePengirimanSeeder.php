@@ -9,6 +9,10 @@ class MetodePengirimanSeeder extends Seeder
 {
     public function run()
     {
+        if (DB::table('metode_pengiriman')->count() > 0) {
+            return;
+        }
+
         DB::table('metode_pengiriman')->insert([
             [
                 'nama_pengiriman' => 'Reguler',

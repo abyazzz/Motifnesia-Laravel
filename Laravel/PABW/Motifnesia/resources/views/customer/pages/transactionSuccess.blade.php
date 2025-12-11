@@ -18,7 +18,7 @@
     <div style="background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:30px;text-align:left;">
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #dee2e6;">
             <span style="color:#666;">Nomor Pesanan:</span>
-            <strong style="color:#333;">#{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</strong>
+            <strong style="color:#333;">{{ $order->order_number }}</strong>
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #dee2e6;">
             <span style="color:#666;">Total Pembayaran:</span>
@@ -26,7 +26,7 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0;">
             <span style="color:#666;">Status:</span>
-            <span style="background:#FFC107;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">{{ ucfirst($order->status) }}</span>
+            <span style="background:#FFC107;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">{{ $order->deliveryStatus->nama_status }}</span>
         </div>
     </div>
 

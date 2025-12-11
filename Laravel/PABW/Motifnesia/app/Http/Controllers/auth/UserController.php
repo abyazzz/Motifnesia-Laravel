@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -25,17 +26,10 @@ class UserController extends Controller
         $user = User::where('email', $username)->orWhere('name', $username)->first();
 
         if ($user && Hash::check($password, $user->password)) {
-            // Simpan session lengkap (tambahkan id user)
-            $sessionUser = [
-                'id' => $user->id,
-                'username' => $user->name,
-                'nama' => $user->full_name ?? $user->name,
-                'email' => $user->email,
-                'profile_pic' => $user->profile_pic ?? null,
-                'role' => ($user->role ?? 'customer'),
-            ];
-            session(['user' => $sessionUser]);
-            if ($sessionUser['role'] === 'admin') {
+            // Login user menggunakan Laravel Auth
+            Auth::login($user);
+            
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.product.management.index')->with('success', 'Berhasil login sebagai Admin!');
             } else {
                 return redirect()->route('customer.home')->with('success', 'Berhasil login!');
@@ -121,7 +115,9 @@ class UserController extends Controller
     // Logout
     public function logout()
     {
-        session()->forget('user');
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
         return redirect()->route('auth.login')->with('success', 'Berhasil logout.');
     }
 }

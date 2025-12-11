@@ -3,52 +3,31 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\OrderStatusHistory;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     /**
-     * Tampilkan halaman Daftar Notifikasi.
+     * Tampilkan halaman notifikasi
      */
     public function index()
     {
-        // Data Dummy untuk notifikasi sesuai screenshot
-        $notifications = [
-            [
-                'status' => 'Pesanan kamu Sampai.',
-                'timestamp' => '2025-06-11 22:03:25',
-                'details' => [
-                    ['nama' => 'Batik Mega Mendung (M)', 'harga' => 701522, 'jumlah' => 1],
-                ],
-                'icon_class' => 'fas fa-check-circle', // Contoh ikon status
-            ],
-            [
-                'status' => 'Pesanan kamu Menunggu Konfirmasi.',
-                'timestamp' => '2025-06-11 22:03:13',
-                'details' => [
-                    ['nama' => 'Batik Mega Mendung (M)', 'harga' => 701522, 'jumlah' => 1],
-                ],
-                'icon_class' => 'fas fa-clock',
-            ],
-            [
-                'status' => 'Pesanan kamu Diproses.',
-                'timestamp' => '2025-06-11 11:18:00',
-                'details' => [
-                    ['nama' => 'Batik Pisan Bali (XL)', 'harga' => 580598, 'jumlah' => 2],
-                    ['nama' => 'Batik Lasem (S)', 'harga' => 185672, 'jumlah' => 1],
-                ],
-                'icon_class' => 'fas fa-cogs',
-            ],
-            [
-                'status' => 'Pesanan kamu Dikirim.',
-                'timestamp' => '2025-06-11 10:18:52',
-                'details' => [
-                    ['nama' => 'Batik Mega Mendung (M)', 'harga' => 701522, 'jumlah' => 1],
-                ],
-                'icon_class' => 'fas fa-truck',
-            ],
-        ];
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Ambil history status order user
+        // Eager load order + orderItems + deliveryStatus
+        $notifications = OrderStatusHistory::with(['order.orderItems', 'deliveryStatus'])
+            ->whereHas('order', function($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->orderBy('changed_at', 'desc')
+            ->get()
+            ->groupBy('deliveryStatus.nama_status');
 
         return view('customer.pages.notifications', compact('notifications'));
     }

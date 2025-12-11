@@ -69,7 +69,10 @@ Route::group(['prefix' => '', 'as' => 'customer.'], function () {
     Route::get('/transaction/success/{orderId}', [\App\Http\Controllers\Customer\PaymentController::class, 'success'])->name('transaction.success');
 
     // ========== FAVORITES & NOTIFICATIONS ==========
-    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::get('/favorites', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/store', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{id}', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'destroy'])->name('favorites.destroy');
+    Route::get('/favorites/{id}/add-to-cart', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'addToCart'])->name('favorites.addToCart');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
     // ========== REVIEWS ==========
@@ -114,6 +117,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
     // Order Status
     Route::get('/order-status', [OrderStatusController::class, 'index'])->name('orders.status');
+    Route::post('/order-status/{id}/update', [OrderStatusController::class, 'updateStatus'])->name('orders.status.update');
     // Sales Report
     Route::get('/sales-report', [ReportController::class, 'index'])->name('reports.sales');
     // STATIC CONTENT

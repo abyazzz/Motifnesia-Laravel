@@ -7,50 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\ShoppingCard;
 use App\Models\Produk;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ShoppingCardController extends Controller
 {
     /**
-     * Helper: Get authenticated user ID
-     */
-    private function getUserId()
-    {
-        $user = session('user');
-        if (!$user) {
-            return null;
-        }
-
-        $userId = $user['id'] ?? null;
-        
-        // Fallback: cari user id dari email/username di DB
-        if (!$userId) {
-            if (isset($user['email'])) {
-                $dbUser = User::where('email', $user['email'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            } elseif (isset($user['username'])) {
-                $dbUser = User::where('name', $user['username'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            }
-        }
-
-        return $userId;
-    }
-
-    /**
      * Tampilkan halaman keranjang belanja
      */
     public function index()
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
         // Ambil semua item keranjang user dengan relasi produk
         $items = ShoppingCard::with('produk')
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->get();
 
         // Hitung total
@@ -69,9 +42,7 @@ class ShoppingCardController extends Controller
      */
     public function add(Request $request)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false, 
                 'message' => 'Silakan login terlebih dahulu.'
@@ -98,7 +69,7 @@ class ShoppingCardController extends Controller
         $qty = $request->input('qty', 1);
 
         // Cek apakah produk+ukuran sudah ada di keranjang user
-        $item = ShoppingCard::where('user_id', $userId)
+        $item = ShoppingCard::where('user_id', Auth::id())
             ->where('product_id', $productId)
             ->where('ukuran', $ukuran)
             ->first();
@@ -110,7 +81,7 @@ class ShoppingCardController extends Controller
         } else {
             // Buat item baru
             ShoppingCard::create([
-                'user_id' => $userId,
+                'user_id' => Auth::id(),
                 'product_id' => $productId,
                 'ukuran' => $ukuran,
                 'qty' => $qty,
@@ -128,9 +99,7 @@ class ShoppingCardController extends Controller
      */
     public function update(Request $request)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -154,7 +123,7 @@ class ShoppingCardController extends Controller
 
         // Pastikan item milik user yang sedang login
         $item = ShoppingCard::where('id', $cartId)
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$item) {
@@ -178,9 +147,7 @@ class ShoppingCardController extends Controller
      */
     public function delete($id)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -189,7 +156,7 @@ class ShoppingCardController extends Controller
 
         // Pastikan item milik user yang sedang login
         $item = ShoppingCard::where('id', $id)
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$item) {
@@ -212,9 +179,7 @@ class ShoppingCardController extends Controller
      */
     public function checkout(Request $request)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
@@ -232,7 +197,7 @@ class ShoppingCardController extends Controller
 
         // Pastikan semua item milik user yang login
         $items = ShoppingCard::with('produk')
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->whereIn('id', $selectedIds)
             ->get();
 

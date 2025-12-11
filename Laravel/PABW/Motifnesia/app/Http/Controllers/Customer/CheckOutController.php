@@ -8,44 +8,18 @@ use App\Models\MetodePengiriman;
 use App\Models\MetodePembayaran;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CheckOutController extends Controller
 {
-    /**
-     * Helper: Get authenticated user ID
-     */
-    private function getUserId()
-    {
-        $user = session('user');
-        if (!$user) {
-            return null;
-        }
-
-        $userId = $user['id'] ?? null;
-        
-        if (!$userId) {
-            if (isset($user['email'])) {
-                $dbUser = User::where('email', $user['email'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            } elseif (isset($user['username'])) {
-                $dbUser = User::where('name', $user['username'])->first();
-                $userId = $dbUser ? $dbUser->id : null;
-            }
-        }
-
-        return $userId;
-    }
-
     /**
      * Tampilkan halaman checkout
      * Mengambil data dari session checkout_items dan DB
      */
     public function index()
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
@@ -58,7 +32,7 @@ class CheckOutController extends Controller
 
         // Ambil data lengkap dari DB
         $cartItems = ShoppingCard::with('produk')
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->whereIn('id', $selectedIds)
             ->get();
 
@@ -67,7 +41,7 @@ class CheckOutController extends Controller
         }
 
         // Ambil data user untuk alamat default
-        $user = User::find($userId);
+        $user = User::find(Auth::id());
         $defaultAddress = $this->formatAddress($user);
 
         // Ambil metode pengiriman dan pembayaran dari DB
@@ -110,9 +84,7 @@ class CheckOutController extends Controller
      */
     public function store(Request $request)
     {
-        $userId = $this->getUserId();
-        
-        if (!$userId) {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -146,7 +118,7 @@ class CheckOutController extends Controller
 
         // Ambil data cart items dari DB
         $cartItems = ShoppingCard::with('produk')
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::id())
             ->whereIn('id', $selectedIds)
             ->get();
 

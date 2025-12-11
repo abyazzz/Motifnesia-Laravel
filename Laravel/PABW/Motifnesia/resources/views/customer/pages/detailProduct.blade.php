@@ -34,11 +34,16 @@
                     </div>
 
                     {{-- TOMBOL AKSI --}}
-                    <div class="action-buttons">
+                    <div class="action-buttons" style="display:flex;gap:10px;">
                         <button type="button" class="btn-cart" id="btnAddToCart">Tambah ke Keranjang</button>
+                        <button type="button" class="btn-favorite" id="btnAddToFavorite" 
+                                style="background:#ff69b4;color:white;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-weight:600;">
+                            ❤️ Favorite
+                        </button>
                         @push('scripts')
                         <script>
                         document.addEventListener('DOMContentLoaded', function() {
+                            // Add to Cart
                             document.getElementById('btnAddToCart').addEventListener('click', function() {
                                 const ukuran = document.querySelector('input[name="size"]:checked');
                                 if (!ukuran) {
@@ -67,10 +72,32 @@
                                 })
                                 .catch(() => alert('Terjadi kesalahan.'));
                             });
+
+                            // Add to Favorite
+                            document.getElementById('btnAddToFavorite').addEventListener('click', function() {
+                                fetch("{{ route('customer.favorites.store') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({
+                                        produk_id: {{ $product['id'] }}
+                                    })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    alert(data.message);
+                                    if (data.success) {
+                                        // Bisa redirect ke favorite atau stay
+                                        // window.location.href = "{{ route('customer.favorites.index') }}";
+                                    }
+                                })
+                                .catch(() => alert('Terjadi kesalahan.'));
+                            });
                         });
                         </script>
                         @endpush
-                        <button type="button" class="btn-wishlist"><i class="fa-regular fa-heart"></i></button>
                     </div>
                 </div>
 

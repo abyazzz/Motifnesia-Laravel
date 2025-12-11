@@ -9,6 +9,10 @@ class MetodePembayaranSeeder extends Seeder
 {
     public function run()
     {
+        if (DB::table('metode_pembayaran')->count() > 0) {
+            return;
+        }
+
         DB::table('metode_pembayaran')->insert([
             [
                 'nama_pembayaran' => 'Saldo Motifnesia',

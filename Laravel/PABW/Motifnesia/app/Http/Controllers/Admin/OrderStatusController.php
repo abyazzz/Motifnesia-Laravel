@@ -3,33 +3,56 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderStatusHistory;
+use App\Models\DeliveryStatus;
 use Illuminate\Http\Request;
 
 class OrderStatusController extends Controller
 {
-    // Data dummy Status Pembelian
-    private $orders = [
-        ['id' => 1, 'customer_name' => 'Abay', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Diproses'],
-        // Duplikasi untuk mengisi daftar panjang dan memberikan variasi status
-        ['id' => 2, 'customer_name' => 'Abay', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Dikemas'],
-        ['id' => 3, 'customer_name' => 'Sabdila', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Diproses'],
-        ['id' => 4, 'customer_name' => 'Rosyadi', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Dalam perjalanan'],
-        ['id' => 5, 'customer_name' => 'Fadhil', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Diproses'],
-        ['id' => 6, 'customer_name' => 'Zaky', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Sampai'],
-        ['id' => 7, 'customer_name' => 'Salman', 'product_detail' => 'Batik Batik - M', 'address' => 'Jl. Telekomunikasi', 'status' => 'Diproses'],
-    ];
-
     /**
-     * Menampilkan halaman status pembelian.
+     * Menampilkan halaman status pengiriman.
      */
     public function index()
     {
-        // Variabel statusOptions DIHAPUS dari sini
+        // Ambil semua orders dengan relasi
+        $orders = Order::with(['user', 'orderItems.produk', 'metodePengiriman', 'metodePembayaran', 'deliveryStatus'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Ambil semua delivery status untuk dropdown
+        $deliveryStatuses = DeliveryStatus::all();
 
         return view('admin.pages.orderStatus', [
-            'orders' => $this->orders,
+            'orders' => $orders,
+            'deliveryStatuses' => $deliveryStatuses,
             'activePage' => 'order-status'
-            // 'statusOptions' sudah tidak dikirim
+        ]);
+    }
+
+    /**
+     * Update status pengiriman
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'delivery_status_id' => 'required|exists:delivery_status,id'
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->delivery_status_id = $request->delivery_status_id;
+        $order->save();
+
+        // Track status change history untuk notifikasi customer
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'delivery_status_id' => $request->delivery_status_id,
+            'changed_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status berhasil diperbarui'
         ]);
     }
 }
