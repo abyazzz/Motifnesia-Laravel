@@ -125,6 +125,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('/order-status/{id}/update', [OrderStatusController::class, 'updateStatus'])->name('orders.status.update');
     // Sales Report
     Route::get('/sales-report', [ReportController::class, 'index'])->name('reports.sales');
+    Route::get('/sales-report/export', [ReportController::class, 'export'])->name('reports.export');
+    // Notifications
+    Route::get('/notifications', [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/toggle-read', [App\Http\Controllers\Admin\NotificationController::class, 'toggleRead'])->name('notifications.toggleRead');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\Admin\NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/clear-read', [App\Http\Controllers\Admin\NotificationController::class, 'clearRead'])->name('notifications.clearRead');
+    Route::delete('/notifications/{id}', [App\Http\Controllers\Admin\NotificationController::class, 'destroy'])->name('notifications.destroy');
     // STATIC CONTENT
     Route::get('/konten', [App\Http\Controllers\Admin\StaticContentController::class, 'index'])
         ->name('konten.index');

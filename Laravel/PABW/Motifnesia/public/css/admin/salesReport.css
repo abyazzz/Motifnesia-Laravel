@@ -1,4 +1,4 @@
-/* Styling Utama Halaman (Konsisten) */
+/* Sales Report Container */
 .sales-report-container {
     padding: 20px;
     background-color: #f7f5ef;
@@ -7,12 +7,12 @@
     margin-left: 20px;
 }
 
-/* Header dan Search Bar (Konsisten) */
+/* Header */
 .report-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .header-title {
@@ -20,112 +20,288 @@
     font-weight: 600;
     color: #4a4a4a;
 }
-/* ... styling search box dan input disamakan dengan file CSS sebelumnya ... */
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.period-dropdown {
+    padding: 10px 20px;
+    border: 2px solid #a89486;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #4a4a4a;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.period-dropdown:hover {
+    border-color: #8b6e5e;
+}
+
+.btn-export {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-export:hover {
+    background-color: #218838;
+}
+
+/* Metrics Cards */
+.metrics-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-icon {
+    font-size: 40px;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Chart Section */
+.chart-section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
 
 .section-title {
     font-size: 20px;
     font-weight: 600;
     color: #4a4a4a;
-    margin: 25px 0 15px 0;
+    margin-bottom: 20px;
 }
 
-/* --- BAGIAN GRAFIK BATANG --- */
 .chart-wrapper {
+    position: relative;
+    height: 300px;
+}
+
+.chart-wrapper canvas {
+    max-height: 100%;
+}
+
+/* Table Section */
+.table-section {
     background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
-.bar-chart-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end; /* Batang mulai dari bawah */
-    height: 200px; /* Tinggi maksimum chart */
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
+.data-table-wrapper {
+    overflow-x: auto;
 }
 
-.chart-bar-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 12%; /* Lebar kolom chart */
-    height: 100%;
-}
-
-.chart-bar {
-    width: 100%;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    transition: height 0.3s;
-}
-
-/* Warna Batang sesuai Screenshot (Hijau dan Merah Bata) */
-.bar-green {
-    background-color: #72a969; /* Warna Hijau di screenshot */
-}
-
-.bar-red {
-    background-color: #c7867e; /* Warna Merah Bata di screenshot */
-}
-
-.chart-label {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #555;
-    font-weight: 500;
-}
-
-/* --- BAGIAN TABEL PRODUK TERLARIS --- */
-.best-seller-table {
-    margin-top: 20px;
-    padding: 0; /* Hilangkan padding wrapper, biar header menyatu */
-}
-
-/* Header Tabel */
 .table-header {
     display: flex;
-    background-color: #8b6e5e; /* Warna cokelat tua di tabel */
+    background-color: #a89486;
     color: #fff;
-    padding: 10px 20px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .header-col {
-    font-weight: bold;
-    font-size: 16px;
-    padding: 0 5px;
+    padding: 0 10px;
 }
 
-/* Pembagian Lebar Kolom Tabel */
-.seller-col-name { flex: 2; }
-.seller-col-unit { flex: 1; text-align: center; }
-.seller-col-revenue { flex: 1.5; text-align: right; }
-
-/* Styling Baris Data (bestSellerRow.blade.php) */
-.best-seller-rows-list {
-    padding: 0 20px 20px 20px;
+.col-order {
+    flex: 0 0 120px;
 }
 
-.best-seller-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 0;
+.col-date {
+    flex: 0 0 150px;
+}
+
+.col-customer {
+    flex: 1;
+    min-width: 150px;
+}
+
+.col-products {
+    flex: 0 0 100px;
+}
+
+.col-total {
+    flex: 0 0 150px;
+    text-align: right;
+}
+
+.col-payment {
+    flex: 0 0 150px;
+}
+
+.table-rows-list {
     margin-top: 5px;
-    border-bottom: 1px solid #eee; /* Garis pemisah tipis */
 }
-.best-seller-row:last-child {
-    border-bottom: none;
+
+.table-row {
+    display: flex;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 3px;
+    transition: background-color 0.2s;
+}
+
+.even-row {
+    background-color: #fff;
+}
+
+.odd-row {
+    background-color: #fcf8e3;
+}
+
+.table-row:hover {
+    background-color: #f0e9d6;
 }
 
 .row-col {
-    font-size: 15px;
+    padding: 0 10px;
+    font-size: 14px;
     color: #333;
-    padding: 0 5px;
+    display: flex;
+    align-items: center;
 }
 
-.row-col.seller-col-name { flex: 2; font-weight: 500;}
-.row-col.seller-col-unit { flex: 1; text-align: center; }
-.row-col.seller-col-revenue { flex: 1.5; text-align: right; }
+/* Top Products Section */
+.top-products-section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.top-products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.top-product-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #a89486;
+    transition: transform 0.2s;
+}
+
+.top-product-item:hover {
+    transform: translateX(5px);
+    background-color: #f0e9d6;
+}
+
+.product-rank {
+    font-size: 24px;
+    font-weight: 700;
+    color: #a89486;
+    width: 40px;
+    text-align: center;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.product-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.stat-sold {
+    font-weight: 500;
+}
+
+.stat-revenue {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* No Data */
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-data p {
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .metrics-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-header,
+    .table-row {
+        flex-direction: column;
+    }
+    
+    .header-col,
+    .row-col {
+        flex: 1;
+        width: 100%;
+        padding: 5px 10px;
+    }
+}

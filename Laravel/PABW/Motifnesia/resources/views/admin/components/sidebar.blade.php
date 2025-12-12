@@ -16,7 +16,7 @@
         'Live Chat Support'     => ['route' => 'admin.chat.index', 'page' => 'live-chat'],
         'Tambah Produk'         => ['route' => 'admin.products.create', 'page' => 'products-create'],
         'Daftar Produk'         => ['route' => 'admin.daftar-produk', 'page' => 'daftar-produk'], // Dari route pertama
-        'Notifikasi Sistem'     => ['route' => '#', 'page' => 'notification'], // Belum dibuat route-nya
+        'Notifikasi Sistem'     => ['route' => 'admin.notifications.index', 'page' => 'notification'],
         'Kelola Konten Statis'  => ['route' => 'admin.konten.index', 'page' => 'konten-statis'],
     ];
 @endphp

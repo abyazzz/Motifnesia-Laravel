@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Order;
+use App\Models\OrderReview;
+use App\Models\Produk;
+use App\Observers\OrderObserver;
+use App\Observers\ReviewObserver;
+use App\Observers\ProductObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register observers untuk auto-generate notifications
+        Order::observe(OrderObserver::class);
+        OrderReview::observe(ReviewObserver::class);
+        Produk::observe(ProductObserver::class);
     }
 }
