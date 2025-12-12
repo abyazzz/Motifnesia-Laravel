@@ -170,9 +170,9 @@
                             Beri Ulasan
                         </button>
                     @elseif ($item['status_ulasan'] === 'lihat')
-                        <button class="btn-review btn-view-ulasan" 
+                        <button class="btn-review btn-view-ulasan btn-open-view-review" 
                                 data-order-item-id="{{ $item['order_item_id'] }}"
-                                onclick="openViewReviewModal({{ $item['order_item_id'] }}, '{{ addslashes($item['nama']) }}')">
+                                data-product-name="{{ $item['nama'] }}">
                             Lihat Ulasan
                         </button>
                     @else

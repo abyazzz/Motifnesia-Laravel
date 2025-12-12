@@ -30,4 +30,11 @@ class Produk extends Model
     ];
 
     
+    /**
+     * Relasi ke OrderReview
+     */
+    public function reviews()
+    {
+        return $this->hasMany(OrderReview::class, 'produk_id');
+    }
 }

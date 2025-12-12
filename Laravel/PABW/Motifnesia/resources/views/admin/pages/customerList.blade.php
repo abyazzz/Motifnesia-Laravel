@@ -15,22 +15,35 @@
             </div>
         </header>
 
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <main class="data-table-wrapper">
             {{-- Header/Kolom Tabel --}}
             <div class="table-header">
-                <div class="header-col name-col">Nama</div>
+                <div class="header-col username-col">Username</div>
+                <div class="header-col fullname-col">Nama Lengkap</div>
                 <div class="header-col email-col">Email</div>
+                <div class="header-col products-col">Total Produk</div>
+                <div class="header-col actions-col">Aksi</div>
             </div>
 
             {{-- Loop Data Pelanggan --}}
             <div class="customer-cards-list">
-                @foreach($customers as $index => $customer)
+                @forelse($customers as $index => $customer)
                     @include('admin.components.customerCard', [
                         'customer' => $customer,
                         // Cek index ganjil/genap (0 adalah genap, 1 adalah ganjil, dst)
                         'isOdd' => ($index % 2 != 0)
                     ])
-                @endforeach
+                @empty
+                    <div class="no-customers">
+                        <p>Belum ada pelanggan yang melakukan pembelian.</p>
+                    </div>
+                @endforelse
             </div>
         </main>
     </div>

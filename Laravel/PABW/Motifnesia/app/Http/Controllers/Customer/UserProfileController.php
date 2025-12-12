@@ -37,41 +37,21 @@ class UserProfileController extends \App\Http\Controllers\Controller
 
     public function edit()
     {
-        $sessionUser = session('user');
+        $user = Auth::user();
 
         $userProfile = [
-            'username' => 'guest',
-            'profile_pic' => 'placeholder_user.jpg',
-            'full_name' => 'Guest User',
-            'birth_date' => null,
-            'gender' => null,
-            'email' => null,
-            'phone_number' => null,
+            'username' => $user->name ?? 'guest',
+            'profile_pic' => $user->profile_pic ?? 'placeholder_user.jpg',
+            'full_name' => $user->full_name ?? $user->name ?? 'Guest User',
+            'birth_date' => $user->birth_date ?? null,
+            'gender' => $user->gender ?? null,
+            'email' => $user->email ?? null,
+            'phone_number' => $user->phone_number ?? null,
+            'address_line' => $user->address_line ?? null,
+            'city' => $user->city ?? null,
+            'province' => $user->province ?? null,
+            'postal_code' => $user->postal_code ?? null,
         ];
-
-        if ($sessionUser) {
-            $user = User::where('name', $sessionUser['username'])->orWhere('email', $sessionUser['username'])->first();
-            if ($user) {
-                 $userProfile['username'] = $user->name;
-                 $userProfile['full_name'] = $user->full_name ?? $user->name;
-                $userProfile['email'] = $user->email;
-                $userProfile['profile_pic'] = $user->profile_pic ?? $userProfile['profile_pic'];
-                $userProfile['phone_number'] = $user->phone_number ?? $userProfile['phone_number'];
-                $userProfile['birth_date'] = $user->birth_date ?? $userProfile['birth_date'];
-                $userProfile['gender'] = $user->gender ?? $userProfile['gender'];
-                $userProfile['address_line'] = $user->address_line ?? null;
-                $userProfile['city'] = $user->city ?? null;
-                $userProfile['province'] = $user->province ?? null;
-                $userProfile['postal_code'] = $user->postal_code ?? null;
-            } else {
-                $userProfile['username'] = $sessionUser['username'] ?? $sessionUser['nama'] ?? 'user';
-                $userProfile['full_name'] = $sessionUser['nama'] ?? $userProfile['username'];
-                $userProfile['address_line'] = $sessionUser['address_line'] ?? null;
-                $userProfile['city'] = $sessionUser['city'] ?? null;
-                $userProfile['province'] = $sessionUser['province'] ?? null;
-                $userProfile['postal_code'] = $sessionUser['postal_code'] ?? null;
-            }
-        }
 
         return view('customer.pages.editProfile', compact('userProfile'));
     }
@@ -81,16 +61,9 @@ class UserProfileController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request)
     {
-        $sessionUser = session('user');
-        if (! $sessionUser) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        // Cari user di DB
-        $user = User::where('name', $sessionUser['username'])->orWhere('email', $sessionUser['username'])->first();
-
+        $user = Auth::user();
         if (! $user) {
-            return back()->with('error', 'User tidak ditemukan di database.');
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
         $data = $request->validate([
@@ -133,15 +106,6 @@ class UserProfileController extends \App\Http\Controllers\Controller
         }
 
         $user->save();
-
-        // Update session user values
-        session(['user' => [
-            'username' => $user->name,
-            'nama' => $user->full_name ?? $user->name,
-            'email' => $user->email,
-            'profile_pic' => $user->profile_pic ?? null,
-            'role' => 'user'
-        ]]);
 
         return redirect()->route('customer.profile.index')->with('success', 'Profil berhasil diperbarui.');
     }

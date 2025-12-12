@@ -8,7 +8,7 @@
     $navLinks = [
         'Daftar Pelanggan'      => ['route' => 'admin.customers.index', 'page' => 'customers'],
         'Manajemen Produk'      => ['route' => 'admin.product.management.index', 'page' => 'product-management'],
-        'Moderasi Ulasan'       => ['route' => 'admin.reviews.index', 'page' => 'reviews'],
+        'Ulasan Produk'         => ['route' => 'admin.reviews.index', 'page' => 'reviews'],
         'Kelola Promo'          => ['route' => '#', 'page' => 'promo'], // Belum dibuat route-nya
         'Laporan Penjualan'     => ['route' => 'admin.reports.sales', 'page' => 'sales-report'],
         'Kelola Retur'          => ['route' => 'admin.returns.index', 'page' => 'returns'],

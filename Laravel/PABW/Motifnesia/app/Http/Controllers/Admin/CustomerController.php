@@ -4,33 +4,53 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
-    // Data dummy Pelanggan
-    private $customers = [
-        ['id' => 1, 'name' => 'User Pertama', 'email' => 'user1@gmail.com'],
-        ['id' => 2, 'name' => 'User Kedua', 'email' => 'user2@gmail.com'],
-        ['id' => 3, 'name' => 'Budi Santoso', 'email' => 'budi.s@gmail.com'],
-        ['id' => 4, 'name' => 'Citra Dewi', 'email' => 'citra_d@gmail.com'],
-        ['id' => 5, 'name' => 'Doni Irawan', 'email' => 'doni.i@gmail.com'],
-        ['id' => 6, 'name' => 'Evi Yulianti', 'email' => 'evi.y@gmail.com'],
-        ['id' => 7, 'name' => 'Ferry Aji', 'email' => 'ferry.aji@gmail.com'],
-        ['id' => 8, 'name' => 'Gita Kusuma', 'email' => 'gita.k@gmail.com'],
-        ['id' => 9, 'name' => 'Hadi Widodo', 'email' => 'hadi.w@gmail.com'],
-        ['id' => 10, 'name' => 'Indah Lestari', 'email' => 'indah.l@gmail.com'],
-        ['id' => 11, 'name' => 'Joko Susilo', 'email' => 'joko.s@gmail.com'],
-        ['id' => 12, 'name' => 'Karin Putri', 'email' => 'karin.p@gmail.com'],
-    ];
-
     /**
-     * Menampilkan daftar pelanggan.
+     * Menampilkan daftar pelanggan yang pernah membeli produk.
      */
     public function index()
     {
+        // Ambil user yang punya minimal 1 order (pernah checkout)
+        $customers = User::whereHas('orders')
+            ->withCount([
+                'orders as total_products' => function ($query) {
+                    $query->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                          ->select(DB::raw('SUM(order_items.qty)'));
+                }
+            ])
+            ->with(['orders.orderItems.produk'])
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'username' => $user->name,
+                    'full_name' => $user->full_name ?? $user->name,
+                    'email' => $user->email,
+                    'total_products' => $user->total_products ?? 0,
+                    'orders' => $user->orders
+                ];
+            });
+
         return view('admin.pages.customerList', [
-            'customers' => $this->customers,
+            'customers' => $customers,
             'activePage' => 'customers'
         ]);
+    }
+
+    /**
+     * Hapus customer berdasarkan ID.
+     */
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.customers.index')
+                        ->with('success', 'Pelanggan berhasil dihapus.');
     }
 }

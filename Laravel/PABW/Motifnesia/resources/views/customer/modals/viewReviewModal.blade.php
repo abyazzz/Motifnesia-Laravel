@@ -131,6 +131,19 @@
         });
     }
 
+    // Event delegation for "Lihat Ulasan" button
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-open-view-review') || e.target.closest('.btn-open-view-review')) {
+                const btn = e.target.classList.contains('btn-open-view-review') ? e.target : e.target.closest('.btn-open-view-review');
+                const orderItemId = btn.getAttribute('data-order-item-id');
+                const productName = btn.getAttribute('data-product-name');
+                console.log('View review button clicked:', { orderItemId, productName });
+                openViewReviewModal(orderItemId, productName);
+            }
+        });
+    });
+
     // Close modal on outside click
     window.addEventListener('click', function(event) {
         const modal = document.getElementById('viewReviewModal');
