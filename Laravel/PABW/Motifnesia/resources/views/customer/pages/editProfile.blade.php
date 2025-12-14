@@ -1,20 +1,22 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-    <div class="edit-profile-container">
-        
-        <div class="edit-profile-card">
-            <h1 class="edit-profile-title">Edit Profil</h1>
+
+<div class="min-h-screen pt-20 px-8" style="background-color: #f5f5f5;">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 pt-3">Edit Profil</h2>
+
+        <div class="bg-white rounded-lg p-8" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
             {{-- Pesan sukses / error dan validasi --}}
             @if (session('success'))
-                <p style="color:green; text-align:center">{{ session('success') }}</p>
+                <div class="bg-green-100 text-green-700 px-4 py-3 rounded-lg mb-4">{{ session('success') }}</div>
             @endif
             @if (session('error'))
-                <p style="color:red; text-align:center">{{ session('error') }}</p>
+                <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">{{ session('error') }}</div>
             @endif
             @if ($errors->any())
-                <div style="color:red; margin-bottom:12px;">
-                    <ul style="margin:0; padding-left:18px;">
+                <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
+                    <ul class="list-disc list-inside">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -23,91 +25,130 @@
             @endif
 
             {{-- Form untuk mengedit data pengguna --}}
-            <form action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data" style="max-width:720px; margin:auto;">
+            <form action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                {{-- Nama dan Nilai Input diambil dari $userProfile --}}
 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" value="{{ old('username', $userProfile['username']) }}" class="form-control" placeholder="Username">
-                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    {{-- Left Column --}}
+                    <div class="space-y-4">
+                        <div>
+                            <label for="username" class="block text-sm font-semibold mb-2">Username</label>
+                            <input type="text" id="username" name="username" value="{{ old('username', $userProfile['username']) }}" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                   placeholder="Username">
+                        </div>
 
-                <div class="form-group">
-                    <label for="fullName">Nama Lengkap</label>
-                    <input type="text" id="fullName" name="full_name" value="{{ $userProfile['full_name'] }}" class="form-control" placeholder="Nama Lengkap">
-                </div>
+                        <div>
+                            <label for="fullName" class="block text-sm font-semibold mb-2">Nama Lengkap</label>
+                            <input type="text" id="fullName" name="full_name" value="{{ $userProfile['full_name'] }}" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                   placeholder="Nama Lengkap">
+                        </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="{{ $userProfile['email'] }}" class="form-control" placeholder="Email" readonly> 
-                </div>
+                        <div>
+                            <label for="email" class="block text-sm font-semibold mb-2">Email</label>
+                            <input type="email" id="email" name="email" value="{{ $userProfile['email'] }}" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" 
+                                   placeholder="Email" readonly> 
+                        </div>
 
-                <div class="form-group">
-                    <label for="phone">Nomor HP</label>
-                    <input type="text" id="phone" name="phone_number" value="{{ old('phone_number', $userProfile['phone_number']) }}" class="form-control" placeholder="Nomor HP">
-                </div>
-                
-                <div class="form-group">
-                    <label for="birthDate">Tanggal Lahir</label>
-                    <input type="date" id="birthDate" name="birth_date" value="{{ old('birth_date', (isset($userProfile['birth_date']) && $userProfile['birth_date']) ? date('Y-m-d', strtotime($userProfile['birth_date'])) : '') }}" class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label for="gender">Jenis Kelamin</label>
-                    <select id="gender" name="gender" class="form-control">
-                        <option value="" {{ old('gender', $userProfile['gender']) === null ? 'selected' : '' }}>Pilih</option>
-                        <option value="L" {{ old('gender', $userProfile['gender']) === 'L' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ old('gender', $userProfile['gender']) === 'P' ? 'selected' : '' }}>Perempuan</option>
-                    </select>
-                </div>
-
-                {{-- Bagian Upload Foto Profil --}}
-                <div class="form-group photo-upload-group">
-                    <label>Foto Profil</label>
-                    <p class="photo-info">Foto Saat Ini</p>
-                    <div class="current-photo-preview">
-                        <img id="currentPhoto" src="{{ asset('images/' . ($userProfile['profile_pic'] ?? 'placeholder_user.jpg')) }}" alt="Foto Profil" style="max-width:150px; display:block; margin-bottom:8px;">
+                        <div>
+                            <label for="phone" class="block text-sm font-semibold mb-2">Nomor HP</label>
+                            <input type="text" id="phone" name="phone_number" value="{{ old('phone_number', $userProfile['phone_number']) }}" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                   placeholder="Nomor HP">
+                        </div>
                     </div>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="profilePhoto" name="profile_photo" accept="image/*" class="file-input-hidden">
-                        <label for="profilePhoto" class="file-input-label">Pilih Foto</label>
-                        <span class="file-name-display">No file chosen</span>
-                        <div id="previewWrapper" style="margin-top:8px; display:none;"></div>
+
+                    {{-- Right Column --}}
+                    <div class="space-y-4">
+                        <div>
+                            <label for="birthDate" class="block text-sm font-semibold mb-2">Tanggal Lahir</label>
+                            <input type="date" id="birthDate" name="birth_date" 
+                                   value="{{ old('birth_date', (isset($userProfile['birth_date']) && $userProfile['birth_date']) ? date('Y-m-d', strtotime($userProfile['birth_date'])) : '') }}" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500">
+                        </div>
+
+                        <div>
+                            <label for="gender" class="block text-sm font-semibold mb-2">Jenis Kelamin</label>
+                            <select id="gender" name="gender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500">
+                                <option value="" {{ old('gender', $userProfile['gender']) === null ? 'selected' : '' }}>Pilih</option>
+                                <option value="L" {{ old('gender', $userProfile['gender']) === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('gender', $userProfile['gender']) === 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                        </div>
+
+                        {{-- Bagian Upload Foto Profil --}}
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Foto Profil</label>
+                            <div class="flex items-center gap-4">
+                                <img id="currentPhoto" src="{{ asset('images/' . ($userProfile['profile_pic'] ?? 'placeholder_user.jpg')) }}" 
+                                     alt="Foto Profil" 
+                                     class="w-24 h-24 rounded-full object-cover border-2" style="border-color: #8B4513;">
+                                <div class="flex-1">
+                                    <input type="file" id="profilePhoto" name="profile_photo" accept="image/*" class="hidden">
+                                    <label for="profilePhoto" class="inline-block px-4 py-2 rounded-lg font-semibold text-white cursor-pointer transition-colors" style="background-color: #8B4513;">
+                                        Pilih Foto
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        <span class="file-name-display">No file chosen</span>
+                                    </p>
+                                    <div id="previewWrapper" class="mt-2 hidden"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Bagian Alamat --}}
-                <div class="address-section" style="margin-top:12px;">
-                    <h3 class="address-title">Alamat</h3>
-                    <div class="form-group">
-                        <label for="addressLine">Alamat</label>
-                        <textarea id="addressLine" name="address_line" class="form-control" rows="2" placeholder="Jalan, rt/rw, blok...">{{ old('address_line', $userProfile['address_line'] ?? '') }}</textarea>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div style="flex:1;">
-                            <label for="city">Kota</label>
-                            <input id="city" name="city" value="{{ old('city', $userProfile['city'] ?? '') }}" class="form-control" placeholder="Kota">
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="text-lg font-bold mb-4">Alamat</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="addressLine" class="block text-sm font-semibold mb-2">Alamat Lengkap</label>
+                            <textarea id="addressLine" name="address_line" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                      rows="3" 
+                                      placeholder="Jalan, rt/rw, blok...">{{ old('address_line', $userProfile['address_line'] ?? '') }}</textarea>
                         </div>
-                        <div style="flex:1;">
-                            <label for="province">Provinsi</label>
-                            <input id="province" name="province" value="{{ old('province', $userProfile['province'] ?? '') }}" class="form-control" placeholder="Provinsi">
-                        </div>
-                        <div style="width:160px;">
-                            <label for="postal">Kode Pos</label>
-                            <input id="postal" name="postal_code" value="{{ old('postal_code', $userProfile['postal_code'] ?? '') }}" class="form-control" placeholder="Kode Pos">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="city" class="block text-sm font-semibold mb-2">Kota</label>
+                                <input id="city" name="city" value="{{ old('city', $userProfile['city'] ?? '') }}" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                       placeholder="Kota">
+                            </div>
+                            <div>
+                                <label for="province" class="block text-sm font-semibold mb-2">Provinsi</label>
+                                <input id="province" name="province" value="{{ old('province', $userProfile['province'] ?? '') }}" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                       placeholder="Provinsi">
+                            </div>
+                            <div>
+                                <label for="postal" class="block text-sm font-semibold mb-2">Kode Pos</label>
+                                <input id="postal" name="postal_code" value="{{ old('postal_code', $userProfile['postal_code'] ?? '') }}" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" 
+                                       placeholder="Kode Pos">
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="form-actions" style="display:flex; gap:8px; margin-top:12px;">
-                    <button type="submit" class="btn-save" style="background:#4CAF50; color:white; padding:10px 16px; border-radius:6px; border:0;">Simpan Perubahan</button>
-                    <button type="button" class="btn-close" onclick="window.location='{{ route('customer.profile.index') }}'" style="background:#ccc; color:#111; padding:8px 30px; border-radius:6px; border:0;">Batal</button>
+                <div class="flex gap-4 mt-8">
+                    <button type="submit" class="flex-1 py-3 rounded-lg font-semibold text-white transition-colors" style="background-color: #8B4513;">
+                        Simpan Perubahan
+                    </button>
+                    <button type="button" onclick="window.location='{{ route('customer.profile.index') }}'" 
+                            class="flex-1 py-3 rounded-lg font-semibold bg-gray-400 text-white hover:bg-gray-500 transition-colors">
+                        Batal
+                    </button>
                 </div>
 
             </form>
         </div>
     </div>
+</div>
     <script>
         const fileInput = document.getElementById('profilePhoto');
         const fileNameDisplay = document.querySelector('.file-name-display');

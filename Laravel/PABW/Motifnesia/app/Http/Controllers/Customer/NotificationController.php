@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\OrderStatusHistory;
-use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     /**
-     * Tampilkan halaman notifikasi
+     * Tampilkan halaman notifikasi (order + retur)
      */
     public function index()
     {
@@ -19,16 +18,39 @@ class NotificationController extends Controller
             return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil history status order user
-        // Eager load order + orderItems + deliveryStatus
-        $notifications = OrderStatusHistory::with(['order.orderItems', 'deliveryStatus'])
-            ->whereHas('order', function($query) {
-                $query->where('user_id', Auth::id());
-            })
-            ->orderBy('changed_at', 'desc')
-            ->get()
-            ->groupBy('deliveryStatus.nama_status');
+        // Ambil semua notifikasi user (order dan retur)
+        $notifications = Notification::where('user_id', Auth::id())
+            ->orderBy('id', 'desc')
+            ->paginate(20);
 
         return view('customer.pages.notifications', compact('notifications'));
+    }
+
+    /**
+     * Mark notifikasi sebagai read
+     */
+    public function markAsRead($id)
+    {
+        $notification = Notification::findOrFail($id);
+        
+        if ($notification->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $notification->update(['is_read' => true]);
+
+        return redirect($notification->link);
+    }
+
+    /**
+     * Mark all notifikasi sebagai read
+     */
+    public function markAllAsRead()
+    {
+        Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return redirect()->back()->with('success', 'Semua notifikasi ditandai sebagai sudah dibaca');
     }
 }

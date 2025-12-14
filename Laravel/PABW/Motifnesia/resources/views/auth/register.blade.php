@@ -1,211 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
-    font-weight: 500;
-  }
-
-  body {
-    background-color: burlywood;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  .container {
-    width: 420px;
-    background: white;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 0 20px 1px gray;
-    padding: 20px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .container h1 {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    color: black;
-  }
-
-  .input-box {
-    width: 100%;
-    height: 50px;
-    margin-bottom: 20px;
-    border: 1px solid rgb(0, 0, 0);
-    border-radius: 15px;
-  }
-
-  .input-box input {
-    background-color: transparent;
-  }
-
-  .input-box option {
-    color: black;
-  }
-
-  .input-box input,
-  .input-box option {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    outline: 0;
-    border-radius: 10px;
-    padding-left: 10px;
-    color: black;
-  }
-
-  .input-box input::placeholder {
-    color: rgb(0, 0, 0);
-  }
-
-  .remember-forget {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .remember-forget label {
-    color: black;
-  }
-
-  .remember-forget a {
-    color: black;
-    text-decoration: none;
-    transition: 300ms;
-  }
-
-  .remember-forget a:hover {
-    text-decoration: underline;
-  }
-
-  .btn {
-    background-color: burlywood;
-    width: 100%;
-    height: 50px;
-    border: 0;
-    outline: 0;
-    border-radius: 15px;
-    transition: 300ms;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-
-  .btn a {
-    font-size: 24px;
-    color: black;
-    text-decoration: none;
-  }
-
-  .btn:hover {
-    transform: scale(0.97);
-  }
-
-  .register {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .register a {
-    text-decoration: none;
-    color: black;
-    margin-bottom: 15px;
-  }
-
-  .register p {
-    color: black;
-  }
-
-  .register a:hover {
-    text-decoration: underline;
-  }
-
-  .icon-app {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .texxx {
-    color: black;
-    margin: 50px auto;
-  }
-
-  .icon-app i {
-    font-size: 28px;
-    color: black;
-    padding: 2px;
-    transition: 200ms;
-  }
-
-  .icon-app i:hover {
-    transform: scale(1.1);
-  }
-</style>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign Up</title>
-  <link rel="stylesheet" href="../asstes/css/halamanRegister.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-    crossorigin="anonymous" />
+  <title>Sign Up - Motifnesia</title>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .animate-fade-in-left {
+      animation: fadeInLeft 0.8s ease-out forwards;
+    }
+
+    .animate-fade-in-right {
+      animation: fadeInRight 0.8s ease-out forwards;
+    }
+
+    .animate-slide-in-scale {
+      animation: slideInScale 0.6s ease-out forwards;
+    }
+
+    .transition-link {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+    }
+
+    .transition-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #8B4513;
+      transition: width 0.3s ease;
+    }
+
+    .transition-link:hover::before {
+      width: 100%;
+    }
+
+    body {
+      opacity: 0;
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    .feature-card {
+      animation-delay: 0.2s;
+      opacity: 0;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.3s; }
+    .feature-card:nth-child(2) { animation-delay: 0.4s; }
+    .feature-card:nth-child(3) { animation-delay: 0.5s; }
+    .feature-card:nth-child(4) { animation-delay: 0.6s; }
+  </style>
 </head>
 
-<body>
-  <div class="container">
-    <h1>Sign Up</h1>
+<body class="min-h-screen flex items-center justify-center" style="background: linear-gradient(135deg, #FFF8F0 0%, #FFE4D6 100%);">
+  
+  <!-- Centered Container -->
+  <div class="w-full max-w-6xl mx-4 bg-white rounded-3xl shadow-2xl overflow-hidden flex animate-fade-in-up">
+    
+    <!-- Left Side - Register Form -->
+    <div class="flex-1 flex items-center justify-center px-8 py-12 lg:px-16">
+      <div class="w-full max-w-md">
+        <!-- Logo for mobile -->
+        <div class="lg:hidden text-center mb-8">
+          <h1 class="text-4xl font-bold mb-2" style="color: #8B4513;">Motifnesia</h1>
+        </div>
 
-    <!-- FORM MULAI DI SINI -->
-    <form action="{{ route('auth.register') }}" method="POST">
-      @csrf
-      <div class="input-box">
-        <input type="text" name="username" placeholder="Username" required />
-      </div>
-      <div class="input-box">
-        <input type="text" name="full_name" placeholder="Nama Lengkap (opsional)" />
-      </div>
-      <div class="input-box">
-        <input type="email" name="email" placeholder="Email" required />
-      </div>
-      <div class="input-box">
-        <input type="password" name="password" id="password" placeholder="Password" required />
-      </div>
-      <div class="input-box">
-        <input type="password" name="password_confirmation" id="confirm_password" placeholder="Confirm Password"
-          required />
-      </div>
-      <select class="input-box" name="secret_question" required>
-        <option value="">-- Pilih Pertanyaan Rahasia --</option>
-        <option value="makanan">Apa makanan favoritmu?</option>
-        <option value="hewan">Apa hewan peliharaan pertamamu?</option>
-        <option value="hobi">Apa hobimu?</option>
-      </select>
-      <div class="input-box">
-        <input type="text" name="secret_answer" placeholder="Jawaban" required>
-      </div>
-      <button class="btn" type="submit">Sign Up</button>
-    </form>
+        <div>
+          <h2 class="text-4xl font-bold mb-2" style="color: #8B4513;">Create Account</h2>
+          <p class="text-gray-500 mb-6">Sign up to get started</p>
 
+          <form action="{{ route('auth.register') }}" method="POST" class="space-y-3" id="registerForm">
+            @csrf
+            
+            <div class="grid grid-cols-2 gap-3">
+              <input type="text" name="username" placeholder="Username" required
+                     class="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+              <input type="text" name="full_name" placeholder="Full Name (Optional)"
+                     class="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+            </div>
 
-    <p class="texxx">Sign Up With</p>
-    <div class="icon-app">
-      <a href="#"><i class="fa-brands fa-google"></i></a>
-      <a href="#"><i class="fa-brands fa-facebook"></i></a>
-      <a href="#"><i class="fa-brands fa-github"></i></a>
+            <input type="email" name="email" placeholder="Email" required
+                   class="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="relative">
+                <input type="password" name="password" id="password" placeholder="Password" required
+                       class="w-full px-4 py-2.5 pr-10 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+                <button type="button" onclick="togglePassword('password', 'passwordEye')" 
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors">
+                  <svg id="passwordEye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="relative">
+                <input type="password" name="password_confirmation" id="confirm_password" placeholder="Confirm Password" required
+                       class="w-full px-4 py-2.5 pr-10 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+                <button type="button" onclick="togglePassword('confirm_password', 'confirmEye')" 
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors">
+                  <svg id="confirmEye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <select name="secret_question" required
+                    class="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all">
+              <option value="">Security Question</option>
+              <option value="makanan">Apa makanan favoritmu?</option>
+              <option value="hewan">Apa hewan peliharaan pertamamu?</option>
+              <option value="hobi">Apa hobimu?</option>
+            </select>
+
+            <input type="text" name="secret_answer" placeholder="Answer" required
+                   class="w-full px-4 py-2.5 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" />
+
+            <button type="submit" 
+                    class="w-full py-3 rounded-full font-bold text-white transition-all hover:shadow-lg transform hover:scale-105 mt-4" 
+                    style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);">
+              SIGN UP
+            </button>
+          </form>
+
+          <!-- Mobile Login Link -->
+          <div class="lg:hidden mt-6 text-center">
+            <p class="text-gray-600 text-sm">Sudah punya akun? 
+              <a href="{{ route('auth.login') }}" class="font-bold" style="color: #8B4513;" onclick="handleTransition(event, '{{ route('auth.login') }}')">Login</a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Right Side - Branding/Gradient -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden" style="background: linear-gradient(135deg, #D2691E 0%, #8B4513 100%);">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 right-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+      </div>
+      <div class="relative z-10 flex flex-col justify-center items-center w-full px-12 py-16 text-white text-center">
+        <h1 class="text-5xl font-bold mb-4">Welcome Back!</h1>
+        <p class="text-lg opacity-90 mb-8">Sudah punya akun? Login untuk melanjutkan belanja Anda</p>
+        <a href="{{ route('auth.login') }}" 
+           onclick="handleTransition(event, '{{ route('auth.login') }}')"
+           class="px-8 py-3 border-2 border-white rounded-full font-semibold hover:bg-white hover:text-orange-800 transition-all duration-300">
+          SIGN IN
+        </a>
+      </div>
+    </div>
+
   </div>
+
   <script>
-    const form = document.querySelector("form");
+    const form = document.getElementById("registerForm");
     form.addEventListener("submit", function (e) {
       const pw = document.getElementById("password").value;
       const cpw = document.getElementById("confirm_password").value;
@@ -218,7 +220,32 @@
         e.preventDefault();
       }
     });
+
+    function handleTransition(event, url) {
+      event.preventDefault();
+      document.body.style.animation = 'fadeInUp 0.4s ease-out reverse';
+      setTimeout(() => {
+        window.location.href = url;
+      }, 400);
+    }
+
+    function togglePassword(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+        `;
+      } else {
+        input.type = 'password';
+        icon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+        `;
+      }
+    }
   </script>
 </body>
-
 </html>

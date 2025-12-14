@@ -25,7 +25,7 @@ class PurchaseHistoryController extends Controller
 
         // Get all order items from orders that belong to this user
         // Include all orders regardless of status for history, but only enable review button if status = Sampai (4)
-        $orderItems = OrderItem::with(['produk', 'order.deliveryStatus', 'review'])
+        $orderItems = OrderItem::with(['produk', 'order.deliveryStatus', 'review', 'productReturns'])
             ->whereHas('order', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
@@ -44,6 +44,9 @@ class PurchaseHistoryController extends Controller
             $canReview = ($order->delivery_status_id == 5) && !$review;
             $hasReviewed = $review !== null;
 
+            // Check if this item has a return request
+            $hasReturn = $item->productReturns()->exists();
+
             $historyData[] = [
                 'order_item_id' => $item->id,
                 'order_id' => $order->id,
@@ -59,6 +62,7 @@ class PurchaseHistoryController extends Controller
                 'can_review' => $canReview,
                 'has_reviewed' => $hasReviewed,
                 'status_ulasan' => $hasReviewed ? 'lihat' : ($canReview ? 'beri' : 'disabled'),
+                'has_return' => $hasReturn,
             ];
         }
 

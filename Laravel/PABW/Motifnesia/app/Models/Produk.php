@@ -22,6 +22,7 @@ class Produk extends Model
         'stok',
         'ukuran',
         'kategori',
+        'gender',
         'jenis_lengan',
         'terjual',
         'deskripsi',

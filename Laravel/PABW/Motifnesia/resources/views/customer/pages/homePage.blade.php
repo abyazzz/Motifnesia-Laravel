@@ -20,12 +20,29 @@
             </div>
         </div>
 
-        <div class="page-container">
-            @include('customer.components.sideBar')
-            <div class="product-grid">
-                @foreach ($products as $product)
-                    @include('customer.components.product-card', ['product' => $product])
-                @endforeach
+        {{-- Main Container: 80% Width, Centered, Fixed Sidebar + Scrollable Product Grid --}}
+        <div class="w-[80%] mx-auto flex pt-20 relative">
+            {{-- Fixed Sidebar Kiri (dalam container 80%) --}}
+            <div class="sticky top-20 h-fit max-h-[calc(100vh-6rem)] w-64 shrink-0 overflow-y-auto bg-white rounded-lg" style="box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);">
+                @include('customer.components.sideBar')
+            </div>
+            
+            {{-- Scrollable Product Grid Kanan --}}
+            <div class="flex-1 ml-6">
+                <div class="grid grid-cols-4 gap-5">
+                        @foreach ($products as $product)
+                            @include('customer.components.product-card', ['product' => $product])
+                        @endforeach
+                    </div>
+                    
+                    @if($products->isEmpty())
+                        <div class="text-center py-20">
+                            <div class="text-6xl mb-4">🔍</div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Produk Tidak Ditemukan</h3>
+                            <p class="text-gray-600">Coba ubah filter atau reset pencarian</p>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
 

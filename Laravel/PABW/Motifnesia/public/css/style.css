@@ -41,28 +41,111 @@ aside {
 aside h3 {
   margin-bottom: 1rem;
   color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 2px solid #D2691E;
+  padding-bottom: 8px;
 }
 
-aside select,
-aside button {
+/* Filter Group */
+.filter-group {
+  margin-bottom: 1rem;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.filter-select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.6rem;
   border-radius: 6px;
   border: 1px solid #ddd;
-  margin-top: 0.5rem;
   font-size: 0.9rem;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
 }
 
-aside button {
-  background-color: #5c4033;
+.filter-select:focus {
+  outline: none;
+  border-color: #D2691E;
+}
+
+.filter-btn {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #D2691E;
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
   margin-top: 1rem;
-  transition: 0.3s;
+  transition: all 0.3s;
+  font-size: 15px;
 }
 
-aside button:hover {
-  background-color: #7a523d;
+.filter-btn:hover {
+  background-color: #A0522D;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(210, 105, 30, 0.3);
+}
+
+/* Price Range Filter */
+.price-range {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.price-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.price-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #D2691E;
+}
+
+.price-option label {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+}
+
+.price-option:hover label {
+  color: #D2691E;
+}
+
+/* Clear Filter Button */
+.clear-filter-btn {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  text-align: center;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 1rem;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.clear-filter-btn:hover {
+  background: #e0e0e0;
+  color: #333;
 }
 
 /* Product Section (kanan) */
@@ -153,6 +236,48 @@ aside button:hover {
 }
 
 .product-link { text-decoration: none; color: inherit; }
+
+/* Product Rating */
+.product-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.product-rating .stars {
+  display: flex;
+  gap: 2px;
+}
+
+.product-rating .star {
+  font-size: 16px;
+  color: #ddd;
+}
+
+.product-rating .star.filled {
+  color: #FFD700;
+}
+
+.product-rating .star.half {
+  background: linear-gradient(90deg, #FFD700 50%, #ddd 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.product-rating .rating-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.product-price {
+  font-weight: 600;
+  color: #D2691E;
+  font-size: 16px;
+}
 
 .slideshow {
   height: 260px;

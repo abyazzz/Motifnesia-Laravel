@@ -109,18 +109,23 @@
                         });
                         </script>
                         @endpush
+                    </div>
+                </div>
+
+                {{-- BAGIAN KANAN BAWAH: DESKRIPSI (di foto posisinya di kanan atas) --}}
+                <div class="product-description-section">
+                    <h2>Deskripsi</h2>
+                    <p>{{ $product['deskripsi'] }}</p>
+                    {{-- Tambahkan deskripsi sesuai foto --}}
+                    <p>Batik Mega Mendung khas daerah Indonesia</p>
                 </div>
             </div>
-
-            {{-- DESKRIPSI SECTION - MASIH DALAM CONTAINER YANG SAMA --}}
-            <div class="mt-8 pt-8 border-t">
-                <h2 class="text-2xl font-bold mb-4">Deskripsi</h2>
-                <p class="text-gray-700 leading-relaxed">{{ $product['deskripsi'] }}</p>
-                <p class="text-gray-700 leading-relaxed mt-2">Batik Mega Mendung khas daerah Indonesia</p>
-            </div>
+            
         </div>
+        
+        {{-- Tombol kembali yang kamu hapus sebelumnya, gue kembalikan biar navigasi enak --}}
 
-        {{-- Ulasan Pelanggan Section --}}
+        <!-- Ulasan Pelanggan Section --}
         <div class="max-w-6xl mx-auto bg-white rounded-2xl p-8 mb-8" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
             <h2 class="text-2xl font-bold mb-6">Ulasan Pelanggan</h2>
             
@@ -150,7 +155,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <p class="text-gray-700 text-sm leading-relaxed ml-16">{{ $review->deskripsi_ulasan }}</p>
+                            <p class="text-gray-700 text-sm leading-relaxed ml-16">{{ $review->review_text }}</p>
                         </div>
                     @endforeach
 
@@ -180,7 +185,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p class="text-gray-700 text-sm leading-relaxed ml-16">{{ $review->deskripsi_ulasan }}</p>
+                                    <p class="text-gray-700 text-sm leading-relaxed ml-16">{{ $review->review_text }}</p>
                                 </div>
                             @endforeach
                         </div>

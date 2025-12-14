@@ -1,94 +1,97 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-<div class="checkout-container" style="max-width:900px;margin:40px auto;padding:20px;">
-    <h2 style="font-size:24px;font-weight:600;margin-bottom:30px;">Checkout</h2>
+<div class="min-h-screen pt-20 px-8" style="background-color: #f5f5f5;">
+    <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 pt-3">Checkout</h2>
 
-    {{-- Alamat Pengiriman --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <h3 style="font-size:18px;font-weight:600;margin-bottom:15px;">Alamat</h3>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <input type="radio" name="alamat_radio" id="alamat_default" checked style="width:18px;height:18px;">
-            <label for="alamat_default" style="flex:1;font-size:14px;color:#333;">
-                {{ $defaultAddress }}
-            </label>
-        </div>
-        <input type="hidden" id="alamat_input" value="{{ $defaultAddress }}">
-    </div>
-
-    {{-- Daftar Produk --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        @foreach($products as $product)
-        <div class="product-item" style="display:flex;align-items:center;gap:15px;padding:15px 0;border-bottom:1px solid #eee;">
-            <img src="{{ asset('images/' . $product['gambar']) }}" alt="{{ $product['nama'] }}" 
-                 style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
-            <div style="flex:1;">
-                <h4 style="font-size:16px;font-weight:500;margin-bottom:5px;">{{ $product['nama'] }} - {{ $product['ukuran'] }} - {{ $product['qty'] }}x</h4>
-                <p style="font-size:14px;color:#666;margin:0;">Rp. {{ number_format($product['harga'], 0, ',', '.') }}</p>
-            </div>
-        </div>
-        @endforeach
-    </div>
-
-    {{-- Metode Pengiriman --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <h3 style="font-size:18px;font-weight:600;margin-bottom:15px;">Metode Pengiriman</h3>
-        @foreach($metodePengiriman as $pengiriman)
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <input type="radio" name="metode_pengiriman" value="{{ $pengiriman->id }}" 
-                       data-harga="{{ $pengiriman->harga }}"
-                       id="pengiriman_{{ $pengiriman->id }}" 
-                       style="width:18px;height:18px;"
-                       @if($loop->first) checked @endif>
-                <label for="pengiriman_{{ $pengiriman->id }}" style="font-size:14px;color:#333;">
-                    <strong>{{ $pengiriman->nama_pengiriman }}</strong><br>
-                    <small style="color:#666;">{{ $pengiriman->deskripsi_pengiriman }}</small>
+        {{-- Alamat Pengiriman --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 class="text-xl font-semibold mb-4">Alamat Pengiriman</h3>
+            <div class="flex items-start gap-3">
+                <input type="radio" name="alamat_radio" id="alamat_default" checked class="w-5 h-5 mt-1">
+                <label for="alamat_default" class="flex-1 text-gray-700">
+                    {{ $defaultAddress }}
                 </label>
             </div>
-            <span style="font-size:14px;font-weight:500;">Rp. {{ number_format($pengiriman->harga, 0, ',', '.') }}</span>
+            <input type="hidden" id="alamat_input" value="{{ $defaultAddress }}">
         </div>
-        @endforeach
-    </div>
 
-    {{-- Metode Pembayaran --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <h3 style="font-size:18px;font-weight:600;margin-bottom:15px;">Metode Pembayaran</h3>
-        @foreach($metodePembayaran as $pembayaran)
-        <div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee;">
-            <input type="radio" name="metode_pembayaran" value="{{ $pembayaran->id }}" 
-                   id="pembayaran_{{ $pembayaran->id }}" 
-                   style="width:18px;height:18px;"
-                   @if($loop->first) checked @endif>
-            <label for="pembayaran_{{ $pembayaran->id }}" style="font-size:14px;color:#333;">
-                {{ $pembayaran->nama_pembayaran }}
-            </label>
+        {{-- Daftar Produk --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 class="text-xl font-semibold mb-4">Produk</h3>
+            @foreach($products as $product)
+            <div class="flex items-center gap-4 py-4 border-b last:border-b-0">
+                <img src="{{ asset('images/' . $product['gambar']) }}" alt="{{ $product['nama'] }}" 
+                     class="w-20 h-20 object-cover rounded-lg">
+                <div class="flex-1">
+                    <h4 class="font-semibold mb-1">{{ $product['nama'] }} - {{ $product['ukuran'] }}</h4>
+                    <p class="text-sm text-gray-600">{{ $product['qty'] }}x - Rp {{ number_format($product['harga'], 0, ',', '.') }}</p>
+                </div>
+            </div>
+            @endforeach
         </div>
-        @endforeach
-    </div>
 
-    {{-- Rincian Belanja --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <h3 style="font-size:18px;font-weight:600;margin-bottom:15px;">Rincian belanja</h3>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;">
-            <span>Total harga ({{ count($products) }} barang):</span>
-            <span id="subtotal_display">Rp. {{ number_format($subtotalProduk, 0, ',', '.') }}</span>
+        {{-- Metode Pengiriman --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 class="text-xl font-semibold mb-4">Metode Pengiriman</h3>
+            @foreach($metodePengiriman as $pengiriman)
+            <div class="flex items-center justify-between py-3 border-b last:border-b-0">
+                <div class="flex items-start gap-3">
+                    <input type="radio" name="metode_pengiriman" value="{{ $pengiriman->id }}" 
+                           data-harga="{{ $pengiriman->harga }}"
+                           id="pengiriman_{{ $pengiriman->id }}" 
+                           class="w-5 h-5 mt-1"
+                           @if($loop->first) checked @endif>
+                    <label for="pengiriman_{{ $pengiriman->id }}" class="text-sm">
+                        <strong class="block">{{ $pengiriman->nama_pengiriman }}</strong>
+                        <span class="text-gray-600">{{ $pengiriman->deskripsi_pengiriman }}</span>
+                    </label>
+                </div>
+                <span class="font-semibold">Rp {{ number_format($pengiriman->harga, 0, ',', '.') }}</span>
+            </div>
+            @endforeach
         </div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;">
-            <span>Total Ongkos Kirim:</span>
-            <span id="ongkir_display">Rp. 0</span>
-        </div>
-        <hr style="margin:15px 0;border:none;border-top:1px solid #eee;">
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:16px;font-weight:600;">
-            <span>Total:</span>
-            <span id="total_display">Rp. {{ number_format($subtotalProduk, 0, ',', '.') }}</span>
-        </div>
-    </div>
 
-    {{-- Button Bayar --}}
-    <button id="btn_bayar" style="width:100%;background:#8B4513;color:white;border:none;border-radius:8px;padding:15px;font-size:16px;font-weight:600;cursor:pointer;">
-        Bayar
-    </button>
+        {{-- Metode Pembayaran --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 class="text-xl font-semibold mb-4">Metode Pembayaran</h3>
+            @foreach($metodePembayaran as $pembayaran)
+            <div class="flex items-center gap-3 py-3 border-b last:border-b-0">
+                <input type="radio" name="metode_pembayaran" value="{{ $pembayaran->id }}" 
+                       id="pembayaran_{{ $pembayaran->id }}" 
+                       class="w-5 h-5"
+                       @if($loop->first) checked @endif>
+                <label for="pembayaran_{{ $pembayaran->id }}" class="text-sm">
+                    {{ $pembayaran->nama_pembayaran }}
+                </label>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Rincian Belanja --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 class="text-xl font-semibold mb-4">Rincian Belanja</h3>
+            <div class="flex justify-between py-2 text-sm">
+                <span>Total harga ({{ count($products) }} barang):</span>
+                <span id="subtotal_display">Rp {{ number_format($subtotalProduk, 0, ',', '.') }}</span>
+            </div>
+            <div class="flex justify-between py-2 text-sm">
+                <span>Total Ongkos Kirim:</span>
+                <span id="ongkir_display">Rp 0</span>
+            </div>
+            <hr class="my-4">
+            <div class="flex justify-between py-2 text-lg font-bold">
+                <span>Total:</span>
+                <span id="total_display">Rp {{ number_format($subtotalProduk, 0, ',', '.') }}</span>
+            </div>
+        </div>
+
+        {{-- Button Bayar --}}
+        <button id="btn_bayar" class="w-full py-4 rounded-lg font-semibold text-white transition-colors" style="background-color: #8B4513;">
+            Bayar
+        </button>
+    </div>
 </div>
 @endsection
 

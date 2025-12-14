@@ -74,6 +74,8 @@ Route::group(['prefix' => '', 'as' => 'customer.'], function () {
     Route::delete('/favorites/{id}', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'destroy'])->name('favorites.destroy');
     Route::get('/favorites/{id}/add-to-cart', [\App\Http\Controllers\Customer\ProductFavoriteController::class, 'addToCart'])->name('favorites.addToCart');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
     // ========== REVIEWS (Old - Product Detail Reviews) ==========
     Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
@@ -89,6 +91,12 @@ Route::group(['prefix' => '', 'as' => 'customer.'], function () {
     Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/edit', [UserProfileController::class, 'update'])->name('profile.update');
+
+    // ========== RETURNS (Customer) ==========
+    Route::get('/returns', [\App\Http\Controllers\Customer\ReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns/create/{orderItemId}', [\App\Http\Controllers\Customer\ReturnController::class, 'create'])->name('returns.create');
+    Route::post('/returns', [\App\Http\Controllers\Customer\ReturnController::class, 'store'])->name('returns.store');
+    Route::patch('/returns/{id}/cancel', [\App\Http\Controllers\Customer\ReturnController::class, 'cancel'])->name('returns.cancel');
 });
 
 // ==================== ADMIN GROUP ====================
@@ -118,8 +126,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/product-reviews', [App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('reviews.index');
     // Live Chat Admin
     Route::get('/live-chat', [ChatController::class, 'index'])->name('chat.index');
-    // Returns
+    // Returns (Admin)
     Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
+    Route::post('/returns/{id}/update-status', [ReturnController::class, 'updateStatus'])->name('returns.updateStatus');
+    Route::delete('/returns/{id}', [ReturnController::class, 'destroy'])->name('returns.destroy');
     // Order Status
     Route::get('/order-status', [OrderStatusController::class, 'index'])->name('orders.status');
     Route::post('/order-status/{id}/update', [OrderStatusController::class, 'updateStatus'])->name('orders.status.update');

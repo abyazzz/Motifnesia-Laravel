@@ -1,37 +1,75 @@
-<div class="container_navbarr">
-    <header class="header_container_navbar">
-        <h1>Motifnesia</h1>
-        <section class="header_search_bar">
-            <form action="" >
-                <input type="text" name="header_search_bar" id="header_search_bar">
-                <button type="submit">search</button>
+{{-- Navbar dengan Tailwind - Fixed Top --}}
+<div class="fixed top-0 left-0 right-0 z-50 p-2">
+    <header class="w-full bg-orange-800 shadow-md rounded-[10px]">
+        <div class="flex items-center justify-between h-16 px-6">
+            {{-- Logo --}}
+            <a href="{{ route('customer.home') }}" class="flex items-center gap-2 text-white hover:opacity-90 transition">
+                <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
+                    <svg class="w-5 h-5 text-orange-800" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">Motifnesia</span>
+            </a>
+
+            {{-- Search Bar --}}
+            <form action="{{ route('customer.home') }}" method="GET" class="flex-1 max-w-md mx-8">
+                <div class="flex items-center bg-white rounded-lg overflow-hidden">
+                    <input type="text" 
+                           name="search" 
+                           placeholder="Cari..." 
+                           value="{{ request('search') }}"
+                           class="flex-1 px-4 py-2 text-sm focus:outline-none">
+                    <button type="submit" 
+                            class="px-6 py-2 bg-orange-700 text-white text-sm font-medium hover:bg-orange-900 transition">
+                        Cari
+                    </button>
+                </div>
             </form>
-        </section>
-        <nav>
-            <ul>
-                {{-- GUNAKAN route('home') --}}
-                <li><a href="{{ route('customer.home') }}">Home</a></li> 
-                
-                <li><a href="#">About Us</a></li>
-                <li><a href="{{ route('customer.notifications.index') }}">Notif</a></li>
-                
-                {{-- GUNAKAN route('cart.index') untuk keranjang --}}
-                <li><a href="{{ route('customer.cart.index') }}"><i class="fa-solid fa-cart-shopping"></i></a></li>
-                
-                {{-- GUNAKAN route('favorites.index') untuk favorit (asumsi nama route ini) --}}
-                <li><a href="{{ route('customer.favorites.index') }}"><i class="fa-regular fa-heart"></i></a></li>
-                
-                <li>|</li>
+
+            {{-- Navigation Menu --}}
+            <nav class="flex items-center gap-6">
+                <a href="{{ route('customer.home') }}" 
+                   class="text-white text-sm font-medium hover:text-orange-200 transition">
+                    Home
+                </a>
+                <a href="#" 
+                   class="text-white text-sm font-medium hover:text-orange-200 transition">
+                    Tentang Kami
+                </a>
+                <a href="{{ route('customer.notifications.index') }}" 
+                   class="text-white text-sm font-medium hover:text-orange-200 transition">
+                    Notif
+                </a>
+
+                {{-- Icons --}}
+                <a href="{{ route('customer.cart.index') }}" 
+                   class="text-white text-lg hover:text-orange-200 transition">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+                <a href="{{ route('customer.favorites.index') }}" 
+                   class="text-white text-lg hover:text-orange-200 transition">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+
+                {{-- Divider --}}
+                <div class="h-6 w-px bg-white/30"></div>
+
+                {{-- Profile / Login --}}
                 @if (!Auth::check())
-                    <li><a href="{{ route('auth.login') }}">Login</a></li>
+                    <a href="{{ route('auth.login') }}" 
+                       class="text-white text-sm font-medium hover:text-orange-200 transition">
+                        Login
+                    </a>
                 @else
-                    <li>
-                        <a href="{{ route('customer.profile.index') }}" style="display:inline-block;">
-                            <img src="{{ asset('images/' . (Auth::user()->profile_pic ?? 'placeholder_user.jpg')) }}" alt="Profile" style="width:40px; height:40px; object-fit:cover; border-radius:50%; vertical-align:middle;">
-                        </a>
-                    </li>
+                    <a href="{{ route('customer.profile.index') }}" 
+                       class="block hover:opacity-80 transition">
+                        <img src="{{ asset('images/' . (Auth::user()->profile_pic ?? 'placeholder_user.jpg')) }}" 
+                             alt="Profile" 
+                             class="w-9 h-9 rounded-full object-cover border-2 border-white/50">
+                    </a>
                 @endif
-            </ul>
-        </nav>
+            </nav>
+        </div>
     </header>
 </div>

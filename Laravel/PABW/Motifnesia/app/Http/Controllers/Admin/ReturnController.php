@@ -4,30 +4,83 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ProductReturn;
 
 class ReturnController extends Controller
 {
-    // Data dummy Permintaan Retur
-    private $returns = [
-        ['id' => 1, 'customer_id' => 1001, 'customer_name' => 'Abay', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        ['id' => 2, 'customer_id' => 1002, 'customer_name' => 'Sabdila', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        ['id' => 3, 'customer_id' => 1003, 'customer_name' => 'Rosyadi', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        ['id' => 4, 'customer_id' => 1004, 'customer_name' => 'Fadhil', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        ['id' => 5, 'customer_id' => 1005, 'customer_name' => 'Zaky', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        ['id' => 6, 'customer_id' => 1006, 'customer_name' => 'Salman', 'product_name' => 'Batik Cap Halus', 'reason' => 'Ukuran tidak sesuai', 'status' => 'Pending'],
-        // Duplikasi data untuk mengisi tabel
-        ['id' => 7, 'customer_id' => 1007, 'customer_name' => 'Andi', 'product_name' => 'Batik Cap Halus', 'reason' => 'Barang cacat', 'status' => 'Pending'],
-        ['id' => 8, 'customer_id' => 1008, 'customer_name' => 'Bela', 'product_name' => 'Batik Cap Halus', 'reason' => 'Salah kirim', 'status' => 'Pending'],
-    ];
-
     /**
      * Menampilkan halaman kelola retur.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filter = $request->get('status', 'all');
+
+        $query = ProductReturn::with(['user', 'order', 'orderItem', 'produk']);
+
+        if ($filter !== 'all') {
+            $query->where('status', $filter);
+        }
+
+        $returns = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Count by status
+        $counts = [
+            'all' => ProductReturn::count(),
+            'Pending' => ProductReturn::where('status', 'Pending')->count(),
+            'Disetujui' => ProductReturn::where('status', 'Disetujui')->count(),
+            'Ditolak' => ProductReturn::where('status', 'Ditolak')->count(),
+            'Diproses' => ProductReturn::where('status', 'Diproses')->count(),
+            'Selesai' => ProductReturn::where('status', 'Selesai')->count(),
+        ];
+
         return view('admin.pages.returnManagement', [
-            'returns' => $this->returns,
+            'returns' => $returns,
+            'counts' => $counts,
+            'currentFilter' => $filter,
             'activePage' => 'returns'
         ]);
+    }
+
+    /**
+     * Update status retur
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:Pending,Disetujui,Ditolak,Diproses,Selesai',
+            'admin_note' => 'nullable|string|max:500',
+        ]);
+
+        $return = ProductReturn::findOrFail($id);
+        $return->status = $request->status;
+        
+        if ($request->admin_note) {
+            $return->admin_note = $request->admin_note;
+        }
+
+        // Update refund status jika status Disetujui atau Selesai
+        if ($request->status === 'Disetujui') {
+            $return->refund_status = 'Diproses';
+        } elseif ($request->status === 'Selesai') {
+            $return->refund_status = 'Selesai';
+        }
+
+        $return->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status retur berhasil diupdate.'
+        ]);
+    }
+
+    /**
+     * Delete retur
+     */
+    public function destroy($id)
+    {
+        $return = ProductReturn::findOrFail($id);
+        $return->delete();
+
+        return redirect()->back()->with('success', 'Data retur berhasil dihapus.');
     }
 }

@@ -33,4 +33,9 @@ class OrderItem extends Model
     {
         return $this->hasOne(OrderReview::class, 'order_item_id');
     }
+
+    public function productReturns()
+    {
+        return $this->hasMany(ProductReturn::class, 'order_item_id');
+    }
 }

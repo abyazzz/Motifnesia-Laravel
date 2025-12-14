@@ -1,76 +1,81 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-<div style="max-width:1200px;margin:80px auto;padding:20px;">
-    {{-- Header --}}
-    <div style="background:#D2691E;color:white;padding:15px;border-radius:8px 8px 0 0;text-align:center;">
-        <h1 style="font-size:22px;font-weight:600;margin:0;">Favorite</h1>
-    </div>
 
-    {{-- Success/Error Messages --}}
-    @if(session('success'))
-        <div style="background:#4CAF50;color:white;padding:15px;margin-top:10px;border-radius:6px;">
-            {{ session('success') }}
-        </div>
-    @endif
-    
-    @if(session('error'))
-        <div style="background:#f44336;color:white;padding:15px;margin-top:10px;border-radius:6px;">
-            {{ session('error') }}
-        </div>
-    @endif
+<div class="min-h-screen pt-20 px-8" style="background-color: #f5f5f5;">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 pt-3">Favorite</h2>
 
-    {{-- Favorites List --}}
-    <div style="background:white;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:20px;">
+        {{-- Success/Error Messages --}}
+        @if(session('success'))
+            <div class="bg-green-500 text-white px-6 py-4 rounded-lg mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="bg-red-500 text-white px-6 py-4 rounded-lg mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
         @forelse($favorites as $favorite)
-            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee;padding:20px 0;">
-                {{-- Product Image --}}
-                <div style="display:flex;align-items:center;gap:20px;flex:1;">
-                    <img src="{{ asset($favorite->produk->gambar) }}" 
-                         alt="{{ $favorite->produk->nama_produk }}" 
-                         style="width:100px;height:100px;object-fit:cover;border-radius:8px;">
-                    
-                    <div>
-                        <h3 style="font-size:16px;font-weight:600;color:#333;margin-bottom:5px;">
-                            {{ $favorite->produk->nama_produk }} - M
-                        </h3>
-                        <p style="font-size:14px;color:#D2691E;font-weight:600;">
-                            Rp. {{ number_format($favorite->produk->harga, 0, ',', '.') }}
-                        </p>
-                    </div>
-                </div>
+            <div class="bg-white rounded-lg p-4 mb-3" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div class="flex items-center gap-4">
 
-                {{-- Actions --}}
-                <div style="display:flex;gap:10px;">
-                    {{-- Add to Cart Button --}}
-                    <a href="{{ route('customer.favorites.addToCart', $favorite->id) }}" 
-                       style="background:#D2691E;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-block;">
-                        🛒 Tambah Keranjang
-                    </a>
-                    
-                    {{-- Delete Button --}}
-                    <form action="{{ route('customer.favorites.destroy', $favorite->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" 
-                                onclick="return confirm('Hapus produk dari favorite?')"
-                                style="background:transparent;border:none;font-size:24px;cursor:pointer;padding:10px;">
-                            🗑️
-                        </button>
-                    </form>
+                    <!-- Image -->
+                    <img src="{{ asset($favorite->produk->gambar) }}" 
+                         alt="{{ $favorite->produk->nama_produk }}"
+                         class="w-20 h-20 object-cover rounded-lg">
+
+                    <!-- Product Info -->
+                    <div class="flex-1">
+                        <div class="font-semibold text-lg">
+                            {{ $favorite->produk->nama_produk }}
+                        </div>
+                        <div class="text-gray-600 text-sm mt-1">
+                            Rp {{ number_format($favorite->produk->harga, 0, ',', '.') }}
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center gap-3">
+                        {{-- Add to Cart Button --}}
+                        <a href="{{ route('customer.favorites.addToCart', $favorite->id) }}" 
+                           class="px-6 py-2 rounded-lg font-semibold text-white transition-colors" 
+                           style="background-color: #8B4513;">
+                            Tambah Keranjang
+                        </a>
+                        
+                        {{-- Delete Button --}}
+                        <form action="{{ route('customer.favorites.destroy', $favorite->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                    onclick="return confirm('Hapus produk dari favorite?')"
+                                    class="text-red-500 hover:text-red-700 p-2">
+                                <i class="fa fa-trash text-xl"></i>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         @empty
-            <div style="padding:40px;text-align:center;color:#999;">
-                Belum ada produk favorite
+            <div class="bg-white rounded-lg p-8 text-center" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <p class="text-gray-600 mb-4">Belum ada produk favorite</p>
+                <a href="{{ route('customer.home') }}" class="inline-block px-6 py-2 bg-orange-700 text-white rounded-lg hover:bg-orange-800">
+                    Mulai Belanja
+                </a>
             </div>
         @endforelse
 
         {{-- Button Perbarui Favorite --}}
         @if($favorites->count() > 0)
-            <div style="text-align:center;margin-top:30px;">
+            <div class="text-center mt-6">
                 <a href="{{ route('customer.home') }}" 
-                   style="background:#D2691E;color:white;padding:12px 40px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600;">
+                   class="inline-block px-8 py-3 rounded-lg font-semibold text-white transition-colors"
+                   style="background-color: #8B4513;">
                     ❤️ Perbarui Favorite
                 </a>
             </div>

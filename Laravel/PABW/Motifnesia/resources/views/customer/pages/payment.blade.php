@@ -1,77 +1,78 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-<div class="payment-container" style="max-width:900px;margin:40px auto;padding:20px;">
-    
-    <h2 style="font-size:24px;font-weight:600;margin-bottom:30px;text-align:center;">Transaksi</h2>
+<div class="min-h-screen pt-20 px-8" style="background-color: #f5f5f5;">
+    <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 pt-3 text-center">Transaksi</h2>
 
-    {{-- Header Bayar Sebelum --}}
-    <div class="payment-header" style="background:#FFF8DC;border:1px solid #ddd;border-radius:12px;padding:25px;margin-bottom:20px;text-align:center;">
-        <div style="display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:10px;">
-            <div style="background:#FFD700;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                <i class="fa fa-clock" style="font-size:30px;color:#8B4513;"></i>
+        {{-- Header Bayar Sebelum --}}
+        <div class="bg-yellow-50 rounded-lg p-6 mb-4 text-center" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div class="flex items-center justify-center gap-4 mb-3">
+                <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <i class="fa fa-clock text-3xl" style="color:#8B4513;"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-lg font-semibold">Bayar sebelum</h3>
+                    <p id="deadline_display" class="text-gray-700">{{ $paymentDeadline->format('d F Y H:i') }} WIB</p>
+                </div>
             </div>
-            <div style="text-align:left;">
-                <h3 style="font-size:18px;font-weight:600;margin:0;">Bayar sebelum</h3>
-                <p id="deadline_display" style="font-size:16px;color:#333;margin:0;">{{ $paymentDeadline->format('d F Y H:i') }} WIB</p>
+            <div id="countdown_timer" class="text-2xl font-bold" style="color:#8B4513;">23:59:59</div>
+        </div>
+
+        {{-- Nomor Rekening & Info Payment --}}
+        <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <p class="text-sm text-gray-600 mb-4">{{ $checkoutData['created_at']->format('d F Y H:i') }} WIB</p>
+            <h3 class="text-4xl font-bold tracking-wider mb-6 text-center">8887867867555700</h3>
+        
+            <div class="mt-6">
+                <h4 class="text-lg font-semibold mb-2">Total Tagihan</h4>
+                <p class="text-3xl font-bold mb-3" style="color:#8B4513;">Rp {{ number_format($checkoutData['total_bayar'], 0, ',', '.') }}</p>
+                <a href="#" id="link_detail" class="text-blue-600 underline text-sm cursor-pointer">Lihat Detail</a>
             </div>
         </div>
-        <div id="countdown_timer" style="font-size:20px;color:#8B4513;font-weight:600;">23:59:59</div>
-    </div>
 
-    {{-- Nomor Rekening & Info Payment --}}
-    <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <p style="font-size:14px;color:#333;margin-bottom:15px;">{{ $checkoutData['created_at']->format('d F Y H:i') }} WIB</p>
-        <h3 style="font-size:32px;font-weight:700;letter-spacing:2px;margin-bottom:20px;text-align:center;">8887867867555700</h3>
+        {{-- Detail Hidden (Toggle) --}}
+        <div id="detail_box" class="bg-white rounded-lg p-6 mb-4 hidden" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h4 class="text-lg font-semibold mb-4">Rincian Belanja</h4>
         
-        <div style="margin-top:20px;">
-            <h4 style="font-size:16px;font-weight:600;margin-bottom:10px;">Total Tagihan</h4>
-            <p style="font-size:24px;font-weight:700;color:#8B4513;">Rp. {{ number_format($checkoutData['total_bayar'], 0, ',', '.') }}</p>
-            <a href="#" id="link_detail" style="font-size:14px;color:#007bff;text-decoration:underline;cursor:pointer;">Lihat Detail</a>
+            @foreach($checkoutData['products'] as $product)
+            <div class="flex justify-between py-2 text-sm border-b">
+                <span>{{ $product['nama'] }} ({{ $product['ukuran'] }}) x{{ $product['qty'] }}</span>
+                <span>Rp {{ number_format($product['subtotal'], 0, ',', '.') }}</span>
+            </div>
+            @endforeach
+            
+            <div class="flex justify-between py-2 text-sm">
+                <span>Subtotal Produk:</span>
+                <span>Rp {{ number_format($checkoutData['subtotal_produk'], 0, ',', '.') }}</span>
+            </div>
+            <div class="flex justify-between py-2 text-sm">
+                <span>Ongkos Kirim ({{ $checkoutData['metode_pengiriman']['nama'] }}):</span>
+                <span>Rp {{ number_format($checkoutData['total_ongkir'], 0, ',', '.') }}</span>
+            </div>
+            <hr class="my-3">
+            <div class="flex justify-between py-2 text-lg font-bold">
+                <span>Total:</span>
+                <span>Rp {{ number_format($checkoutData['total_bayar'], 0, ',', '.') }}</span>
+            </div>
         </div>
+
+        {{-- Form Input Nomor Pembayaran --}}
+        <form id="form_payment" action="{{ route('customer.payment.store') }}" method="POST" onsubmit="console.log('Form submitting...'); return true;">
+            @csrf
+            <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <label for="payment_number" class="block text-sm font-semibold mb-3">Masukkan Nomor Pembayaran</label>
+                <input type="text" name="payment_number" id="payment_number" placeholder="Contoh: 8887867867555700" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg" required>
+            </div>
+
+            {{-- Button Bayar --}}
+            <button type="submit" class="w-full py-4 rounded-lg font-semibold text-white transition-colors" style="background-color: #8B4513;">
+                Konfirmasi Pembayaran
+            </button>
+        </form>
+
     </div>
-
-    {{-- Detail Hidden (Toggle) --}}
-    <div id="detail_box" class="section-box" style="display:none;background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <h4 style="font-size:16px;font-weight:600;margin-bottom:15px;">Rincian Belanja</h4>
-        
-        @foreach($checkoutData['products'] as $product)
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px solid #eee;">
-            <span>{{ $product['nama'] }} ({{ $product['ukuran'] }}) x{{ $product['qty'] }}</span>
-            <span>Rp. {{ number_format($product['subtotal'], 0, ',', '.') }}</span>
-        </div>
-        @endforeach
-        
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;">
-            <span>Subtotal Produk:</span>
-            <span>Rp. {{ number_format($checkoutData['subtotal_produk'], 0, ',', '.') }}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;">
-            <span>Ongkos Kirim ({{ $checkoutData['metode_pengiriman']['nama'] }}):</span>
-            <span>Rp. {{ number_format($checkoutData['total_ongkir'], 0, ',', '.') }}</span>
-        </div>
-        <hr style="margin:10px 0;">
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:16px;font-weight:600;">
-            <span>Total:</span>
-            <span>Rp. {{ number_format($checkoutData['total_bayar'], 0, ',', '.') }}</span>
-        </div>
-    </div>
-
-    {{-- Form Input Nomor Pembayaran --}}
-    <form id="form_payment" action="{{ route('customer.payment.store') }}" method="POST" onsubmit="console.log('Form submitting...'); return true;">
-        @csrf
-        <div class="section-box" style="background:white;border:1px solid #ddd;border-radius:12px;padding:20px;margin-bottom:20px;">
-            <label for="payment_number" style="font-size:14px;font-weight:600;margin-bottom:10px;display:block;">Masukkan Nomor Pembayaran</label>
-            <input type="text" name="payment_number" id="payment_number" placeholder="Contoh: 8887867867555700" 
-                   style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;" required>
-        </div>
-
-        {{-- Button Bayar --}}
-        <button type="submit" style="width:100%;background:#8B4513;color:white;border:none;border-radius:8px;padding:15px;font-size:16px;font-weight:600;cursor:pointer;">
-            Konfirmasi Pembayaran
-        </button>
-    </form>
-
 </div>
 
 {{-- Modal Success --}}

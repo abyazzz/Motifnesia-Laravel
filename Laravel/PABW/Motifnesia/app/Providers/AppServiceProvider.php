@@ -6,9 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\Order;
 use App\Models\OrderReview;
 use App\Models\Produk;
+use App\Models\ProductReturn;
 use App\Observers\OrderObserver;
 use App\Observers\ReviewObserver;
 use App\Observers\ProductObserver;
+use App\Observers\ProductReturnObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         OrderReview::observe(ReviewObserver::class);
         Produk::observe(ProductObserver::class);
+        ProductReturn::observe(ProductReturnObserver::class);
     }
 }
