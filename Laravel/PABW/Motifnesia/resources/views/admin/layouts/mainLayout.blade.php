@@ -14,11 +14,11 @@
     {{-- Jika perlu, tambahkan library CSS seperti Bootstrap di sini --}}
 </head>
 <body style="margin: 0;">
-    <div class="admin-layout admin-container">
+    <div class="admin-container">
         {{-- TERUSKAN $activePage KE SIDEBAR --}}
         @include('admin.components.sidebar', ['activePage' => $activePage ?? 'default'])
 
-        <div class="main-content" style="flex-grow: 1; padding: 0;">
+        <div class="main-content">
             {{-- Header/Navbar (yang ada search bar dan profil) --}}
             @include('admin.components.navbar') 
 

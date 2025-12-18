@@ -102,7 +102,7 @@ class AdminProductController extends Controller
             'harga_diskon'  => null,
         ]);
 
-        return redirect()->route('admin.daftar-produk');
+        return redirect()->route('admin.product.management.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // =========================

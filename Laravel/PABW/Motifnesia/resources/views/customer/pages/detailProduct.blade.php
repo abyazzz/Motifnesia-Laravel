@@ -7,7 +7,7 @@
             <div class="flex gap-8"> 
                 {{-- BAGIAN KIRI: GAMBAR PRODUK --}}
                 <div class="w-1/2 flex-shrink-0">
-                    <img src="{{ asset('images/' . $product['gambar']) }}" alt="{{ $product['nama'] }}" class="w-full h-auto rounded-xl" style="box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <img src="{{ asset($product['gambar']) }}" alt="{{ $product['nama'] }}" class="w-full h-auto rounded-xl" style="box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                 </div>
 
                 {{-- BAGIAN KANAN: INFORMASI PRODUK --}}

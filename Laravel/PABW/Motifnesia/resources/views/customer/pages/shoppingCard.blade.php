@@ -30,7 +30,7 @@
 
                     <!-- Image -->
                     @if($item->produk)
-                    <img src="{{ asset('images/'.$item->produk->gambar) }}" 
+                    <img src="{{ asset($item->produk->gambar) }}" 
                          alt="{{ $item->produk->nama_produk }}"
                          class="w-20 h-20 object-cover rounded-lg">
                     @else
@@ -157,27 +157,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 qty: qty
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            return response.json().then(data => ({
+                status: response.status,
+                ok: response.ok,
+                data: data
+            }));
+        })
+        .then(result => {
+            console.log('Result:', result);
+            if (result.ok && result.data.success) {
                 // Update tampilan qty dan data-qty di card
                 const card = btnElement.closest('.item-card');
-                const parent = btnElement.closest('.d-flex');
-                parent.querySelector('.qty-display').value = qty;
-                parent.querySelectorAll('button').forEach(b => {
-                    b.setAttribute('data-qty', qty);
-                });
-                card.setAttribute('data-qty', qty);
+                const qtyControls = btnElement.closest('.flex.items-center.gap-2');
+                
+                if (qtyControls) {
+                    const qtyDisplay = qtyControls.querySelector('.qty-display');
+                    if (qtyDisplay) {
+                        qtyDisplay.value = qty;
+                    }
+                    
+                    // Update data-qty di button +/-
+                    qtyControls.querySelectorAll('button').forEach(b => {
+                        b.setAttribute('data-qty', qty);
+                    });
+                }
+                
+                // Update data-qty di card
+                if (card) {
+                    card.setAttribute('data-qty', qty);
+                    
+                    // Update subtotal untuk item ini
+                    const price = parseInt(card.getAttribute('data-price'));
+                    const subtotal = price * qty;
+                    const subtotalElement = card.querySelector('.w-32.text-right .font-bold');
+                    if (subtotalElement) {
+                        subtotalElement.textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+                    }
+                }
                 
                 // Recalculate total tanpa reload
                 calculateTotal();
             } else {
-                alert(data.message || 'Gagal update qty');
+                alert(result.data.message || 'Gagal update qty');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan');
+            alert('Terjadi kesalahan: ' + error.message);
         });
     }
 

@@ -1,59 +1,57 @@
 @php
-    // Definisikan variabel activePage di sini untuk dummy, 
-    // dalam implementasi nyata, ini harus di-pass dari Controller/View
-    // Contoh: 'customers', 'product-management', 'sales-report', dll.
     $activePage = $activePage ?? 'customers'; 
-
-    // Daftar link dan nama route-nya
     $navLinks = [
-        'Daftar Pelanggan'      => ['route' => 'admin.customers.index', 'page' => 'customers'],
-        'Manajemen Produk'      => ['route' => 'admin.product.management.index', 'page' => 'product-management'],
-        'Ulasan Produk'         => ['route' => 'admin.reviews.index', 'page' => 'reviews'],
-        'Kelola Promo'          => ['route' => '#', 'page' => 'promo'], // Belum dibuat route-nya
-        'Laporan Penjualan'     => ['route' => 'admin.reports.sales', 'page' => 'sales-report'],
-        'Kelola Retur'          => ['route' => 'admin.returns.index', 'page' => 'returns'],
-        'Status Pengiriman'     => ['route' => 'admin.orders.status', 'page' => 'order-status'],
-        'Live Chat Support'     => ['route' => 'admin.chat.index', 'page' => 'live-chat'],
-        'Tambah Produk'         => ['route' => 'admin.products.create', 'page' => 'products-create'],
-        'Daftar Produk'         => ['route' => 'admin.daftar-produk', 'page' => 'daftar-produk'], // Dari route pertama
-        'Notifikasi Sistem'     => ['route' => 'admin.notifications.index', 'page' => 'notification'],
-        'Kelola Konten Statis'  => ['route' => 'admin.konten.index', 'page' => 'konten-statis'],
+        'Daftar Pelanggan'      => ['route' => 'admin.customers.index', 'page' => 'customers', 'icon' => '👥'],
+        'Manajemen Produk'      => ['route' => 'admin.product.management.index', 'page' => 'product-management', 'icon' => '📦'],
+        'Ulasan Produk'         => ['route' => 'admin.reviews.index', 'page' => 'reviews', 'icon' => '⭐'],
+        'Kelola Promo'          => ['route' => '#', 'page' => 'promo', 'icon' => '🎁'],
+        'Laporan Penjualan'     => ['route' => 'admin.reports.sales', 'page' => 'sales-report', 'icon' => '📊'],
+        'Kelola Retur'          => ['route' => 'admin.returns.index', 'page' => 'returns', 'icon' => '↩️'],
+        'Status Pengiriman'     => ['route' => 'admin.orders.status', 'page' => 'order-status', 'icon' => '🚚'],
+        'Live Chat Support'     => ['route' => 'admin.chat.index', 'page' => 'live-chat', 'icon' => '💬'],
+        'Notifikasi Sistem'     => ['route' => 'admin.notifications.index', 'page' => 'notification', 'icon' => '🔔'],
+        'Kelola Konten Statis'  => ['route' => 'admin.konten.index', 'page' => 'konten-statis', 'icon' => '⚙️'],
     ];
 @endphp
 
-<div style="width: 250px; background-color: #FFF4E0; height: 100vh; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
-    <div>
+<div class="sidebar bg-gradient-to-b from-amber-50 to-orange-50 min-h-screen shadow-lg border-r border-amber-200">
+    <div class="px-4 py-6">
         {{-- Logo dan Nama --}}
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
-            {{-- Asumsi lu udah punya 'images/logo.png' --}}
-            <img src="{{ asset('images/logo.png') }}" alt="Motifnesia Logo" style="width: 40px;"> 
-            <h3 style="font-weight: bold; color: #4A4A4A;">Motifnesia</h3>
+        <div class="flex items-center gap-3 mb-8 pb-4 border-b-2 border-amber-200">
+            <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-700 rounded-lg flex items-center justify-center shadow-md">
+                <span class="text-white font-bold text-xl">M</span>
+            </div>
+            <h3 class="text-xl font-bold bg-gradient-to-r from-amber-800 to-orange-800 bg-clip-text text-transparent">Motifnesia</h3>
         </div>
 
         {{-- Daftar Menu --}}
-        <ul style="list-style: none; padding: 0;">
+        <nav class="space-y-1 mb-[50px]">
             @foreach ($navLinks as $title => $link)
                 @php
                     $isActive = $activePage === $link['page'];
-                    $bgColor = $isActive ? '#A47C48' : 'transparent';
-                    $textColor = $isActive ? 'white' : '#5A3E2B';
                 @endphp
-                <li>
-                    <a href="{{ $link['route'] == '#' ? '#' : route($link['route']) }}" 
-                       style="display: block; padding: 10px; background-color: {{ $bgColor }}; color: {{ $textColor }}; border-radius: 6px; margin-bottom: 5px; font-weight: 500; text-decoration: none;">
-                        {{ $title }}
-                    </a>
-                </li>
+                <a href="{{ $link['route'] == '#' ? '#' : route($link['route']) }}" 
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group
+                          {{ $isActive 
+                             ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md' 
+                             : 'text-amber-900 hover:bg-amber-100 hover:shadow-sm' }}">
+                    <span class="text-xl {{ $isActive ? 'scale-110' : 'group-hover:scale-110' }} transition-transform">
+                        {{ $link['icon'] }}
+                    </span>
+                    <span class="font-medium text-sm">{{ $title }}</span>
+                </a>
             @endforeach
-        </ul>
-    </div>
+        </nav>
 
-    {{-- Tombol Logout --}}
-    <a href="{{ route('auth.logout') }}" 
-       style="background-color: #A47C48; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none;">
-        <span style="font-size: 16px;">
-            &#128274; {{-- Unicode lock icon --}}
-        </span>
-        Logout
-    </a>
+        {{-- Tombol Logout --}}
+        <div class="border-t border-amber-200 pt-4">
+            <a href="{{ route('auth.logout') }}" 
+               class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
 </div>

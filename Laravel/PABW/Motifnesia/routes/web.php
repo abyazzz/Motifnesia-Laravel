@@ -124,6 +124,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     // Product Reviews (admin view)
     Route::get('/product-reviews', [App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('reviews.index');
+    Route::get('/product-reviews/{id}', [App\Http\Controllers\Admin\ProductReviewController::class, 'show'])->name('reviews.show');
     // Live Chat Admin
     Route::get('/live-chat', [ChatController::class, 'index'])->name('chat.index');
     // Returns (Admin)

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Order;
 use App\Models\Notification;
+use App\Models\Produk;
 
 class OrderObserver
 {
@@ -33,6 +34,15 @@ class OrderObserver
             'priority' => 'important',
             'is_read' => false,
         ]);
+
+        // Kurangi stok produk saat order dibuat (payment sukses)
+        $order->load('orderItems');
+        foreach ($order->orderItems as $item) {
+            $produk = Produk::find($item->produk_id);
+            if ($produk) {
+                $produk->decrement('stok', $item->qty);
+            }
+        }
     }
 
     /**
@@ -79,6 +89,17 @@ class OrderObserver
                 'priority' => $priority,
                 'is_read' => false,
             ]);
+
+            // Jika status berubah menjadi "Sampai", update kolom terjual
+            if (strtolower($statusName) === 'sampai') {
+                $order->load('orderItems');
+                foreach ($order->orderItems as $item) {
+                    $produk = Produk::find($item->produk_id);
+                    if ($produk) {
+                        $produk->increment('terjual', $item->qty);
+                    }
+                }
+            }
         }
     }
 }

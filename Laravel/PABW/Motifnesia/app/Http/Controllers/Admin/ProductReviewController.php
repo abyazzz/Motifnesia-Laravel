@@ -57,10 +57,46 @@ class ProductReviewController extends Controller
             ];
         });
 
-        return view('admin.pages.productReviews', [
+        return view('admin.pages.reviewModeration', [
             'products' => $products,
             'activePage' => 'reviews',
             'currentFilter' => $filter
+        ]);
+    }
+
+    /**
+     * Menampilkan detail ulasan untuk produk tertentu.
+     */
+    public function show($id)
+    {
+        $product = Produk::with(['reviews.user', 'reviews.order'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->findOrFail($id);
+
+        $productData = [
+            'id' => $product->id,
+            'nama_produk' => $product->nama_produk,
+            'gambar' => $product->gambar,
+            'sku' => $product->sku,
+            'average_rating' => round($product->reviews_avg_rating ?? 0, 1),
+            'total_reviews' => $product->reviews_count ?? 0,
+            'reviews' => $product->reviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'customer_name' => $review->user->full_name ?? $review->user->name ?? 'Guest',
+                    'customer_email' => $review->user->email ?? 'N/A',
+                    'rating' => $review->rating,
+                    'comment' => $review->deskripsi_ulasan,
+                    'date' => $review->created_at->format('d M Y'),
+                    'order_number' => $review->order->order_number ?? '-',
+                ];
+            })
+        ];
+
+        return view('admin.pages.productReviewDetail', [
+            'product' => $productData,
+            'activePage' => 'reviews'
         ]);
     }
 }

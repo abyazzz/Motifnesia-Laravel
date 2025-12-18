@@ -3,108 +3,162 @@
 @section('title', $formTitle)
 
 @section('content')
-    {{-- Link CSS spesifik untuk halaman ini --}}
-    <link rel="stylesheet" href="{{ asset('css/admin/addProduct.css') }}">
+    <div class="p-6 max-w-7xl">
+        {{-- Header with Back Button --}}
+        <div class="mb-6 flex items-center gap-4">
+            <a href="{{ route('admin.product.management.index') }}" 
+               class="flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Kembali ke Manajemen Produk
+            </a>
+        </div>
 
-    <div class="add-product-container">
-        <header class="form-header">
-            <h1 class="header-title">{{ $formTitle }}</h1>
-            <div class="search-box">
-                <input type="text" placeholder="Cari..." class="search-input">
-                <button class="search-button" type="button">🔍</button>
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {{-- Left Column: Form Fields --}}
+                <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="space-y-4">
+                    
+                        {{-- Nama Produk --}}
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Produk</label>
+                            <input type="text" id="name" name="name" value="{{ $product['name'] }}" required
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Harga --}}
+                            <div>
+                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga</label>
+                                <input type="number" id="price" name="price" value="{{ $product['price'] }}" step="0.01" min="0"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+
+                            {{-- Stok --}}
+                            <div>
+                                <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Stok</label>
+                                <input type="number" id="stock" name="stock" value="{{ $product['stock'] }}"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Material --}}
+                            <div>
+                                <label for="material" class="block text-sm font-semibold text-gray-700 mb-2">Material</label>
+                                <select id="material" name="material"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">-- Pilih Material --</option>
+                                    <option value="Katun" {{ isset($product['material']) && $product['material'] == 'Katun' ? 'selected' : '' }}>Katun</option>
+                                    <option value="Sutra" {{ isset($product['material']) && $product['material'] == 'Sutra' ? 'selected' : '' }}>Sutra</option>
+                                </select>
+                            </div>
+
+                            {{-- Proses --}}
+                            <div>
+                                <label for="process" class="block text-sm font-semibold text-gray-700 mb-2">Proses</label>
+                                <select id="process" name="process"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">-- Pilih Proses --</option>
+                                    <option value="Press" {{ isset($product['process']) && $product['process'] == 'Press' ? 'selected' : '' }}>Press</option>
+                                    <option value="Tulis" {{ isset($product['process']) && $product['process'] == 'Tulis' ? 'selected' : '' }}>Tulis</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- SKU --}}
+                            <div>
+                                <label for="sku" class="block text-sm font-semibold text-gray-700 mb-2">SKU</label>
+                                <input type="text" id="sku" name="sku" value="{{ $product['sku'] }}"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+
+                            {{-- Kategori --}}
+                            <div>
+                                <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
+                                <select id="category" name="category"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="Pria" {{ isset($product['category']) && $product['category'] == 'Pria' ? 'selected' : '' }}>Pria</option>
+                                    <option value="Wanita" {{ isset($product['category']) && $product['category'] == 'Wanita' ? 'selected' : '' }}>Wanita</option>
+                                    <option value="Anak-anak" {{ isset($product['category']) && $product['category'] == 'Anak-anak' ? 'selected' : '' }}>Anak-anak</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Ukuran --}}
+                            <div>
+                                <label for="ukuran" class="block text-sm font-semibold text-gray-700 mb-2">Ukuran</label>
+                                <select id="ukuran" name="ukuran"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">-- Pilih Ukuran --</option>
+                                    <option value="S" {{ isset($product['ukuran']) && $product['ukuran'] == 'S' ? 'selected' : '' }}>S</option>
+                                    <option value="M" {{ isset($product['ukuran']) && $product['ukuran'] == 'M' ? 'selected' : '' }}>M</option>
+                                    <option value="L" {{ isset($product['ukuran']) && $product['ukuran'] == 'L' ? 'selected' : '' }}>L</option>
+                                    <option value="XL" {{ isset($product['ukuran']) && $product['ukuran'] == 'XL' ? 'selected' : '' }}>XL</option>
+                                </select>
+                            </div>
+
+                            {{-- Jenis Lengan --}}
+                            <div>
+                                <label for="jenis_lengan" class="block text-sm font-semibold text-gray-700 mb-2">Jenis Lengan</label>
+                                <select id="jenis_lengan" name="jenis_lengan"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">-- Pilih Jenis Lengan --</option>
+                                    <option value="Pendek" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Pendek' ? 'selected' : '' }}>Pendek</option>
+                                    <option value="Panjang" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Panjang' ? 'selected' : '' }}>Panjang</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Tags --}}
+                        <div>
+                            <label for="tags" class="block text-sm font-semibold text-gray-700 mb-2">Tags</label>
+                            <input type="text" id="tags" name="tags" value="{{ $product['tags'] }}"
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                   placeholder="Contoh: batik, modern, casual">
+                        </div>
+
+                        {{-- Deskripsi --}}
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Produk</label>
+                            <textarea id="description" name="description" rows="4"
+                                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">{{ $product['description'] }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                {{-- Right Column: Image Upload --}}
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Foto Produk</h3>
+                        <div class="mb-4">
+                            <img src="{{ $product['image'] }}" alt="Pratinjau Produk" 
+                                 class="w-full h-64 object-cover rounded-lg border-2 border-gray-200" id="productPreview">
+                        </div>
+                        <input type="file" name="image" id="elect-image-button" accept="image/*"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                        <p class="text-xs text-gray-500 mt-2">Format: JPG, PNG. Max: 2MB</p>
+                        
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <button type="submit" 
+                                    class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Tambah Produk
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </header>
-
-        <main class="product-form-wrapper">
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="product-form">
-                @csrf
-                
-                {{-- Kiri: Kolom Input Form --}}
-                <div class="form-column form-left">
-                    
-                    {{-- Nama Produk --}}
-                    <label for="name">Nama Produk</label>
-                    <input type="text" id="name" name="name" value="{{ $product['name'] }}" required>
-
-                    {{-- Harga --}}
-                    <label for="price">Harga</label>
-                    <input type="number" id="price" name="price" value="{{ $product['price'] }}" step="0.01" min="0">
-
-                    {{-- Material --}}
-                    <label for="material">Material</label>
-                    <select id="material" name="material">
-                        <option value="">-- Pilih Material --</option>
-                        <option value="Katun" {{ isset($product['material']) && $product['material'] == 'Katun' ? 'selected' : '' }}>Katun</option>
-                        <option value="Sutra" {{ isset($product['material']) && $product['material'] == 'Sutra' ? 'selected' : '' }}>Sutra</option>
-                    </select>
-
-                    {{-- Proses --}}
-                    <label for="process">Proses</label>
-                    <select id="process" name="process">
-                        <option value="">-- Pilih Proses --</option>
-                        <option value="Press" {{ isset($product['process']) && $product['process'] == 'Press' ? 'selected' : '' }}>Press</option>
-                        <option value="Tulis" {{ isset($product['process']) && $product['process'] == 'Tulis' ? 'selected' : '' }}>Tulis</option>
-                    </select>
-                    
-                    {{-- SKU --}}
-                    <label for="sku">SKU</label>
-                    <input type="text" id="sku" name="sku" value="{{ $product['sku'] }}">
-
-                    {{-- Kategori --}}
-                    <label for="category">Kategori</label>
-                    <select id="category" name="category">
-                        <option value="">-- Pilih Kategori --</option>
-                        <option value="Pria" {{ isset($product['category']) && $product['category'] == 'Pria' ? 'selected' : '' }}>Pria</option>
-                        <option value="Wanita" {{ isset($product['category']) && $product['category'] == 'Wanita' ? 'selected' : '' }}>Wanita</option>
-                        <option value="Anak-anak" {{ isset($product['category']) && $product['category'] == 'Anak-anak' ? 'selected' : '' }}>Anak-anak</option>
-                    </select>
-                    
-                    {{-- Tags --}}
-                    <label for="tags">Tags</label>
-                    <input type="text" id="tags" name="tags" value="{{ $product['tags'] }}">
-
-                    {{-- Deskripsi (Tambahan) --}}
-                    <label for="description">Deskripsi Produk</label>
-                    <textarea id="description" name="description" rows="3" style="width:100%;">{{ $product['description'] }}</textarea>
-
-                    {{-- Ukuran --}}
-                    <label for="ukuran">Ukuran</label>
-                    <select id="ukuran" name="ukuran">
-                        <option value="">-- Pilih Ukuran --</option>
-                        <option value="S" {{ isset($product['ukuran']) && $product['ukuran'] == 'S' ? 'selected' : '' }}>S</option>
-                        <option value="M" {{ isset($product['ukuran']) && $product['ukuran'] == 'M' ? 'selected' : '' }}>M</option>
-                        <option value="XL" {{ isset($product['ukuran']) && $product['ukuran'] == 'XL' ? 'selected' : '' }}>XL</option>
-                    </select>
-
-                    {{-- Jenis Lengan --}}
-                    <label for="jenis_lengan">Jenis Lengan</label>
-                    <select id="jenis_lengan" name="jenis_lengan">
-                        <option value="">-- Pilih Jenis Lengan --</option>
-                        <option value="Pendek" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Pendek' ? 'selected' : '' }}>Pendek</option>
-                        <option value="Panjang" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Panjang' ? 'selected' : '' }}>Panjang</option>
-                    </select>
-
-                    {{-- Stok --}}
-                    <label for="stock">Stok</label>
-                    <input type="text" id="stock" name="stock" value="{{ $product['stock'] }}">
-                    
-                </div>
-                
-                {{-- Kanan: Foto dan Tombol Aksi --}}
-                <div class="form-column form-right">
-                    <div class="image-preview-box">
-                        <img src="{{ $product['image'] }}" alt="Pratinjau Produk" class="product-image-preview" id="productPreview">
-
-                        <input type="file" name="image" id="elect-image-button" class="elect-image-button" accept="image/*">
-                    </div>
-
-                    <div class="action-buttons-area">
-                        {{-- Nama tombol di screenshot: Simpan Perubahan --}}
-                        <button type="submit" class="save-button">Tambah Produk</button>
-                    </div>
-                </div>
-            </form>
-        </main>
+        </form>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function(){

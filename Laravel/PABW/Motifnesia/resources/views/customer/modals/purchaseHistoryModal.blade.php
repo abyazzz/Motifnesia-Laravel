@@ -168,7 +168,7 @@
         <div class="modal-body">
             @forelse ($purchaseHistory as $item)
                 <div class="history-item">
-                    <img src="{{ asset('images/' . $item['gambar']) }}" alt="{{ $item['nama'] }}" class="product-thumb-hist">
+                    <img src="{{ asset($item['gambar']) }}" alt="{{ $item['nama'] }}" class="product-thumb-hist">
                     
                     <div class="product-info-hist">
                         <span class="product-name-hist">{{ $item['nama'] }}</span>

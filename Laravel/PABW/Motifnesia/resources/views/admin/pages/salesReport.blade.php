@@ -3,99 +3,112 @@
 @section('title', 'Laporan Penjualan')
 
 @section('content')
-    {{-- Link CSS spesifik untuk halaman ini --}}
-    <link rel="stylesheet" href="{{ asset('css/admin/salesReport.css') }}">
-
-    <div class="sales-report-container">
-        <header class="report-header">
-            <h1 class="header-title">Laporan Penjualan</h1>
+    <div class="p-6 max-w-7xl">
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-6">
+            <div></div>
             
             {{-- Filter dan Export --}}
-            <div class="header-actions">
-                <select id="period-filter" class="period-dropdown" onchange="applyPeriodFilter(this.value)">
+            <div class="flex items-center gap-3">
+                <select id="period-filter" 
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-sm"
+                        onchange="applyPeriodFilter(this.value)">
                     <option value="today" {{ $currentPeriod == 'today' ? 'selected' : '' }}>Hari Ini</option>
                     <option value="7" {{ $currentPeriod == '7' ? 'selected' : '' }}>7 Hari Terakhir</option>
                     <option value="30" {{ $currentPeriod == '30' ? 'selected' : '' }}>30 Hari Terakhir</option>
                     <option value="month" {{ $currentPeriod == 'month' ? 'selected' : '' }}>Bulan Ini</option>
                 </select>
                 
-                <a href="{{ route('admin.reports.export') }}?period={{ $currentPeriod }}" class="btn-export">
-                    📥 Export Excel
+                <a href="{{ route('admin.reports.export') }}?period={{ $currentPeriod }}" 
+                   class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Export Excel
                 </a>
             </div>
-        </header>
+        </div>
 
         {{-- Metrics Cards --}}
-        <div class="metrics-container">
-            <div class="metric-card">
-                <div class="metric-icon">💰</div>
-                <div class="metric-content">
-                    <div class="metric-label">Total Revenue</div>
-                    <div class="metric-value">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">💰</div>
+                    <div class="flex-1">
+                        <div class="text-xs text-gray-600 mb-1">Total Revenue</div>
+                        <div class="text-lg font-bold text-gray-800">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="metric-card">
-                <div class="metric-icon">🛒</div>
-                <div class="metric-content">
-                    <div class="metric-label">Total Orders</div>
-                    <div class="metric-value">{{ $totalOrders }}</div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">🛒</div>
+                    <div class="flex-1">
+                        <div class="text-xs text-gray-600 mb-1">Total Orders</div>
+                        <div class="text-lg font-bold text-gray-800">{{ $totalOrders }}</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="metric-card">
-                <div class="metric-icon">📦</div>
-                <div class="metric-content">
-                    <div class="metric-label">Products Sold</div>
-                    <div class="metric-value">{{ $totalProductsSold }}</div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">📦</div>
+                    <div class="flex-1">
+                        <div class="text-xs text-gray-600 mb-1">Products Sold</div>
+                        <div class="text-lg font-bold text-gray-800">{{ $totalProductsSold }}</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="metric-card">
-                <div class="metric-icon">📊</div>
-                <div class="metric-content">
-                    <div class="metric-label">Avg Order Value</div>
-                    <div class="metric-value">Rp {{ number_format($averageOrderValue, 0, ',', '.') }}</div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">📊</div>
+                    <div class="flex-1">
+                        <div class="text-xs text-gray-600 mb-1">Avg Order Value</div>
+                        <div class="text-lg font-bold text-gray-800">Rp {{ number_format($averageOrderValue, 0, ',', '.') }}</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         {{-- Chart Section --}}
-        <div class="chart-section">
-            <h2 class="section-title">📈 Grafik Penjualan</h2>
-            <div class="chart-wrapper">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📈 Grafik Penjualan</h2>
+            <div class="relative h-[300px]">
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
 
         {{-- Orders Table --}}
-        <div class="table-section">
-            <h2 class="section-title">📋 Detail Transaksi</h2>
-            <div class="data-table-wrapper">
-                <div class="table-header">
-                    <div class="header-col col-order">Order</div>
-                    <div class="header-col col-date">Tanggal</div>
-                    <div class="header-col col-customer">Customer</div>
-                    <div class="header-col col-products">Produk</div>
-                    <div class="header-col col-total">Total</div>
-                    <div class="header-col col-payment">Payment</div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📋 Detail Transaksi</h2>
+            <div class="overflow-x-auto">
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg px-4 py-3 mb-2">
+                    <div class="grid grid-cols-12 gap-4 text-sm font-semibold text-gray-700">
+                        <div class="col-span-2">Order</div>
+                        <div class="col-span-2">Tanggal</div>
+                        <div class="col-span-3">Customer</div>
+                        <div class="col-span-2">Produk</div>
+                        <div class="col-span-2 text-right">Total</div>
+                        <div class="col-span-1">Payment</div>
+                    </div>
                 </div>
                 
-                <div class="table-rows-list">
-                    @forelse($orders as $index => $order)
-                        <div class="table-row {{ $index % 2 != 0 ? 'odd-row' : 'even-row' }}">
-                            <div class="row-col col-order">#{{ $order->order_number }}</div>
-                            <div class="row-col col-date">{{ $order->created_at->format('d M Y H:i') }}</div>
-                            <div class="row-col col-customer">{{ $order->user->full_name ?? $order->user->name }}</div>
-                            <div class="row-col col-products">
-                                {{ $order->orderItems->count() }} item(s)
-                            </div>
-                            <div class="row-col col-total">Rp {{ number_format($order->total_bayar, 0, ',', '.') }}</div>
-                            <div class="row-col col-payment">{{ $order->metodePembayaran->nama ?? '-' }}</div>
+                <div class="divide-y divide-gray-200">
+                    @forelse($orders as $order)
+                        <div class="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 transition-colors text-sm">
+                            <div class="col-span-2 font-medium text-gray-800">#{{ $order->order_number }}</div>
+                            <div class="col-span-2 text-gray-600">{{ $order->created_at->format('d M Y H:i') }}</div>
+                            <div class="col-span-3 text-gray-700">{{ $order->user->full_name ?? $order->user->name }}</div>
+                            <div class="col-span-2 text-gray-600">{{ $order->orderItems->count() }} item(s)</div>
+                            <div class="col-span-2 text-right font-semibold text-gray-800">Rp {{ number_format($order->total_bayar, 0, ',', '.') }}</div>
+                            <div class="col-span-1 text-gray-600">{{ $order->metodePembayaran->nama ?? '-' }}</div>
                         </div>
                     @empty
-                        <div class="no-data">
-                            <p>Belum ada transaksi pada periode ini.</p>
+                        <div class="text-center py-12">
+                            <div class="text-5xl mb-3">📭</div>
+                            <p class="text-gray-600">Belum ada transaksi pada periode ini.</p>
                         </div>
                     @endforelse
                 </div>
@@ -103,23 +116,26 @@
         </div>
 
         {{-- Top Products Section --}}
-        <div class="top-products-section">
-            <h2 class="section-title">🔥 Top 5 Produk Terlaris</h2>
-            <div class="top-products-list">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">🔥 Top 5 Produk Terlaris</h2>
+            <div class="space-y-3">
                 @forelse($topProducts as $index => $item)
-                    <div class="top-product-item">
-                        <div class="product-rank">{{ $index + 1 }}</div>
-                        <div class="product-info">
-                            <div class="product-name">{{ $item->produk->nama_produk ?? 'Unknown Product' }}</div>
-                            <div class="product-stats">
-                                <span class="stat-sold">{{ $item->total_sold }} terjual</span>
-                                <span class="stat-revenue">Rp {{ number_format($item->total_revenue, 0, ',', '.') }}</span>
+                    <div class="flex items-center gap-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
+                            {{ $index + 1 }}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">{{ $item->produk->nama_produk ?? 'Unknown Product' }}</div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <span class="text-gray-600">{{ $item->total_sold }} terjual</span>
+                                <span class="font-semibold text-amber-700">Rp {{ number_format($item->total_revenue, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="no-data">
-                        <p>Belum ada data produk terlaris.</p>
+                    <div class="text-center py-12">
+                        <div class="text-5xl mb-3">📦</div>
+                        <p class="text-gray-600">Belum ada data produk terlaris.</p>
                     </div>
                 @endforelse
             </div>

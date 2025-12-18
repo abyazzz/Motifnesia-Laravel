@@ -20,6 +20,18 @@ class CustomerProductController extends Controller
         // Query produk dengan filter
         $query = Produk::query();
 
+        // Filter Search (nama produk, material, kategori, tags, deskripsi)
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('nama_produk', 'LIKE', "%{$search}%")
+                  ->orWhere('material', 'LIKE', "%{$search}%")
+                  ->orWhere('kategori', 'LIKE', "%{$search}%")
+                  ->orWhere('tags', 'LIKE', "%{$search}%")
+                  ->orWhere('deskripsi', 'LIKE', "%{$search}%");
+            });
+        }
+
         // Filter Gender
         if (request('gender')) {
             $query->where('gender', request('gender'));
@@ -49,6 +61,8 @@ class CustomerProductController extends Controller
                 'harga'     => $p->harga ?? 0,
                 'gambar'    => $p->gambar ?? '',
                 'deskripsi' => $p->deskripsi ?? '',
+                'stok'      => $p->stok ?? 0,
+                'terjual'   => $p->terjual ?? 0,
                 'rating'    => round($avgRating, 1),
             ];
         });

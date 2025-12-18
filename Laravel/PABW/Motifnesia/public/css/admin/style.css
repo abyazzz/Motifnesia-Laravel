@@ -1,35 +1,59 @@
-.admin-layout {
-    display: flex;
-    min-height: 100vh;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.sidebar {
-    width: 250px;
-    background-color: #f5f5f5;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
-    z-index: 100;
-}
-
-.main-content {
-    flex: 1;
-    margin-left: 250px; /* ruang buat sidebar */
-    padding: 20px;
-    background-color: #fff;
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 .admin-container {
     display: flex;
     min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f9fafb;
+    gap: 0;
 }
 
 .sidebar {
-    width: 240px;
-    background-color: #fff3e0;
-    padding: 20px;
+    width: 256px;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 40;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #d97706;
+    border-radius: 4px;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f9fafb;
+    margin-left: 256px;
+}
+
+.content-wrapper {
+    flex: 1;
+    background-color: #f9fafb;
 }
 
 .b-card-product:hover {

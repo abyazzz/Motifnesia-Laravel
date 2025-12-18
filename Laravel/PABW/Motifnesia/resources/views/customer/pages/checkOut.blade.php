@@ -22,7 +22,7 @@
             <h3 class="text-xl font-semibold mb-4">Produk</h3>
             @foreach($products as $product)
             <div class="flex items-center gap-4 py-4 border-b last:border-b-0">
-                <img src="{{ asset('images/' . $product['gambar']) }}" alt="{{ $product['nama'] }}" 
+                <img src="{{ asset($product['gambar']) }}" alt="{{ $product['nama'] }}" 
                      class="w-20 h-20 object-cover rounded-lg">
                 <div class="flex-1">
                     <h4 class="font-semibold mb-1">{{ $product['nama'] }} - {{ $product['ukuran'] }}</h4>

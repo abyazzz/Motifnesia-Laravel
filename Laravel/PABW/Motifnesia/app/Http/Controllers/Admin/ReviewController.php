@@ -8,7 +8,7 @@ use App\Models\Produk;
 use App\Models\OrderReview;
 use Illuminate\Support\Facades\DB;
 
-class ProductReviewController extends Controller
+class ReviewController extends Controller
 {
     /**
      * Menampilkan halaman ulasan produk.

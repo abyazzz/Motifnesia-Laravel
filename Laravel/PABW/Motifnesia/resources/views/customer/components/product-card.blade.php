@@ -17,7 +17,7 @@
 
 <a href="{{ route('customer.product.detail', ['id' => $product['id']]) }}" 
    class="block group hover:no-underline">
-  <div class="bg-white rounded-lg overflow-hidden transition-all duration-200" style="box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);" onmouseover="this.style.boxShadow='0 0 15px 0 rgba(0,0,0,0.15)'" onmouseout="this.style.boxShadow='0 0 10px 0 rgba(0,0,0,0.1)'">
+  <div class="bg-white rounded-lg overflow-hidden transition-all duration-200" style="min-height: 230px; min-width: 175px; box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);" onmouseover="this.style.boxShadow='0 0 15px 0 rgba(0,0,0,0.15)'" onmouseout="this.style.boxShadow='0 0 10px 0 rgba(0,0,0,0.1)'">
     {{-- Product Image --}}
     <div class="relative overflow-hidden aspect-square bg-gray-100">
       <img src="{{ $img }}" 
@@ -43,21 +43,28 @@
         Rp {{ number_format($product['harga'], 0, ',', '.') }}
       </p>
       
-      {{-- Rating --}}
-      <div class="flex items-center gap-1.5">
-        <div class="flex gap-0.5">
-          @for($i = 1; $i <= 5; $i++)
-            @if($i <= $fullStars)
-              <span class="text-yellow-400 text-xs">★</span>
-            @elseif($i == $fullStars + 1 && $halfStar)
-              <span class="text-yellow-400 text-xs">★</span>
-            @else
-              <span class="text-gray-300 text-xs">★</span>
-            @endif
-          @endfor
+      {{-- Rating & Terjual --}}
+      <div class="flex items-center justify-between">
+        {{-- Rating --}}
+        <div class="flex items-center gap-1.5">
+          <div class="flex gap-0.5">
+            @for($i = 1; $i <= 5; $i++)
+              @if($i <= $fullStars)
+                <span class="text-yellow-400 text-xs">★</span>
+              @elseif($i == $fullStars + 1 && $halfStar)
+                <span class="text-yellow-400 text-xs">★</span>
+              @else
+                <span class="text-gray-300 text-xs">★</span>
+              @endif
+            @endfor
+          </div>
+          <span class="text-xs font-medium text-gray-600">{{ number_format($rating, 1) }}</span>
         </div>
-        <span class="text-xs font-medium text-gray-600">{{ number_format($rating, 1) }}</span>
-        {{-- <span>{{ $product['stok'] }}</span> --}}
+
+        {{-- Terjual --}}
+        <div class="text-xs text-gray-500">
+          Terjual {{ $product['terjual'] ?? 0 }}
+        </div>
       </div>
     </div>
   </div>
