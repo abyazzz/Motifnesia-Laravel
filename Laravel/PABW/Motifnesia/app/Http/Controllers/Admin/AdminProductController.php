@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
+use App\Services\ProductService;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
 {
@@ -54,55 +55,24 @@ class AdminProductController extends Controller
     // =========================
     // STORE PRODUK BARU
     // =========================
-    public function store(Request $request)
+    public function store(StoreProductRequest $request, ProductService $productService)
     {
-        $data = $request->validate([
-            'name'         => 'required|string|max:255',
-            'description'  => 'required|string',
-            'price'        => 'required|numeric',
-            'category'     => 'required|string|max:100',
-            'stock'        => 'required|integer',
-            'material'     => 'required|string|max:100',
-            'process'      => 'required|string|max:100',
-            'sku'          => 'required|string|max:50',
-            'tags'         => 'required|string|max:255',
-            'ukuran'       => 'required|string|max:10',
-            'jenis_lengan' => 'required|string|max:50',
-            'image'        => 'required|image|mimes:png,jpg,jpeg,webp|max:5120',
-        ]);
+        $data = $request->validated();
 
-        // Upload gambar ke public/assets/photoProduct
+        // Upload gambar
         $gambarPath = null;
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('assets/photoProduct');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            $file->move($destinationPath, $filename);
-            $gambarPath = 'assets/photoProduct/' . $filename;
+            $gambarPath = $productService->uploadProductImage($request->file('image'));
         }
 
-        // Simpan ke DB dengan kolom yang sesuai model Produk
-        Produk::create([
-            'nama_produk'   => $data['name'],
-            'deskripsi'     => $data['description'],
-            'harga'         => $data['price'],
-            'kategori'      => $data['category'],
-            'stok'          => $data['stock'],
-            'material'      => $data['material'],
-            'proses'        => $data['process'],
-            'sku'           => $data['sku'],
-            'tags'          => $data['tags'],
-            'ukuran'        => $data['ukuran'],
-            'jenis_lengan'  => $data['jenis_lengan'],
-            'gambar'        => $gambarPath,
-            'diskon_persen' => 0,
-            'harga_diskon'  => null,
-        ]);
+        // Prepare product data dengan kalkulasi diskon
+        $productData = $productService->prepareProductData($data, $gambarPath);
 
-        return redirect()->route('admin.product.management.index')->with('success', 'Produk berhasil ditambahkan!');
+        // Simpan ke DB
+        Produk::create($productData);
+
+        return redirect()->route('admin.product.management.index')
+            ->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // =========================
@@ -120,40 +90,20 @@ class AdminProductController extends Controller
     // =========================
     // UPDATE PRODUK (MODAL)
     // =========================
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id, ProductService $productService)
     {
         $produk = Produk::findOrFail($id);
-
-        $data = $request->validate([
-            'name'         => 'nullable|string|max:255',
-            'description'  => 'nullable|string',
-            'price'        => 'nullable|numeric',
-            'category'     => 'nullable|string|max:100',
-            'stock'        => 'nullable|integer',
-            'material'     => 'nullable|string|max:100',
-            'process'      => 'nullable|string|max:100',
-            'sku'          => 'nullable|string|max:50',
-            'tags'         => 'nullable|string|max:255',
-            'ukuran'       => 'nullable|string|max:10',
-            'jenis_lengan' => 'nullable|string|max:50',
-            'image'        => 'nullable|image|mimes:png,jpg,jpeg,webp|max:5120',
-        ]);
+        $data = $request->validated();
 
         // Handle image upload
         if ($request->hasFile('image')) {
             // Hapus gambar lama
-            if ($produk->gambar && file_exists(public_path($produk->gambar))) {
-                @unlink(public_path($produk->gambar));
+            if ($produk->gambar) {
+                $productService->deleteProductImage($produk->gambar);
             }
-
-            $file = $request->file('image');
-            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('assets/photoProduct');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            $file->move($destinationPath, $filename);
-            $produk->gambar = 'assets/photoProduct/' . $filename;
+            
+            // Upload gambar baru
+            $produk->gambar = $productService->uploadProductImage($request->file('image'));
         }
 
         // Update fields yang diinput
@@ -168,26 +118,43 @@ class AdminProductController extends Controller
         if (isset($data['tags'])) $produk->tags = $data['tags'];
         if (isset($data['ukuran'])) $produk->ukuran = $data['ukuran'];
         if (isset($data['jenis_lengan'])) $produk->jenis_lengan = $data['jenis_lengan'];
+        
+        // Update diskon dan kalkulasi harga_diskon
+        if (isset($data['diskon_persen'])) {
+            $produk->diskon_persen = $data['diskon_persen'];
+        }
+        
+        // Kalkulasi ulang harga_diskon menggunakan service
+        $produk->harga_diskon = $productService->calculateDiscountedPrice(
+            (float) $produk->harga, 
+            (int) ($produk->diskon_persen ?? 0)
+        );
 
         $produk->save();
 
-        return response()->json(['success' => true, 'message' => 'Produk berhasil diupdate!']);
+        return response()->json([
+            'success' => true, 
+            'message' => 'Produk berhasil diupdate!'
+        ]);
     }
 
     // =========================
     // HAPUS PRODUK
     // =========================
-    public function destroy($id)
+    public function destroy($id, ProductService $productService)
     {
         $produk = Produk::findOrFail($id);
 
-        // Hapus gambar di folder (gambar field berisi path relatif seperti 'assets/photoProduct/...')
-        if ($produk->gambar && file_exists(public_path($produk->gambar))) {
-            @unlink(public_path($produk->gambar));
+        // Hapus gambar menggunakan service
+        if ($produk->gambar) {
+            $productService->deleteProductImage($produk->gambar);
         }
 
         $produk->delete();
 
-        return response()->json(['success' => true, 'message' => 'Produk berhasil dihapus!']);
+        return response()->json([
+            'success' => true, 
+            'message' => 'Produk berhasil dihapus!'
+        ]);
     }
 }

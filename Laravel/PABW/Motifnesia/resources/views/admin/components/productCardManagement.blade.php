@@ -11,6 +11,8 @@
     $name = data_get($product, 'nama_produk', data_get($product, 'name', 'Produk'));
     $harga = data_get($product, 'harga', 0);
     $id = data_get($product, 'id');
+    $diskonPersen = data_get($product, 'diskon_persen', 0);
+    $hargaDiskon = data_get($product, 'harga_diskon', $harga);
     $productJson = json_encode([
         'id' => $id,
         'nama_produk' => $name,
@@ -18,6 +20,8 @@
         'terjual' => $terjual,
         'stok' => $stok,
         'harga' => $harga,
+        'diskon_persen' => $diskonPersen,
+        'harga_diskon' => $hargaDiskon,
         'material' => data_get($product, 'material'),
         'proses' => data_get($product, 'proses'),
         'sku' => data_get($product, 'sku'),
@@ -59,10 +63,17 @@
     <div class="p-4">
         <h3 class="font-bold text-gray-800 mb-2 line-clamp-2 min-h-[3rem]">{{ $name }}</h3>
         
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-xl font-bold text-amber-700">
-                Rp {{ number_format($harga, 0, ',', '.') }}
-            </span>
+        <div class="mb-3">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="text-xl font-bold text-amber-700">
+                    Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
+                </span>
+                @if($diskonPersen > 0)
+                    <span class="text-xs font-semibold px-2 py-1 bg-green-500 text-white rounded">
+                        -{{ $diskonPersen }}%
+                    </span>
+                @endif
+            </div>
             <span class="text-sm text-gray-500 flex items-center gap-1">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>

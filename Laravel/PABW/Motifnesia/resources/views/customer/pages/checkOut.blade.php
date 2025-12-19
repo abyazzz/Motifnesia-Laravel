@@ -21,12 +21,23 @@
         <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
             <h3 class="text-xl font-semibold mb-4">Produk</h3>
             @foreach($products as $product)
+            @php
+                $hargaDiskon = $product['harga_diskon'] ?? $product['harga'];
+                $diskonPersen = $product['diskon_persen'] ?? 0;
+            @endphp
             <div class="flex items-center gap-4 py-4 border-b last:border-b-0">
                 <img src="{{ asset($product['gambar']) }}" alt="{{ $product['nama'] }}" 
                      class="w-20 h-20 object-cover rounded-lg">
                 <div class="flex-1">
                     <h4 class="font-semibold mb-1">{{ $product['nama'] }} - {{ $product['ukuran'] }}</h4>
-                    <p class="text-sm text-gray-600">{{ $product['qty'] }}x - Rp {{ number_format($product['harga'], 0, ',', '.') }}</p>
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm text-gray-600">{{ $product['qty'] }}x - Rp {{ number_format($hargaDiskon, 0, ',', '.') }}</p>
+                        @if($diskonPersen > 0)
+                            <span class="text-xs font-semibold px-2 py-0.5 bg-green-500 text-white rounded">
+                                -{{ $diskonPersen }}%
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
             @endforeach

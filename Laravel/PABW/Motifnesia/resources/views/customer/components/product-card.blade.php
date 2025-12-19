@@ -39,9 +39,21 @@
         {{ $product['nama'] }}
       </h3>
       
-      <p class="text-base font-bold text-orange-600 mb-2">
-        Rp {{ number_format($product['harga'], 0, ',', '.') }}
-      </p>
+      @php
+        $hargaDiskon = $product['harga_diskon'] ?? $product['harga'];
+        $diskonPersen = $product['diskon_persen'] ?? 0;
+      @endphp
+      
+      <div class="flex items-center gap-2 mb-2">
+        <p class="text-base font-bold text-orange-600">
+          Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
+        </p>
+        @if($diskonPersen > 0)
+          <span class="text-xs font-semibold px-2 py-0.5 bg-green-500 text-white rounded">
+            -{{ $diskonPersen }}%
+          </span>
+        @endif
+      </div>
       
       {{-- Rating & Terjual --}}
       <div class="flex items-center justify-between">

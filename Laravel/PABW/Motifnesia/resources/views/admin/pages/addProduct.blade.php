@@ -33,7 +33,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Harga --}}
                             <div>
-                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga</label>
+                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga Asli</label>
                                 <input type="number" id="price" name="price" value="{{ $product['price'] }}" step="0.01" min="0"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                             </div>
@@ -43,6 +43,25 @@
                                 <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Stok</label>
                                 <input type="number" id="stock" name="stock" value="{{ $product['stock'] }}"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+
+                        {{-- Diskon & Total Harga --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Diskon --}}
+                            <div>
+                                <label for="diskon_persen" class="block text-sm font-semibold text-gray-700 mb-2">Diskon (%)</label>
+                                <input type="number" id="diskon_persen" name="diskon_persen" value="0" step="1" min="0" max="100"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                       placeholder="Contoh: 10">
+                            </div>
+
+                            {{-- Total Harga (Read Only) --}}
+                            <div>
+                                <label for="total_harga_display" class="block text-sm font-semibold text-gray-700 mb-2">Total Harga Setelah Diskon</label>
+                                <input type="text" id="total_harga_display" readonly
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-green-50 text-green-700 font-bold focus:outline-none"
+                                       placeholder="Rp 0">
                             </div>
                         </div>
 
@@ -164,18 +183,50 @@
         document.addEventListener('DOMContentLoaded', function(){
             const fileInput = document.getElementById('elect-image-button');
             const preview = document.getElementById('productPreview');
+            const priceInput = document.getElementById('price');
+            const diskonInput = document.getElementById('diskon_persen');
+            const totalHargaDisplay = document.getElementById('total_harga_display');
 
-            if (!fileInput) return;
+            // Handle image preview
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e){
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    const url = URL.createObjectURL(file);
+                    preview.src = url;
+                    preview.onload = function(){
+                        URL.revokeObjectURL(url);
+                    }
+                });
+            }
 
-            fileInput.addEventListener('change', function(e){
-                const file = e.target.files && e.target.files[0];
-                if (!file) return;
-                const url = URL.createObjectURL(file);
-                preview.src = url;
-                preview.onload = function(){
-                    URL.revokeObjectURL(url);
-                }
-            });
+            // Kalkulasi total harga setelah diskon
+            function calculateTotalHarga() {
+                const harga = parseFloat(priceInput.value) || 0;
+                const diskon = parseFloat(diskonInput.value) || 0;
+                
+                // Validasi diskon
+                if (diskon < 0) diskonInput.value = 0;
+                if (diskon > 100) diskonInput.value = 100;
+                
+                const finalDiskon = parseFloat(diskonInput.value) || 0;
+                const totalHarga = harga - (harga * (finalDiskon / 100));
+                
+                // Format currency
+                totalHargaDisplay.value = 'Rp ' + totalHarga.toLocaleString('id-ID', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+            }
+
+            // Event listeners untuk kalkulasi otomatis
+            if (priceInput && diskonInput && totalHargaDisplay) {
+                priceInput.addEventListener('input', calculateTotalHarga);
+                diskonInput.addEventListener('input', calculateTotalHarga);
+                
+                // Initial calculation
+                calculateTotalHarga();
+            }
         });
     </script>
     

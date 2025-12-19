@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CheckoutRequest;
 use App\Models\ShoppingCard;
 use App\Models\MetodePengiriman;
 use App\Models\MetodePembayaran;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class CheckOutController extends Controller
 {
@@ -53,7 +53,8 @@ class CheckOutController extends Controller
         $products = [];
         
         foreach ($cartItems as $item) {
-            $harga = $item->produk->harga ?? 0;
+            $harga = $item->produk->harga_diskon ?? $item->produk->harga ?? 0;
+            $diskonPersen = $item->produk->diskon_persen ?? 0;
             $qty = $item->qty;
             $subtotal = $harga * $qty;
             $subtotalProduk += $subtotal;
@@ -66,6 +67,8 @@ class CheckOutController extends Controller
                 'ukuran' => $item->ukuran,
                 'qty' => $qty,
                 'harga' => $harga,
+                'harga_diskon' => $harga,
+                'diskon_persen' => $diskonPersen,
                 'subtotal' => $subtotal,
             ];
         }
@@ -82,29 +85,9 @@ class CheckOutController extends Controller
     /**
      * Proses checkout: Simpan data checkout ke session dan redirect ke payment
      */
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
-        }
-
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'alamat' => 'required|string',
-            'metode_pengiriman_id' => 'required|exists:metode_pengiriman,id',
-            'metode_pembayaran_id' => 'required|exists:metode_pembayaran,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak lengkap.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        $validated = $request->validated();
 
         // Ambil checkout_items dari session
         $selectedIds = session('checkout_items');
@@ -138,7 +121,8 @@ class CheckOutController extends Controller
         $products = [];
 
         foreach ($cartItems as $item) {
-            $harga = $item->produk->harga ?? 0;
+            $harga = $item->produk->harga_diskon ?? $item->produk->harga ?? 0;
+            $diskonPersen = $item->produk->diskon_persen ?? 0;
             $qty = $item->qty;
             $subtotal = $harga * $qty;
             $subtotalProduk += $subtotal;
@@ -148,6 +132,8 @@ class CheckOutController extends Controller
                 'produk_id' => $item->product_id,
                 'nama' => $item->produk->nama_produk ?? 'Produk',
                 'gambar' => $item->produk->gambar ?? 'placeholder.jpg',
+                'harga_diskon' => $harga,
+                'diskon_persen' => $diskonPersen,
                 'ukuran' => $item->ukuran,
                 'qty' => $qty,
                 'harga' => $harga,

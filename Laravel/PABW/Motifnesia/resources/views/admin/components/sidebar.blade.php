@@ -1,13 +1,12 @@
 @php
     $activePage = $activePage ?? 'customers'; 
     $navLinks = [
-        'Daftar Pelanggan'      => ['route' => 'admin.customers.index', 'page' => 'customers', 'icon' => '👥'],
         'Manajemen Produk'      => ['route' => 'admin.product.management.index', 'page' => 'product-management', 'icon' => '📦'],
         'Ulasan Produk'         => ['route' => 'admin.reviews.index', 'page' => 'reviews', 'icon' => '⭐'],
-        'Kelola Promo'          => ['route' => '#', 'page' => 'promo', 'icon' => '🎁'],
-        'Laporan Penjualan'     => ['route' => 'admin.reports.sales', 'page' => 'sales-report', 'icon' => '📊'],
-        'Kelola Retur'          => ['route' => 'admin.returns.index', 'page' => 'returns', 'icon' => '↩️'],
         'Status Pengiriman'     => ['route' => 'admin.orders.status', 'page' => 'order-status', 'icon' => '🚚'],
+        'Kelola Retur'          => ['route' => 'admin.returns.index', 'page' => 'returns', 'icon' => '↩️'],
+        'Laporan Penjualan'     => ['route' => 'admin.reports.sales', 'page' => 'sales-report', 'icon' => '📊'],
+        'Daftar Pelanggan'      => ['route' => 'admin.customers.index', 'page' => 'customers', 'icon' => '👥'],
         'Live Chat Support'     => ['route' => 'admin.chat.index', 'page' => 'live-chat', 'icon' => '💬'],
         'Notifikasi Sistem'     => ['route' => 'admin.notifications.index', 'page' => 'notification', 'icon' => '🔔'],
         'Kelola Konten Statis'  => ['route' => 'admin.konten.index', 'page' => 'konten-statis', 'icon' => '⚙️'],

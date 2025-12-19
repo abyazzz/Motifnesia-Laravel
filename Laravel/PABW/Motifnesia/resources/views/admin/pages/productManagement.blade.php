@@ -98,8 +98,8 @@
 
                         {{-- Harga --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Harga</label>
-                            <input type="text" id="edit_price" name="price" 
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Harga Asli</label>
+                            <input type="number" id="edit_price" name="price" step="0.01" min="0"
                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                         </div>
 
@@ -108,6 +108,20 @@
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Stok</label>
                             <input type="number" id="edit_stock" name="stock" 
                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+
+                        {{-- Diskon --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Diskon (%)</label>
+                            <input type="number" id="edit_diskon_persen" name="diskon_persen" step="1" min="0" max="100"
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+
+                        {{-- Total Harga --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Total Harga Setelah Diskon</label>
+                            <input type="text" id="edit_total_harga_display" readonly
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-green-50 text-green-700 font-bold focus:outline-none">
                         </div>
 
                         {{-- Material --}}
@@ -232,8 +246,30 @@
                 document.getElementById('edit_ukuran').value = product.ukuran || '';
                 document.getElementById('edit_jenis_lengan').value = product.jenis_lengan || '';
                 document.getElementById('edit_stock').value = product.stok || '';
+                document.getElementById('edit_diskon_persen').value = product.diskon_persen || 0;
                 modal.style.display = 'flex';
+                calculateEditTotalHarga();
             }
+
+            // Kalkulasi total harga untuk modal edit
+            function calculateEditTotalHarga() {
+                const harga = parseFloat(document.getElementById('edit_price').value) || 0;
+                const diskon = parseFloat(document.getElementById('edit_diskon_persen').value) || 0;
+                const totalHarga = harga - (harga * (diskon / 100));
+                document.getElementById('edit_total_harga_display').value = 'Rp ' + totalHarga.toLocaleString('id-ID', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+            }
+
+            // Event listeners untuk kalkulasi otomatis di modal edit
+            document.getElementById('edit_price').addEventListener('input', calculateEditTotalHarga);
+            document.getElementById('edit_diskon_persen').addEventListener('input', function() {
+                const val = parseFloat(this.value) || 0;
+                if (val < 0) this.value = 0;
+                if (val > 100) this.value = 100;
+                calculateEditTotalHarga();
+            });
 
             modalClose.addEventListener('click', function () { modal.style.display = 'none'; });
 

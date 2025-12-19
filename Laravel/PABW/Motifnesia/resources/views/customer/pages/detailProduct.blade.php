@@ -13,7 +13,18 @@
                 {{-- BAGIAN KANAN: INFORMASI PRODUK --}}
                 <div class="flex-1">
                     <h1 class="text-3xl font-bold mb-4 text-gray-800">{{ $product['nama'] }}</h1>
-                    <p class="text-3xl font-bold mb-6" style="color: #8B4513;">Rp{{ number_format($product['harga'], 0, ',', '.') }}</p>
+                    @php
+                        $hargaDiskon = $product['harga_diskon'] ?? $product['harga'];
+                        $diskonPersen = $product['diskon_persen'] ?? 0;
+                    @endphp
+                    <div class="flex items-center gap-3 mb-6">
+                        <p class="text-3xl font-bold" style="color: #8B4513;">Rp{{ number_format($hargaDiskon, 0, ',', '.') }}</p>
+                        @if($diskonPersen > 0)
+                            <span class="text-lg font-semibold px-3 py-1 bg-green-500 text-white rounded">
+                                -{{ $diskonPersen }}%
+                            </span>
+                        @endif
+                    </div>
 
                     <div class="space-y-2 mb-6 text-sm">
                         <p><strong>Material:</strong> {{ $product['material'] ?? 'Sutra' }}</p>

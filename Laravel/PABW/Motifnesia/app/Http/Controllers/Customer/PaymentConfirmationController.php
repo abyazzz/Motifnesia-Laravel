@@ -32,12 +32,13 @@ class PaymentConfirmationController extends Controller
             ]);
 
             foreach ($session['produk'] as $item) {
+                $harga = $item['produk']['harga_diskon'] ?? $item['produk']['harga'];
                 ProductOrderDetail::create([
                     'order_id' => $order->id,
                     'product_id' => $item['produk']['id'],
                     'ukuran' => $item['ukuran'],
                     'qty' => $item['qty'],
-                    'harga' => $item['produk']['harga'],
+                    'harga' => $harga,
                 ]);
             }
 

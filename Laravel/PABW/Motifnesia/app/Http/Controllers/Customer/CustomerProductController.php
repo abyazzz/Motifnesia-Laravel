@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-
+use App\Services\ProductService;
 use App\Models\Produk;
 use App\Models\KontenSlideShow;
 
@@ -51,20 +51,9 @@ class CustomerProductController extends Controller
         }
 
         // Load products dengan rating dari reviews
-        $products = $query->orderBy('id', 'desc')->get()->map(function($p) {
-            // Hitung average rating dari reviews
-            $avgRating = $p->reviews()->avg('rating') ?? 5.0;
-            
-            return [
-                'id'        => $p->id,
-                'nama'      => $p->nama_produk ?? '',
-                'harga'     => $p->harga ?? 0,
-                'gambar'    => $p->gambar ?? '',
-                'deskripsi' => $p->deskripsi ?? '',
-                'stok'      => $p->stok ?? 0,
-                'terjual'   => $p->terjual ?? 0,
-                'rating'    => round($avgRating, 1),
-            ];
+        $productService = app(ProductService::class);
+        $products = $query->orderBy('id', 'desc')->get()->map(function($p) use ($productService) {
+            return $productService->formatProductWithRating($p);
         });
 
         return view('customer.pages.homePage', compact('products', 'slides'));
@@ -82,6 +71,8 @@ class CustomerProductController extends Controller
             'id'        => $product->id,
             'nama'      => $product->nama_produk,
             'harga'     => $product->harga,
+            'harga_diskon' => $product->harga_diskon ?? $product->harga,
+            'diskon_persen' => $product->diskon_persen ?? 0,
             'gambar'    => $product->gambar,
             'deskripsi' => $product->deskripsi,
             'material'  => $product->material,
@@ -94,19 +85,13 @@ class CustomerProductController extends Controller
         $reviews = $product->reviews()->with('user')->latest()->get();
 
         // Get related products (produk lain, exclude current)
+        $productService = app(ProductService::class);
         $relatedProducts = Produk::where('id', '!=', $id)
             ->orderBy('id', 'desc')
             ->limit(8)
             ->get()
-            ->map(function($p) {
-                $avgRating = $p->reviews()->avg('rating') ?? 5.0;
-                return [
-                    'id'        => $p->id,
-                    'nama'      => $p->nama_produk ?? '',
-                    'harga'     => $p->harga ?? 0,
-                    'gambar'    => $p->gambar ?? '',
-                    'rating'    => round($avgRating, 1),
-                ];
+            ->map(function($p) use ($productService) {
+                return $productService->formatProductWithRating($p);
             });
 
         return view('customer.pages.detailProduct', [

@@ -20,18 +20,20 @@ use App\Http\Controllers\Admin\StaticContentController;
 use App\Http\Controllers\Customer\TransactionController;
 use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Customer\NotificationController;
-use App\Http\Controllers\Customer\ShoppingCartController;
 use App\Http\Controllers\Customer\ShoppingCardController;
 use App\Http\Controllers\Customer\ControllerSessionCheckout;
 use App\Http\Controllers\Customer\CustomerProductController;
 use App\Http\Controllers\Admin\AdminProductController; // ← CRUD Produk Admin
-// Redirect root path ke homePage
+// Redirect root path berdasarkan role
 Route::get('/', function() {
+    if (auth()->check() && auth()->user()->role === 'admin') {
+        return redirect('/admin/product-management');
+    }
     return redirect()->route('customer.home');
 });
 
 // ==================== AUTH GROUP ====================
-Route::group(['prefix' => '', 'as' => 'auth.'], function () {
+Route::group(['prefix' => '', 'as' => 'auth.', 'middleware' => 'guest'], function () {
     // Halaman Login (GET)
     Route::get('/login', [UserController::class, 'login'])->name('login');
     // Proses Login (POST)
@@ -41,17 +43,21 @@ Route::group(['prefix' => '', 'as' => 'auth.'], function () {
     Route::post('/register', [UserController::class, 'doRegister'])->name('doRegister');
     // Forgot Password
     Route::get('/forgot', [UserController::class, 'forgot'])->name('forgot');
-    // Logout
-    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 });
 
-// ==================== CUSTOMER GROUP ====================
+// Logout route (tidak pakai guest middleware)
+Route::get('/logout', [UserController::class, 'logout'])->name('auth.logout');
+
+// ==================== CUSTOMER GROUP (PUBLIC) ====================
 Route::group(['prefix' => '', 'as' => 'customer.'], function () {
-
-    // ========== HOME & PRODUCTS ==========
-    Route::get('/homePage', [CustomerProductController::class, 'index'])->name('home');
+    // ========== HOME & PRODUCTS (Public, tapi redirect admin) ==========
+    Route::get('/homePage', [CustomerProductController::class, 'index'])->name('home')
+        ->middleware('block.admin');
     Route::get('/products/{id}', [CustomerProductController::class, 'show'])->name('product.detail');
+});
 
+// ==================== CUSTOMER GROUP (AUTH REQUIRED) ====================
+Route::group(['prefix' => '', 'as' => 'customer.', 'middleware' => 'customer'], function () {
     // ========== SHOPPING CART (Keranjang Belanja) ==========
     Route::get('/cart', [ShoppingCardController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [ShoppingCardController::class, 'add'])->name('cart.add');
@@ -100,7 +106,7 @@ Route::group(['prefix' => '', 'as' => 'customer.'], function () {
 });
 
 // ==================== ADMIN GROUP ====================
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
     // Daftar Produk (list/table view)
     Route::get('/daftar-produk', [AdminProductController::class, 'index'])
         ->name('daftar-produk');

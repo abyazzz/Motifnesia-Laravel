@@ -19,8 +19,12 @@
             @csrf
 
             @foreach ($items as $item)
+            @php
+                $hargaDiskon = $item->produk->harga_diskon ?? $item->produk->harga;
+                $diskonPersen = $item->produk->diskon_persen ?? 0;
+            @endphp
             <div class="bg-white rounded-lg p-4 mb-3 item-card" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);"
-                 data-price="{{ $item->produk ? $item->produk->harga : 0 }}" 
+                 data-price="{{ $hargaDiskon }}" 
                  data-qty="{{ $item->qty }}">
                 <div class="flex items-center gap-4">
 
@@ -42,8 +46,15 @@
                         <div class="font-semibold text-lg">
                             {{ $item->produk->nama_produk }} - {{ $item->ukuran }}
                         </div>
-                        <div class="text-gray-600 text-sm mt-1">
-                            Rp {{ number_format($item->produk->harga, 0, ',', '.') }}
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="text-gray-600 text-sm">
+                                Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
+                            </div>
+                            @if($diskonPersen > 0)
+                                <span class="text-xs font-semibold px-2 py-0.5 bg-green-500 text-white rounded">
+                                    -{{ $diskonPersen }}%
+                                </span>
+                            @endif
                         </div>
                     </div>
 
@@ -58,7 +69,7 @@
 
                     <!-- Subtotal -->
                     <div class="w-32 text-right">
-                        <div class="font-bold text-lg">Rp {{ number_format($item->produk->harga * $item->qty, 0, ',', '.') }}</div>
+                        <div class="font-bold text-lg">Rp {{ number_format($hargaDiskon * $item->qty, 0, ',', '.') }}</div>
                     </div>
 
                     <!-- Delete Button -->

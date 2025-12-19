@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddToCartRequest;
 use Illuminate\Http\Request;
 use App\Models\ShoppingCard;
 use App\Models\Produk;
@@ -40,33 +41,13 @@ class ShoppingCardController extends Controller
     /**
      * Tambah produk ke keranjang (AJAX)
      */
-    public function add(Request $request)
+    public function add(AddToCartRequest $request)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'Silakan login terlebih dahulu.'
-            ], 401);
-        }
-
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|exists:produk,id',
-            'ukuran' => 'required|string',
-            'qty' => 'nullable|integer|min:1'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak valid.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $productId = $request->input('product_id');
-        $ukuran = $request->input('ukuran');
-        $qty = $request->input('qty', 1);
+        $validated = $request->validated();
+        
+        $productId = $validated['product_id'];
+        $ukuran = $validated['ukuran'];
+        $qty = $validated['qty'] ?? 1;
 
         // Cek apakah produk+ukuran sudah ada di keranjang user
         $item = ShoppingCard::where('user_id', Auth::id())

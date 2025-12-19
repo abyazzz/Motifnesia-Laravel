@@ -33,8 +33,19 @@
                         <div class="font-semibold text-lg">
                             {{ $favorite->produk->nama_produk }}
                         </div>
-                        <div class="text-gray-600 text-sm mt-1">
-                            Rp {{ number_format($favorite->produk->harga, 0, ',', '.') }}
+                        @php
+                            $hargaDiskon = $favorite->produk->harga_diskon ?? $favorite->produk->harga;
+                            $diskonPersen = $favorite->produk->diskon_persen ?? 0;
+                        @endphp
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="text-gray-600 text-sm">
+                                Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
+                            </div>
+                            @if($diskonPersen > 0)
+                                <span class="text-xs font-semibold px-2 py-0.5 bg-green-500 text-white rounded">
+                                    -{{ $diskonPersen }}%
+                                </span>
+                            @endif
                         </div>
                     </div>
 
