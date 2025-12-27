@@ -31,6 +31,8 @@ class User extends Authenticatable
         'city',
         'province',
         'postal_code',
+        'secret_question',
+        'secret_answer',
     ];
 
     /**

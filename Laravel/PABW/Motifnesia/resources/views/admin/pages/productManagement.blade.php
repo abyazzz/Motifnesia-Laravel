@@ -127,8 +127,12 @@
                         {{-- Material --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Material</label>
-                            <input type="text" id="edit_material" name="material" 
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <select id="edit_material" name="material" 
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="">-- Pilih Material --</option>
+                                <option value="Katun">Katun</option>
+                                <option value="Sutra">Sutra</option>
+                            </select>
                         </div>
 
                         {{-- Proses --}}
@@ -152,8 +156,13 @@
                         {{-- Kategori --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
-                            <input type="text" id="edit_category" name="category" 
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <select id="edit_category" name="category" 
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="Pria">Pria</option>
+                                <option value="Wanita">Wanita</option>
+                                <option value="Anak-anak">Anak-anak</option>
+                            </select>
                         </div>
 
                         {{-- Ukuran --}}

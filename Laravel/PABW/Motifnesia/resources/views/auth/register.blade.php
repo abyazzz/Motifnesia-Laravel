@@ -121,7 +121,7 @@
           <h2 class="text-4xl font-bold mb-2" style="color: #8B4513;">Create Account</h2>
           <p class="text-gray-500 mb-6">Sign up to get started</p>
 
-          <form action="{{ route('auth.register') }}" method="POST" class="space-y-3" id="registerForm">
+          <form action="{{ route('auth.doRegister') }}" method="POST" class="space-y-3" id="registerForm">
             @csrf
             
             <div class="grid grid-cols-2 gap-3">

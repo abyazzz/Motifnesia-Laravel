@@ -66,7 +66,7 @@ class PaymentController extends Controller
         if (!$checkoutData) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data checkout tidak ditemukan. Session mungkin expired.'
+                'message' => 'Data checkout tidak ditemukan.'
             ], 400);
         }
 

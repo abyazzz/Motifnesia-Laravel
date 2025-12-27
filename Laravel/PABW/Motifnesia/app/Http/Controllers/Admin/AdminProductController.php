@@ -24,11 +24,52 @@ class AdminProductController extends Controller
     }
 
     // =========================
-    // FORM CREATE PRODUK
+    // CREATE & STORE PRODUK (Form + Save)
     // =========================
-    public function create()
+    public function createOrStore(Request $request, ProductService $productService)
     {
-        // Data kosong untuk form tambah produk
+        // Jika POST request, proses penyimpanan produk
+        if ($request->isMethod('post')) {
+            try {
+                // Validasi menggunakan StoreProductRequest rules
+                $validated = $request->validate([
+                    'name' => 'required|string|max:255',
+                    'description' => 'required|string',
+                    'price' => 'required|numeric|min:0',
+                    'category' => 'required|string',
+                    'stock' => 'required|integer|min:0',
+                    'material' => 'required|string',
+                    'process' => 'required|string',
+                    'sku' => 'required|string|unique:produk,sku',
+                    'tags' => 'required|string',
+                    'ukuran' => 'required|string',
+                    'jenis_lengan' => 'required|string',
+                    'diskon_persen' => 'required|integer|min:0|max:100',
+                    'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                ]);
+            
+                $gambarPath = null;
+                if ($request->hasFile('image')) {
+                    $gambarPath = $productService->uploadProductImage($request->file('image'));
+                }
+
+                // Prepare product data dengan kalkulasi diskon
+                $productData = $productService->prepareProductData($validated, $gambarPath);
+
+                // Simpan ke DB
+                Produk::create($productData);
+
+                return redirect()->route('admin.product.management.index')
+                    ->with('success', 'Produk berhasil ditambahkan!');
+            } catch (\Exception $e) {
+                \Log::error('Error creating product: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal menambahkan produk: ' . $e->getMessage());
+            }
+        }
+
+        // Jika GET request, tampilkan form
         $product = [
             'name' => '',
             'price' => '',
@@ -49,30 +90,6 @@ class AdminProductController extends Controller
             'formTitle' => 'Tambah Produk',
             'activePage' => 'products-create'
         ]);
-    }
-
-
-    // =========================
-    // STORE PRODUK BARU
-    // =========================
-    public function store(StoreProductRequest $request, ProductService $productService)
-    {
-        $data = $request->validated();
-
-        // Upload gambar
-        $gambarPath = null;
-        if ($request->hasFile('image')) {
-            $gambarPath = $productService->uploadProductImage($request->file('image'));
-        }
-
-        // Prepare product data dengan kalkulasi diskon
-        $productData = $productService->prepareProductData($data, $gambarPath);
-
-        // Simpan ke DB
-        Produk::create($productData);
-
-        return redirect()->route('admin.product.management.index')
-            ->with('success', 'Produk berhasil ditambahkan!');
     }
 
     // =========================

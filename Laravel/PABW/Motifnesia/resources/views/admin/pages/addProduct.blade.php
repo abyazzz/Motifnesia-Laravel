@@ -15,7 +15,33 @@
             </a>
         </div>
 
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        {{-- Display Success Message --}}
+        @if (session('success'))
+            <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <div class="font-semibold">{{ session('success') }}</div>
+            </div>
+        @endif
+
+        {{-- Display Error Message --}}
+        @if (session('error'))
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div class="font-semibold">{{ session('error') }}</div>
+            </div>
+        @endif
+
+        {{-- Display Validation Errors --}}
+        @if ($errors->any())
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div class="font-semibold mb-2">Terdapat kesalahan dalam pengisian form:</div>
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.products.create') }}" method="POST" enctype="multipart/form-data">
             @csrf
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -25,24 +51,33 @@
                     
                         {{-- Nama Produk --}}
                         <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Produk</label>
-                            <input type="text" id="name" name="name" value="{{ $product['name'] }}" required
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Produk <span class="text-red-500">*</span></label>
+                            <input type="text" id="name" name="name" value="{{ old('name', $product['name']) }}" required
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 @error('name') border-red-500 @enderror">
+                            @error('name')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Harga --}}
                             <div>
-                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga Asli</label>
-                                <input type="number" id="price" name="price" value="{{ $product['price'] }}" step="0.01" min="0"
-                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga Asli <span class="text-red-500">*</span></label>
+                                <input type="number" id="price" name="price" value="{{ old('price', $product['price']) }}" step="0.01" min="0" required
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 @error('price') border-red-500 @enderror">
+                                @error('price')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Stok --}}
                             <div>
-                                <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Stok</label>
-                                <input type="number" id="stock" name="stock" value="{{ $product['stock'] }}"
-                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Stok <span class="text-red-500">*</span></label>
+                                <input type="number" id="stock" name="stock" value="{{ old('stock', $product['stock']) }}" min="0" required
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 @error('stock') border-red-500 @enderror">
+                                @error('stock')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -51,7 +86,7 @@
                             {{-- Diskon --}}
                             <div>
                                 <label for="diskon_persen" class="block text-sm font-semibold text-gray-700 mb-2">Diskon (%)</label>
-                                <input type="number" id="diskon_persen" name="diskon_persen" value="0" step="1" min="0" max="100"
+                                <input type="number" id="diskon_persen" name="diskon_persen" value="{{ old('diskon_persen', 0) }}" step="1" min="0" max="100"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                        placeholder="Contoh: 10">
                             </div>
@@ -72,8 +107,8 @@
                                 <select id="material" name="material"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     <option value="">-- Pilih Material --</option>
-                                    <option value="Katun" {{ isset($product['material']) && $product['material'] == 'Katun' ? 'selected' : '' }}>Katun</option>
-                                    <option value="Sutra" {{ isset($product['material']) && $product['material'] == 'Sutra' ? 'selected' : '' }}>Sutra</option>
+                                    <option value="Katun" {{ old('material', $product['material']) == 'Katun' ? 'selected' : '' }}>Katun</option>
+                                    <option value="Sutra" {{ old('material', $product['material']) == 'Sutra' ? 'selected' : '' }}>Sutra</option>
                                 </select>
                             </div>
 
@@ -83,8 +118,8 @@
                                 <select id="process" name="process"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     <option value="">-- Pilih Proses --</option>
-                                    <option value="Press" {{ isset($product['process']) && $product['process'] == 'Press' ? 'selected' : '' }}>Press</option>
-                                    <option value="Tulis" {{ isset($product['process']) && $product['process'] == 'Tulis' ? 'selected' : '' }}>Tulis</option>
+                                    <option value="Press" {{ old('process', $product['process']) == 'Press' ? 'selected' : '' }}>Press</option>
+                                    <option value="Tulis" {{ old('process', $product['process']) == 'Tulis' ? 'selected' : '' }}>Tulis</option>
                                 </select>
                             </div>
                         </div>
@@ -93,20 +128,23 @@
                             {{-- SKU --}}
                             <div>
                                 <label for="sku" class="block text-sm font-semibold text-gray-700 mb-2">SKU</label>
-                                <input type="text" id="sku" name="sku" value="{{ $product['sku'] }}"
+                                <input type="text" id="sku" name="sku" value="{{ old('sku', $product['sku']) }}"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                             </div>
 
                             {{-- Kategori --}}
                             <div>
-                                <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
-                                <select id="category" name="category"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+                                <select id="category" name="category" required
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 @error('category') border-red-500 @enderror">
                                     <option value="">-- Pilih Kategori --</option>
-                                    <option value="Pria" {{ isset($product['category']) && $product['category'] == 'Pria' ? 'selected' : '' }}>Pria</option>
-                                    <option value="Wanita" {{ isset($product['category']) && $product['category'] == 'Wanita' ? 'selected' : '' }}>Wanita</option>
-                                    <option value="Anak-anak" {{ isset($product['category']) && $product['category'] == 'Anak-anak' ? 'selected' : '' }}>Anak-anak</option>
+                                    <option value="Pria" {{ old('category', $product['category']) == 'Pria' ? 'selected' : '' }}>Pria</option>
+                                    <option value="Wanita" {{ old('category', $product['category']) == 'Wanita' ? 'selected' : '' }}>Wanita</option>
+                                    <option value="Anak-anak" {{ old('category', $product['category']) == 'Anak-anak' ? 'selected' : '' }}>Anak-anak</option>
                                 </select>
+                                @error('category')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -117,10 +155,10 @@
                                 <select id="ukuran" name="ukuran"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     <option value="">-- Pilih Ukuran --</option>
-                                    <option value="S" {{ isset($product['ukuran']) && $product['ukuran'] == 'S' ? 'selected' : '' }}>S</option>
-                                    <option value="M" {{ isset($product['ukuran']) && $product['ukuran'] == 'M' ? 'selected' : '' }}>M</option>
-                                    <option value="L" {{ isset($product['ukuran']) && $product['ukuran'] == 'L' ? 'selected' : '' }}>L</option>
-                                    <option value="XL" {{ isset($product['ukuran']) && $product['ukuran'] == 'XL' ? 'selected' : '' }}>XL</option>
+                                    <option value="S" {{ old('ukuran', $product['ukuran']) == 'S' ? 'selected' : '' }}>S</option>
+                                    <option value="M" {{ old('ukuran', $product['ukuran']) == 'M' ? 'selected' : '' }}>M</option>
+                                    <option value="L" {{ old('ukuran', $product['ukuran']) == 'L' ? 'selected' : '' }}>L</option>
+                                    <option value="XL" {{ old('ukuran', $product['ukuran']) == 'XL' ? 'selected' : '' }}>XL</option>
                                 </select>
                             </div>
 
@@ -130,8 +168,8 @@
                                 <select id="jenis_lengan" name="jenis_lengan"
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     <option value="">-- Pilih Jenis Lengan --</option>
-                                    <option value="Pendek" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Pendek' ? 'selected' : '' }}>Pendek</option>
-                                    <option value="Panjang" {{ isset($product['jenis_lengan']) && $product['jenis_lengan'] == 'Panjang' ? 'selected' : '' }}>Panjang</option>
+                                    <option value="Pendek" {{ old('jenis_lengan', $product['jenis_lengan']) == 'Pendek' ? 'selected' : '' }}>Pendek</option>
+                                    <option value="Panjang" {{ old('jenis_lengan', $product['jenis_lengan']) == 'Panjang' ? 'selected' : '' }}>Panjang</option>
                                 </select>
                             </div>
                         </div>
@@ -139,16 +177,19 @@
                         {{-- Tags --}}
                         <div>
                             <label for="tags" class="block text-sm font-semibold text-gray-700 mb-2">Tags</label>
-                            <input type="text" id="tags" name="tags" value="{{ $product['tags'] }}"
+                            <input type="text" id="tags" name="tags" value="{{ old('tags', $product['tags']) }}"
                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                    placeholder="Contoh: batik, modern, casual">
                         </div>
 
                         {{-- Deskripsi --}}
                         <div>
-                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Produk</label>
-                            <textarea id="description" name="description" rows="4"
-                                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">{{ $product['description'] }}</textarea>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Produk <span class="text-red-500">*</span></label>
+                            <textarea id="description" name="description" rows="4" required
+                                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 @error('description') border-red-500 @enderror">{{ old('description', $product['description']) }}</textarea>
+                            @error('description')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>

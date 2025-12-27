@@ -43,6 +43,7 @@ Route::group(['prefix' => '', 'as' => 'auth.', 'middleware' => 'guest'], functio
     Route::post('/register', [UserController::class, 'doRegister'])->name('doRegister');
     // Forgot Password
     Route::get('/forgot', [UserController::class, 'forgot'])->name('forgot');
+    Route::post('/forgot', [UserController::class, 'doForgot'])->name('doForgot');
 });
 
 // Logout route (tidak pakai guest middleware)
@@ -103,6 +104,13 @@ Route::group(['prefix' => '', 'as' => 'customer.', 'middleware' => 'customer'], 
     Route::get('/returns/create/{orderItemId}', [\App\Http\Controllers\Customer\ReturnController::class, 'create'])->name('returns.create');
     Route::post('/returns', [\App\Http\Controllers\Customer\ReturnController::class, 'store'])->name('returns.store');
     Route::patch('/returns/{id}/cancel', [\App\Http\Controllers\Customer\ReturnController::class, 'cancel'])->name('returns.cancel');
+
+    // ========== LIVE CHAT (Customer) ==========
+    Route::get('/chat', [\App\Http\Controllers\Customer\ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/get-or-create', [\App\Http\Controllers\Customer\ChatController::class, 'getOrCreateChat'])->name('chat.getOrCreate');
+    Route::post('/chat/send', [\App\Http\Controllers\Customer\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/{chatId}/messages', [\App\Http\Controllers\Customer\ChatController::class, 'getNewMessages'])->name('chat.messages');
+    Route::post('/chat/{chatId}/close', [\App\Http\Controllers\Customer\ChatController::class, 'closeChat'])->name('chat.close');
 });
 
 // ==================== ADMIN GROUP ====================
@@ -113,12 +121,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
     // Product Management Page (grid + modal edit/delete)
     Route::get('/product-management', [AdminProductController::class, 'manage'])
         ->name('product.management.index');
-    // CREATE product (Form Add)
-    Route::get('/products/create', [AdminProductController::class, 'create'])
+    // CREATE & STORE product (Form + Save in one route)
+    Route::match(['GET', 'POST'], '/products/create', [AdminProductController::class, 'createOrStore'])
         ->name('products.create');
-    // STORE product
-    Route::post('/products/create', [AdminProductController::class, 'store'])
-        ->name('products.store');
     // UPDATE product (modal)
     Route::post('/products/{id}/update', [AdminProductController::class, 'update'])
         ->name('products.update');
@@ -133,6 +138,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
     Route::get('/product-reviews/{id}', [App\Http\Controllers\Admin\ProductReviewController::class, 'show'])->name('reviews.show');
     // Live Chat Admin
     Route::get('/live-chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/live-chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/live-chat/{chatId}/messages', [ChatController::class, 'getNewMessages'])->name('chat.messages');
+    Route::get('/live-chat/list', [ChatController::class, 'getChatList'])->name('chat.list');
     // Returns (Admin)
     Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
     Route::post('/returns/{id}/update-status', [ReturnController::class, 'updateStatus'])->name('returns.updateStatus');

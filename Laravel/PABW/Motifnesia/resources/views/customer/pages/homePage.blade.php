@@ -1,30 +1,34 @@
 @extends('customer.layouts.mainLayout')
 
 @section('container')
-        {{-- Slideshow: Full Width --}}
-        <div class="w-full pt-20 mb-6">
-            <div class="slideshow-wrapper">
-                <div id="homepage-carousel" class="homepage-carousel">
+        {{-- Slideshow Container: 80% Width --}}
+        <div class="w-[80%] mx-auto pt-20 mb-6">
+            <div class="relative h-[400px] rounded-lg overflow-hidden shadow-lg">
+                <div id="homepage-carousel" class="relative w-full h-full">
                     @if(isset($slides) && $slides->count())
                         @foreach($slides as $i => $slide)
-                            <div class="carousel-slide" data-index="{{ $i }}" style="display: {{ $i === 0 ? 'block' : 'none' }};">
-                                <img src="{{ asset($slide->gambar) }}" alt="Slide {{ $i+1 }}">
-                                {{-- caption dihilangkan --}}
+                            <div class="absolute inset-0 transition-opacity duration-500 {{ $i === 0 ? 'opacity-100' : 'opacity-0' }}" data-index="{{ $i }}">
+                                <img src="{{ asset($slide->gambar) }}" alt="Slide {{ $i+1 }}" class="w-full h-full object-cover" style="object-position: center 0px;">
                             </div>
                         @endforeach
-                        <button id="carousel-prev" class="carousel-control prev">‹</button>
-                        <button id="carousel-next" class="carousel-control next">›</button>
+                        <button id="carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button id="carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
                     @else
-                        <div class="carousel-slide" style="display:block;">
-                            <div class="no-slide">No slides available</div>
+                        <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                            <p class="text-gray-500">No slides available</p>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
 
-        {{-- Main Container: 80% Width, Fixed Sidebar + Scrollable Product Grid --}}
-        <div class="w-[80%] mx-auto flex relative">
+        {{-- Sidebar + Product Grid Container: 80% Width --}}
+        <div class="w-[80%] mx-auto">
+            <div class="flex relative">
             {{-- Fixed Sidebar Kiri (dalam container 80%) --}}
             <div class="sticky top-20 h-fit max-h-[calc(100vh-6rem)] w-64 shrink-0 overflow-y-auto bg-white rounded-lg" style="box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);">
                 @include('customer.components.sideBar')
@@ -49,51 +53,26 @@
             </div>
         </div>
 
-        <style>
-        .slideshow-wrapper { 
-            width: 100%; 
-            position: relative; 
-            overflow: hidden;
-            border-radius: 8px;
-        }
-        .homepage-carousel { 
-            position: relative; 
-            overflow: hidden; 
-            height: 450px;
-        }
-        .carousel-slide { 
-            width: 100%; 
-            height: 450px;
-        }
-        .carousel-slide img { 
-            width: 100%; 
-            height: 450px; 
-            object-fit: cover; 
-            display: block;
-        }
-        .carousel-caption { position: absolute; left: 20px; bottom: 20px; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
-        .carousel-control { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: #fff; border: none; padding: 8px 12px; cursor: pointer; font-size: 28px; border-radius: 4px; }
-        .carousel-control.prev { left: 8px; }
-        .carousel-control.next { right: 8px; }
-        .carousel-control:hover { background: rgba(0,0,0,0.6); }
-        .no-slide { padding: 40px; background:#f5f5f5; height: 450px; display: flex; align-items: center; justify-content: center; }
-        </style>
-
         <script>
         (function(){
-            const slides = Array.from(document.querySelectorAll('#homepage-carousel .carousel-slide'));
+            const slides = Array.from(document.querySelectorAll('#homepage-carousel [data-index]'));
             if (!slides.length) return;
             let idx = 0;
             const show = (i) => {
-                slides.forEach((s, si) => s.style.display = (si === i) ? 'block' : 'none');
+                slides.forEach((s, si) => {
+                    s.classList.toggle('opacity-100', si === i);
+                    s.classList.toggle('opacity-0', si !== i);
+                });
                 idx = i;
             };
             const prev = () => show((idx - 1 + slides.length) % slides.length);
             const next = () => show((idx + 1) % slides.length);
             document.getElementById('carousel-prev')?.addEventListener('click', prev);
             document.getElementById('carousel-next')?.addEventListener('click', next);
-            // optional: keyboard navigation
-            document.addEventListener('keydown', function(e){ if(e.key === 'ArrowLeft') prev(); if(e.key === 'ArrowRight') next(); });
+            document.addEventListener('keydown', function(e){ 
+                if(e.key === 'ArrowLeft') prev(); 
+                if(e.key === 'ArrowRight') next(); 
+            });
         })();
         </script>
 
