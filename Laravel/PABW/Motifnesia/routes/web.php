@@ -10,7 +10,6 @@ use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Admin\OrderStatusController;
 use App\Http\Controllers\Customer\CheckOutController;
 use App\Http\Controllers\Customer\FavoriteController;
@@ -83,12 +82,6 @@ Route::group(['prefix' => '', 'as' => 'customer.', 'middleware' => 'customer'], 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-
-    // ========== REVIEWS (Old - Product Detail Reviews) ==========
-    Route::get('/products/{id}/reviews', [ReviewController::class, 'index'])->name('products.reviews.index');
-    Route::post('/product-reviews', [ReviewController::class, 'store'])->name('product.reviews.store');
-    Route::put('/product-reviews/{id}', [ReviewController::class, 'update'])->name('product.reviews.update');
-    Route::delete('/product-reviews/{id}', [ReviewController::class, 'destroy'])->name('product.reviews.destroy');
 
     // ========== ORDER REVIEWS (Purchase History Reviews) ==========
     Route::post('/order-reviews', [\App\Http\Controllers\Customer\OrderReviewController::class, 'store'])->name('order.reviews.store');

@@ -42,15 +42,4 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Hapus customer berdasarkan ID.
-     */
-    public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return redirect()->route('admin.customers.index')
-                        ->with('success', 'Pelanggan berhasil dihapus.');
-    }
 }

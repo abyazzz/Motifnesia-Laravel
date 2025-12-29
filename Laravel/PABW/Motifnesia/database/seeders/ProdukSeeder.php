@@ -14,9 +14,8 @@ class ProdukSeeder extends Seeder
      */
     public function run()
     {
-        if (Produk::count() > 0) {
-            return;
-        }
+        
+        
 
         Produk::create([
             'gambar' => 'photoProduct/foto1.jpg',

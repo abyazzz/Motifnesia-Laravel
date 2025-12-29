@@ -48,10 +48,12 @@
         font-size: 18px;
     }
 
-    .review-text {
-        color: #333;
-        line-height: 1.6;
-        font-size: 14px;
+    .review-stars .fa-star {
+        color: #ddd;
+    }
+
+    .review-stars .fa-star.checked {
+        color: #ffc107;
     }
 </style>
 

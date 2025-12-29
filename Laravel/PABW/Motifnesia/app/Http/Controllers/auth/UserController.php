@@ -36,40 +36,6 @@ class UserController extends Controller
             }
         }
 
-        // Jika tidak ditemukan di DB, fallback ke akun dummy yang disimpan di session (atau default)
-        $accounts = session('accounts', [
-            [
-                'username' => 'admin',
-                'password' => '123456',
-                'nama' => 'Admin Motifnesia',
-                'role' => 'admin'
-            ],
-            [
-                'username' => 'user',
-                'password' => '456789',
-                'nama' => 'Pelanggan Setia',
-                'role' => 'user'
-            ]
-        ]);
-
-        // Cari akun yang cocok di fallback
-        $authenticatedAccount = null;
-        foreach ($accounts as $akun) {
-            if ($username === $akun['username'] && $password === $akun['password']) {
-                $authenticatedAccount = $akun;
-                break;
-            }
-        }
-
-        if ($authenticatedAccount) {
-            session(['user' => $authenticatedAccount]);
-            if ($authenticatedAccount['role'] === 'admin') {
-                return redirect()->route('admin.product.management.index')->with('success', 'Berhasil login sebagai Admin!');
-            } else {
-                return redirect()->route('customer.home')->with('success', 'Berhasil login!');
-            }
-        }
-
         return back()->with('error', 'Username atau password salah!');
     }
 

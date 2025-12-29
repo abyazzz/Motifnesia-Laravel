@@ -19,7 +19,7 @@
                         </div>
                     </div>
 
-                    <h3 class="text-xl font-bold mb-6">{{ $userProfile['full_name'] ?? $userProfile['username'] }}</h3>
+                    <h3 class="text-xl font-bold mb-6">{{ $userProfile['username'] ?? $userProfile['full_name'] }}</h3>
 
                     {{-- Action Buttons --}}
                     <div class="space-y-3">
@@ -47,11 +47,11 @@
                     <div class="space-y-2">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-700">Total Pesanan:</span>
-                            <span class="font-bold" style="color: #8B4513;">-</span>
+                            <span class="font-bold" style="color: #8B4513;">{{ $shoppingStats['total_orders'] ?? 0 }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-700">Total Belanja:</span>
-                            <span class="font-bold" style="color: #8B4513;">Rp -</span>
+                            <span class="font-bold" style="color: #8B4513;">Rp {{ number_format($shoppingStats['total_spent'] ?? 0, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                     <div class="space-y-4">
                         <div class="flex items-center py-3 border-b">
                             <div class="w-40 text-gray-600 font-medium">Nama Lengkap</div>
-                            <div class="flex-1 font-semibold">{{ $userProfile['username'] ?? '-' }}</div>
+                            <div class="flex-1 font-semibold">{{ $userProfile['full_name'] ?? '-' }}</div>
                         </div>
                         <div class="flex items-center py-3 border-b">
                             <div class="w-40 text-gray-600 font-medium">Email</div>

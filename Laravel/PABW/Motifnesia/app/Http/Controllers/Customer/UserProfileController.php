@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customer\PurchaseHistoryController;
 use App\Models\User;
 
-class UserProfileController extends \App\Http\Controllers\Controller
+class UserProfileController extends Controller
 {
     /**
      * Tampilkan halaman Profil Pengguna.
@@ -32,7 +32,17 @@ class UserProfileController extends \App\Http\Controllers\Controller
         ];
 
         $purchaseHistory = PurchaseHistoryController::getHistoryData();
-        return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory'));
+
+        // Hitung statistik belanja
+        $totalOrders = count(array_unique(array_column($purchaseHistory, 'order_id')));
+        $totalSpent = array_sum(array_column($purchaseHistory, 'subtotal'));
+
+        $shoppingStats = [
+            'total_orders' => $totalOrders,
+            'total_spent' => $totalSpent,
+        ];
+
+        return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory', 'shoppingStats'));
     }
 
     public function edit()
