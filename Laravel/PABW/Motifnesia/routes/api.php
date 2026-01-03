@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiProductController;
+use App\Http\Controllers\Api\CustomerReviewController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +53,18 @@ Route::get('/products-categories', [ApiProductController::class, 'categories']);
 // URL: POST /api/products/search
 // Body: { "keyword": "batik", "min_price": 50000, "max_price": 200000, "category": "batik" }
 Route::post('/products/search', [ApiProductController::class, 'search']);
+
+// ========== REVIEW API ROUTES ==========
+
+// GET reviews by product ID
+// URL: GET /api/reviews/1
+Route::get('/reviews/{produk_id}', [CustomerReviewController::class, 'index']);
+
+// POST new review
+// URL: POST /api/reviews
+// Body: { produk_id, rating, deskripsi_ulasan }
+Route::post('/reviews', [CustomerReviewController::class, 'store']);
+
 
 // ========== TEST ENDPOINT (untuk cek API nyala) ==========
 Route::get('/test', function() {
