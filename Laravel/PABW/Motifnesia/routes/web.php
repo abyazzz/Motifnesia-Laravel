@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OrderStatusController;
 use App\Http\Controllers\Customer\CheckOutController;
 use App\Http\Controllers\Customer\FavoriteController;
 use App\Http\Controllers\Admin\StaticContentController;
+use App\Http\Controllers\Customer\UserAddressController;
 
 // Import Controllers Admin (Backend)
 use App\Http\Controllers\Customer\TransactionController;
@@ -97,6 +98,12 @@ Route::group(['prefix' => '', 'as' => 'customer.', 'middleware' => 'customer'], 
     Route::get('/profile', [UserProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/edit', [UserProfileController::class, 'update'])->name('profile.update');
+
+    // User Addresses (AJAX)
+    Route::post('/profile/addresses', [UserAddressController::class, 'store'])->name('profile.addresses.store');
+    Route::post('/profile/addresses/{id}/update', [UserAddressController::class, 'update'])->name('profile.addresses.update');
+    Route::post('/profile/addresses/{id}/set-primary', [UserAddressController::class, 'setPrimary'])->name('profile.addresses.setPrimary');
+    Route::delete('/profile/addresses/{id}', [UserAddressController::class, 'destroy'])->name('profile.addresses.destroy');
 
     // ========== RETURNS (Customer) ==========
     Route::get('/returns', [\App\Http\Controllers\Customer\ReturnController::class, 'index'])->name('returns.index');

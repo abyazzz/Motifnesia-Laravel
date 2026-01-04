@@ -103,13 +103,38 @@
                                 <i class="fas fa-map-marker-alt mr-2 text-orange-600"></i>Alamat
                             </div>
                             <div class="flex-1">
-                                @if(!empty($userProfile['address_line']))
-                                    <div class="font-semibold mb-1">{{ $userProfile['address_line'] }}</div>
-                                    <div class="text-sm text-gray-600">
-                                        {{ $userProfile['city'] ?? '' }}{{ $userProfile['city'] && $userProfile['province'] ? ', ' : '' }}{{ $userProfile['province'] ?? '' }} {{ $userProfile['postal_code'] ?? '' }}
+                                @if($addresses && $addresses->count() > 0)
+                                    <div class="space-y-3">
+                                        @foreach($addresses as $address)
+                                            <div class="border rounded-lg p-3 {{ $address->is_primary ? 'border-orange-500 bg-orange-50' : 'border-gray-200' }}">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="flex-1">
+                                                        @if($address->label)
+                                                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $address->is_primary ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700' }} mr-2">
+                                                                {{ $address->label }}
+                                                            </span>
+                                                        @endif
+                                                        @if($address->is_primary)
+                                                            <span class="inline-block px-2 py-1 text-xs font-semibold bg-green-500 text-white rounded">
+                                                                <i class="fas fa-check-circle mr-1"></i>Utama
+                                                            </span>
+                                                        @endif
+                                                        <div class="mt-2 font-semibold">{{ $address->recipient_name }}</div>
+                                                        <div class="text-sm text-gray-600">{{ $address->phone_number }}</div>
+                                                        <div class="text-sm mt-1">{{ $address->address_line }}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}
+                                                        </div>
+                                                        @if($address->notes)
+                                                            <div class="text-xs text-gray-500 mt-1 italic">{{ $address->notes }}</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 @else
-                                    <span class="text-gray-400">Belum diisi</span>
+                                    <span class="text-gray-400">Belum ada alamat. Tambahkan di halaman Edit Profil.</span>
                                 @endif
                             </div>
                         </div>

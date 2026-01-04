@@ -165,7 +165,9 @@ class ApiUserController extends Controller
      * ========================================
      * GET PROFILE USER (butuh login)
      * ========================================
-     * Endpoint: GET /api/profile
+     * Endpoint: GET /api/profile?user_id={id}
+     * Query params:
+     *   - user_id (required for testing, optional when using Sanctum)
      * Headers: Authorization: Bearer {token}
      * 
      * Note: Untuk sekarang tanpa auth dulu, nanti tambahin middleware auth:sanctum
@@ -173,18 +175,32 @@ class ApiUserController extends Controller
     public function profile(Request $request)
     {
         try {
-            // Ambil user yang sedang login
-            // Kalau pake Sanctum: $user = $request->user();
-            // Untuk sekarang pake Auth
+            // Untuk testing: accept user_id dari query param
+            // Nanti pas production pakai Sanctum: $user = $request->user();
+            $userId = $request->input('user_id');
             
-            if (!Auth::check()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User belum login'
-                ], 401);
+            if ($userId) {
+                // Testing mode: use user_id from query
+                $user = User::find($userId);
+                if (!$user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User tidak ditemukan'
+                    ], 404);
+                }
+            } else {
+                // Production mode: use authenticated user
+                if (!Auth::check()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User belum login'
+                    ], 401);
+                }
+                $user = Auth::user();
             }
 
-            $user = Auth::user();
+            // Load addresses relationship
+            $user->load('addresses');
 
             return response()->json([
                 'success' => true,
@@ -199,10 +215,16 @@ class ApiUserController extends Controller
                     'birth_date' => $user->birth_date,
                     'gender' => $user->gender,
                     'profile_pic' => $user->profile_pic,
+                    
+                    // DEPRECATED: Use 'addresses' instead
                     'address_line' => $user->address_line,
                     'city' => $user->city,
                     'province' => $user->province,
                     'postal_code' => $user->postal_code,
+                    
+                    // NEW: Multiple addresses support
+                    'addresses' => $user->addresses,
+                    'primary_address' => $user->addresses->where('is_primary', true)->first(),
                 ]
             ], 200);
 
@@ -235,22 +257,37 @@ class ApiUserController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            // Ambil user yang sedang login
-            if (!Auth::check()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User belum login'
-                ], 401);
+            // WORKAROUND: Accept user_id dari body untuk testing tanpa Sanctum
+            // Nanti pas production pakai: $user = Auth::user();
+            $userId = $request->input('user_id');
+            
+            if (!$userId) {
+                // Fallback ke Auth::check() kalau ga ada user_id
+                if (!Auth::check()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User belum login'
+                    ], 401);
+                }
+                $user = Auth::user();
+            } else {
+                // Testing mode: ambil user by ID
+                $user = User::find($userId);
+                if (!$user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User tidak ditemukan'
+                    ], 404);
+                }
             }
-
-            $user = Auth::user();
 
             // Validasi input
             $validator = Validator::make($request->all(), [
+                'user_id' => 'nullable|integer',
                 'full_name' => 'nullable|string|max:255',
                 'phone_number' => 'nullable|string|max:20',
                 'birth_date' => 'nullable|date',
-                'gender' => 'nullable|in:male,female',
+                'gender' => 'nullable|in:male,female,Laki-laki,Perempuan',
                 'address_line' => 'nullable|string',
                 'city' => 'nullable|string|max:100',
                 'province' => 'nullable|string|max:100',
@@ -337,6 +374,115 @@ class ApiUserController extends Controller
             ], 500);
         }
     }
+
+
+    // public function updateProfile(Request $request)
+    // {
+    //     try {
+    //         // Ambil user yang sedang login
+    //         if (!Auth::check()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'User belum login'
+    //             ], 401);
+    //         }
+
+    //         $user = Auth::user();
+
+    //         // Validasi input
+    //         $validator = Validator::make($request->all(), [
+    //             'full_name' => 'nullable|string|max:255',
+    //             'phone_number' => 'nullable|string|max:20',
+    //             'birth_date' => 'nullable|date',
+    //             'gender' => 'nullable|in:male,female',
+    //             'address_line' => 'nullable|string',
+    //             'city' => 'nullable|string|max:100',
+    //             'province' => 'nullable|string|max:100',
+    //             'postal_code' => 'nullable|string|max:10',
+    //             'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 2MB
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Validasi gagal',
+    //                 'errors' => $validator->errors()
+    //             ], 422);
+    //         }
+
+    //         // Handle upload profile pic (jika ada)
+    //         if ($request->hasFile('profile_pic')) {
+    //             // Hapus gambar lama jika ada
+    //             if ($user->profile_pic && file_exists(public_path($user->profile_pic))) {
+    //                 unlink(public_path($user->profile_pic));
+    //             }
+
+    //             // Upload gambar baru
+    //             $image = $request->file('profile_pic');
+    //             $imageName = time() . '_' . $image->getClientOriginalName();
+    //             $image->move(public_path('images/profiles'), $imageName);
+    //             $user->profile_pic = 'images/profiles/' . $imageName;
+    //         }
+
+    //         // Update field yang ada di request
+    //         if ($request->has('full_name')) {
+    //             $user->full_name = $request->full_name;
+    //         }
+    //         if ($request->has('phone_number')) {
+    //             $user->phone_number = $request->phone_number;
+    //         }
+    //         if ($request->has('birth_date')) {
+    //             $user->birth_date = $request->birth_date;
+    //         }
+    //         if ($request->has('gender')) {
+    //             $user->gender = $request->gender;
+    //         }
+    //         if ($request->has('address_line')) {
+    //             $user->address_line = $request->address_line;
+    //         }
+    //         if ($request->has('city')) {
+    //             $user->city = $request->city;
+    //         }
+    //         if ($request->has('province')) {
+    //             $user->province = $request->province;
+    //         }
+    //         if ($request->has('postal_code')) {
+    //             $user->postal_code = $request->postal_code;
+    //         }
+
+    //         // Save perubahan
+    //         $user->save();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Profile berhasil diupdate',
+    //             'data' => [
+    //                 'id' => $user->id,
+    //                 'name' => $user->name,
+    //                 'full_name' => $user->full_name,
+    //                 'email' => $user->email,
+    //                 'role' => $user->role,
+    //                 'phone_number' => $user->phone_number,
+    //                 'birth_date' => $user->birth_date,
+    //                 'gender' => $user->gender,
+    //                 'profile_pic' => $user->profile_pic,
+    //                 'address_line' => $user->address_line,
+    //                 'city' => $user->city,
+    //                 'province' => $user->province,
+    //                 'postal_code' => $user->postal_code,
+    //             ]
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Gagal mengupdate profile',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    
 
     /**
      * ========================================
@@ -432,7 +578,7 @@ class ApiUserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::find($id);
+            $user = User::with('addresses')->find($id);
 
             if (!$user) {
                 return response()->json([
@@ -454,10 +600,16 @@ class ApiUserController extends Controller
                     'birth_date' => $user->birth_date,
                     'gender' => $user->gender,
                     'profile_pic' => $user->profile_pic,
+                    
+                    // DEPRECATED: Use 'addresses' instead
                     'address_line' => $user->address_line,
                     'city' => $user->city,
                     'province' => $user->province,
                     'postal_code' => $user->postal_code,
+                    
+                    // NEW: Multiple addresses support
+                    'addresses' => $user->addresses,
+                    'primary_address' => $user->addresses->where('is_primary', true)->first(),
                 ]
             ], 200);
 

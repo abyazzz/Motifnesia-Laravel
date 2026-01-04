@@ -63,4 +63,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    // Relationship dengan addresses
+    public function addresses()
+    {
+        return $this->hasMany(UserAddress::class);
+    }
+
+    // Get primary address
+    public function primaryAddress()
+    {
+        return $this->hasOne(UserAddress::class)->where('is_primary', true);
+    }
 }

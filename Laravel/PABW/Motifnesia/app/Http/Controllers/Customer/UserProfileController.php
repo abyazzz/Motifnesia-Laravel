@@ -31,8 +31,11 @@ class UserProfileController extends \App\Http\Controllers\Controller
             'postal_code' => $user->postal_code ?? null,
         ];
 
+        // Load user addresses
+        $addresses = $user->addresses()->orderBy('is_primary', 'desc')->orderBy('id', 'asc')->get();
+
         $purchaseHistory = PurchaseHistoryController::getHistoryData();
-        return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory'));
+        return view('customer.pages.userProfile', compact('userProfile', 'purchaseHistory', 'addresses'));
     }
 
     public function edit()
@@ -53,7 +56,10 @@ class UserProfileController extends \App\Http\Controllers\Controller
             'postal_code' => $user->postal_code ?? null,
         ];
 
-        return view('customer.pages.editProfile', compact('userProfile'));
+        // Load user addresses
+        $addresses = $user->addresses()->orderBy('is_primary', 'desc')->orderBy('id', 'asc')->get();
+
+        return view('customer.pages.editProfile', compact('userProfile', 'addresses'));
     }
 
     /**

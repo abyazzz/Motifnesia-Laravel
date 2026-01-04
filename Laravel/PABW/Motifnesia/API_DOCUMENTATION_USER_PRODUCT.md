@@ -160,7 +160,10 @@ Nanti bisa ditambahin: **Laravel Sanctum** untuk token-based auth
 
 ### 3. GET PROFILE USER
 
-**Endpoint:** `GET /api/profile`
+**Endpoint:** `GET /api/profile?user_id={id}`
+
+**Query Parameters:**
+- `user_id` (optional) - ID user untuk testing. Nanti kalau udah pakai Sanctum, ga perlu kirim ini.
 
 **Headers:** (Kalau udah pakai token)
 ```
@@ -182,13 +185,67 @@ Authorization: Bearer {your_token}
     "birth_date": "1990-01-01",
     "gender": "male",
     "profile_pic": "images/profiles/123456_photo.jpg",
+    
     "address_line": "Jl. Contoh No. 123",
     "city": "Jakarta",
     "province": "DKI Jakarta",
-    "postal_code": "12345"
+    "postal_code": "12345",
+    
+    "addresses": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "label": "Rumah",
+        "recipient_name": "John Doe",
+        "phone_number": "08123456789",
+        "address_line": "Jl. Contoh No. 123, RT 01/RW 02",
+        "city": "Jakarta",
+        "province": "DKI Jakarta",
+        "postal_code": "12345",
+        "notes": null,
+        "is_primary": true,
+        "created_at": "2026-01-04T17:56:45.000000Z",
+        "updated_at": "2026-01-04T18:08:15.000000Z"
+      },
+      {
+        "id": 2,
+        "user_id": 1,
+        "label": "Kantor",
+        "recipient_name": "John Doe",
+        "phone_number": "08198765432",
+        "address_line": "Jl. Sudirman No. 456",
+        "city": "Jakarta Selatan",
+        "province": "DKI Jakarta",
+        "postal_code": "12190",
+        "notes": "Gedung lt. 5",
+        "is_primary": false,
+        "created_at": "2026-01-04T17:56:56.000000Z",
+        "updated_at": "2026-01-04T17:56:56.000000Z"
+      }
+    ],
+    "primary_address": {
+      "id": 1,
+      "user_id": 1,
+      "label": "Rumah",
+      "recipient_name": "John Doe",
+      "phone_number": "08123456789",
+      "address_line": "Jl. Contoh No. 123, RT 01/RW 02",
+      "city": "Jakarta",
+      "province": "DKI Jakarta",
+      "postal_code": "12345",
+      "notes": null,
+      "is_primary": true,
+      "created_at": "2026-01-04T17:56:45.000000Z",
+      "updated_at": "2026-01-04T18:08:15.000000Z"
+    }
   }
 }
 ```
+
+**Note:** 
+- Field `address_line`, `city`, `province`, `postal_code` di root level adalah **DEPRECATED**
+- Sekarang pakai `addresses` array untuk multiple addresses support
+- `primary_address` otomatis return alamat utama user
 
 ---
 
@@ -322,13 +379,49 @@ GET /api/users/1
     "birth_date": "1990-01-01",
     "gender": "male",
     "profile_pic": "images/profiles/123456_photo.jpg",
+    
     "address_line": "Jl. Contoh No. 123",
     "city": "Jakarta",
     "province": "DKI Jakarta",
-    "postal_code": "12345"
+    "postal_code": "12345",
+    
+    "addresses": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "label": "Rumah",
+        "recipient_name": "John Doe",
+        "phone_number": "08123456789",
+        "address_line": "Jl. Contoh No. 123, RT 01/RW 02",
+        "city": "Jakarta",
+        "province": "DKI Jakarta",
+        "postal_code": "12345",
+        "notes": null,
+        "is_primary": true,
+        "created_at": "2026-01-04T17:56:45.000000Z",
+        "updated_at": "2026-01-04T18:08:15.000000Z"
+      }
+    ],
+    "primary_address": {
+      "id": 1,
+      "user_id": 1,
+      "label": "Rumah",
+      "recipient_name": "John Doe",
+      "phone_number": "08123456789",
+      "address_line": "Jl. Contoh No. 123, RT 01/RW 02",
+      "city": "Jakarta",
+      "province": "DKI Jakarta",
+      "postal_code": "12345",
+      "notes": null,
+      "is_primary": true,
+      "created_at": "2026-01-04T17:56:45.000000Z",
+      "updated_at": "2026-01-04T18:08:15.000000Z"
+    }
   }
 }
 ```
+
+**Note:** Sama seperti profile endpoint, sekarang include `addresses` array dan `primary_address`.
 
 ---
 
