@@ -24,11 +24,7 @@ class CustomerProductController extends Controller
         if (request('search')) {
             $search = request('search');
             $query->where(function($q) use ($search) {
-                $q->where('nama_produk', 'LIKE', "%{$search}%")
-                  ->orWhere('material', 'LIKE', "%{$search}%")
-                  ->orWhere('kategori', 'LIKE', "%{$search}%")
-                  ->orWhere('tags', 'LIKE', "%{$search}%")
-                  ->orWhere('deskripsi', 'LIKE', "%{$search}%");
+                $q->where('nama_produk', 'LIKE', "%{$search}%");
             });
         }
 
@@ -79,7 +75,7 @@ class CustomerProductController extends Controller
             'proses'    => $product->proses,
             'kategori'  => $product->kategori,
             'stok'      => $product->stok,
-        ];
+        ]; 
 
         // Get reviews untuk produk ini
         $reviews = $product->reviews()->with('user')->latest()->get();

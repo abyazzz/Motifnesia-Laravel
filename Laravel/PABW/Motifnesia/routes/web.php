@@ -21,7 +21,6 @@ use App\Http\Controllers\Customer\TransactionController;
 use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\ShoppingCardController;
-use App\Http\Controllers\Customer\ControllerSessionCheckout;
 use App\Http\Controllers\Customer\CustomerProductController;
 use App\Http\Controllers\Admin\AdminProductController; // ← CRUD Produk Admin
 // Redirect root path berdasarkan role
@@ -46,7 +45,7 @@ Route::group(['prefix' => '', 'as' => 'auth.', 'middleware' => 'guest'], functio
     Route::post('/forgot', [UserController::class, 'doForgot'])->name('doForgot');
 });
 
-// Logout route (tidak pakai guest middleware)
+// Logout route
 Route::get('/logout', [UserController::class, 'logout'])->name('auth.logout');
 
 // ==================== CUSTOMER GROUP (PUBLIC) ====================

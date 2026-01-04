@@ -11,17 +11,17 @@ use Illuminate\Http\Request;
 
 class AdminProductController extends Controller
 {
-    // =========================
-    // DAFTAR PRODUK (untuk admin.daftar-produk)
-    // =========================
-    public function index()
-    {
-        $products = Produk::orderBy('id', 'desc')->get();
-        return view('admin.pages.daftarProduk', [
-            'products' => $products,
-            'activePage' => 'daftar-produk'
-        ]);
-    }
+    // // =========================
+    // // DAFTAR PRODUK (untuk admin.daftar-produk)
+    // // =========================
+    // public function index()
+    // {
+    //     $products = Produk::orderBy('id', 'desc')->get();
+    //     return view('admin.pages.daftarProduk', [
+    //         'products' => $products,
+    //         'activePage' => 'daftar-produk'
+    //     ]);
+    // }
 
     // =========================
     // CREATE & STORE PRODUK (Form + Save)
@@ -57,7 +57,7 @@ class AdminProductController extends Controller
                 $productData = $productService->prepareProductData($validated, $gambarPath);
 
                 // Simpan ke DB
-                Produk::create($productData);
+                Produk::create(attributes: $productData);
 
                 return redirect()->route('admin.product.management.index')
                     ->with('success', 'Produk berhasil ditambahkan!');

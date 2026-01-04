@@ -77,7 +77,7 @@
             </div>
         </div>
         
-        @if(request()->hasAny(['gender', 'jenis_lengan', 'price_range']))
+        @if(request()->hasAny(['gender', 'jenis_lengan', 'price_range'])
             <a href="{{ route('customer.home') }}" 
                class="block w-full text-center px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">
                 Reset Filter

@@ -31,7 +31,7 @@ class OrderStatusController extends Controller
     }
 
     /**
-     * Update status pengiriman
+     * Update status pengiriman 
      */
     public function updateStatus(Request $request, $id)
     {
@@ -55,4 +55,4 @@ class OrderStatusController extends Controller
             'message' => 'Status berhasil diperbarui'
         ]);
     }
-}
+}  

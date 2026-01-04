@@ -5,7 +5,7 @@
     <div class="max-w-6xl mx-auto">
         <h2 class="text-3xl font-bold mb-6 pt-3">Checkout</h2>
 
-        {{-- Alamat Pengiriman --}}
+        {{-- Alamat Pengiriman --}} 
         <div class="bg-white rounded-lg p-6 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
             <h3 class="text-xl font-semibold mb-4">Alamat Pengiriman</h3>
             <div class="flex items-start gap-3">

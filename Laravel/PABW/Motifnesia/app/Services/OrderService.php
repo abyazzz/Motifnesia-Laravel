@@ -56,7 +56,7 @@ class OrderService
             $this->clearCart($checkoutData['products']);
             
             DB::commit();
-            
+             
             return $order;
             
         } catch (\Exception $e) {

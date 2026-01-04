@@ -15,7 +15,7 @@ class PaymentController extends Controller
     /**
      * Tampilkan halaman payment/transaksi
      * Menampilkan ringkasan dari session checkout_data
-     */
+     */ 
     public function index()
     {
         if (!Auth::check()) {
@@ -77,7 +77,7 @@ class PaymentController extends Controller
 
             // Hapus session checkout
             session()->forget(['checkout_items', 'checkout_data']);
-
+ 
             // Redirect ke success page dengan order id
             return redirect()->route('customer.transaction.success', $order->id)
                 ->with('success', 'Transaksi berhasil! Menunggu konfirmasi pembayaran.');

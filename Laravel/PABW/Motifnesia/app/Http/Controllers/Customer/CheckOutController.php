@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CheckOutController extends Controller
 {
-    /**
+    /** 
      * Tampilkan halaman checkout
      * Mengambil data dari session checkout_items dan DB
      */
@@ -141,7 +141,7 @@ class CheckOutController extends Controller
             ];
         }
 
-        $totalOngkir = $metodePengiriman->harga ?? 0;
+        $totalOngkir = $metodePengiriman->harga;
         $totalBayar = $subtotalProduk + $totalOngkir;
 
         // Simpan data checkout ke session
